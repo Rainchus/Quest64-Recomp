@@ -1,0 +1,21 @@
+[submodule "lib/RmlUi"]
+	path = lib/RmlUi
+	url = https://github.com/mikke89/RmlUi/
+[submodule "lib/rt64"]
+	path = lib/rt64
+	url = https://github.com/rt64/rt64
+[submodule "lib/freetype-windows-binaries"]
+	path = lib/freetype-windows-binaries
+	url = https://github.com/ubawurinna/freetype-windows-binaries
+[submodule "lib/sf64decomp"]
+	path = lib/sf64decomp
+	url = https://github.com/sonicdcer/sf64.git
+[submodule "lib/lunasvg"]
+	path = lib/lunasvg
+	url = https://github.com/sammycage/lunasvg
+[submodule "lib/sse2neon"]
+	path = lib/sse2neon
+	url = https://github.com/DLTcollab/sse2neon.git
+[submodule "lib/N64ModernRuntime"]
+	path = lib/N64ModernRuntime
+	url = https://github.com/N64Recomp/N64ModernRuntime.git
