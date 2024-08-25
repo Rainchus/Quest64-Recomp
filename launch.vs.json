@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Starfox64Recompiled.exe",
+      "name": "Starfox64Recompiled.exe",
+      "currentDir": "${workspaceRoot}"
+    }
+  ]
+}
