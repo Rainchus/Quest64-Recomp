@@ -1,0 +1,14 @@
+# Config file for Starfox 64 NTSC 1.1 Recompilation.
+[input]
+entrypoint = 0x80000400
+# Paths are relative to the location of this config file.
+elf_path = "starfox64.us.rev1.elf"
+output_func_path = "RecompiledFuncs"
+
+[patches]
+stubs = [
+]
+
+ignored = [
+    "RdRam_CheckIPL3"
+]
