@@ -5,6 +5,7 @@ recomp_puts = 0x8F000000;
 recomp_exit = 0x8F000004;
 recomp_handle_quicksave_actions = 0x8F000008;
 recomp_handle_quicksave_actions_main = 0x8F00000C;
+osViSwapBuffer_recomp = 0x8F0000B4;
 osRecvMesg_recomp = 0x8F000010;
 osSendMesg_recomp = 0x8F000014;
 recomp_get_gyro_deltas = 0x8F000018;
