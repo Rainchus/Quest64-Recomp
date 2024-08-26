@@ -26,6 +26,9 @@ build/
 data_dump.toml
 dump.toml
 
+# Local backups
+backups
+
 # User-specific files
 *.rsuser
 *.suo
