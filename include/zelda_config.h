@@ -8,7 +8,7 @@
 
 namespace zelda64 {
     constexpr std::u8string_view program_id = u8"Starfox64Recompiled";
-    constexpr std::string_view program_name = "Zelda 64: Recompiled";
+    constexpr std::string_view program_name = "Starfox 64: Recompiled";
 
     // TODO: Move loading configs to the runtime once we have a way to allow per-project customization.
     void load_config();
