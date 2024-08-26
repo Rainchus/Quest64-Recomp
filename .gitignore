@@ -22,6 +22,10 @@ build/
 *.lib
 *.pdb
 
+# Data dumps
+data_dump.toml
+dump.toml
+
 # User-specific files
 *.rsuser
 *.suo

@@ -2,13 +2,16 @@
 [input]
 entrypoint = 0x80000400
 # Paths are relative to the location of this config file.
-elf_path = "starfox64.us.rev1.elf"
+# elf_path = "starfox64.us.rev1.elf"
+symbols_file_path = "Starfox64RecompSyms/sf64.us.rev1.syms.toml"
+rom_file_path = "starfox64.us.rev1.uncompressed.z64"
 output_func_path = "RecompiledFuncs"
 
 [patches]
 stubs = [
+    "RdRam_CheckIPL3"
 ]
 
 ignored = [
-    "RdRam_CheckIPL3"
+    
 ]

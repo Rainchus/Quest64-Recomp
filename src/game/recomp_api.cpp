@@ -18,6 +18,15 @@ extern "C" void recomp_update_inputs(uint8_t* rdram, recomp_context* ctx) {
     recomp::poll_inputs();
 }
 
+extern "C" void __ll_rshift_recomp(uint8_t * rdram, recomp_context * ctx) {
+    int64_t a = (ctx->r4 << 32) | ((ctx->r5 << 0) & 0xFFFFFFFFu);
+    int64_t b = (ctx->r6 << 32) | ((ctx->r7 << 0) & 0xFFFFFFFFu);
+    int64_t ret = a >> b;
+
+    ctx->r2 = (int32_t)(ret >> 32);
+    ctx->r3 = (int32_t)(ret >> 0);
+}
+
 extern "C" void recomp_puts(uint8_t* rdram, recomp_context* ctx) {
     PTR(char) cur_str = _arg<0, PTR(char)>(rdram, ctx);
     u32 length = _arg<1, u32>(rdram, ctx);

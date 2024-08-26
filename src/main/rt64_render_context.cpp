@@ -355,10 +355,10 @@ void zelda64::renderer::RT64Context::load_shader_cache(std::span<const char> cac
     // TODO figure out how to avoid a copy here.
     std::istringstream cache_stream{std::string{cache_binary.data(), cache_binary.size()}};
 
-    if (!app->rasterShaderCache->loadOfflineList(cache_stream)) {
-       printf("Failed to preload shader cache!\n");
-       assert(false);
-    }
+    //if (!app->rasterShaderCache->loadOfflineList(cache_stream)) {
+    //   printf("Failed to preload shader cache!\n");
+    //   assert(false);
+    //}
 }
 
 RT64::UserConfiguration::Antialiasing zelda64::renderer::RT64MaxMSAA() {
