@@ -22,7 +22,7 @@ void Graphics_SetTask(void);
 void Main_SetVIMode(void);
 int recomp_printf(const char* fmt, ...);
 
-// FPS fix
+// @recomp FPS fix, pass Vi's per frame to RT64 for interpolated frames
 RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
 {
     u8 i;
@@ -34,7 +34,7 @@ RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
     Graphics_InitializeTask(gSysFrameCount);
     {
         gSPSegment(gUnkDisp1++, 0, 0);
-        gEXEnable(gMasterDisp++); // @recomp
+        gEXEnable(gMasterDisp++);
         gSPDisplayList(gMasterDisp++, gGfxPool->unkDL1);
         Game_Update();
         gSPEndDisplayList(gUnkDisp1++);
@@ -59,7 +59,7 @@ RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
         }
 
         {
-            gEXEnable(gMasterDisp++); // @recomp
+            gEXEnable(gMasterDisp++);
             gSPSegment(gUnkDisp1++, 0, 0);
             gSPDisplayList(gMasterDisp++, gGfxPool->unkDL1);
             Game_Update();
@@ -71,9 +71,9 @@ RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
             gSPEndDisplayList(gUnkDisp2++);
             gSPDisplayList(gMasterDisp++, gGfxPool->unkDL2);
 
-            visPerFrame = MIN(gVIsPerFrame, 4);  // @recomp
-            validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1);  // @recomp
-            gEXSetRefreshRate(gMasterDisp++, 60 / validVIsPerFrame);  // @recomp
+            visPerFrame = MIN(gVIsPerFrame, 4);
+            validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1);
+            gEXSetRefreshRate(gMasterDisp++, 60 / validVIsPerFrame);
 
             gDPFullSync(gMasterDisp++);
             gSPEndDisplayList(gMasterDisp++);
@@ -93,8 +93,8 @@ RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
         visPerFrame = MIN(gVIsPerFrame, 4);
         validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1);
 
-        for (i = 0; i < validVIsPerFrame; i += 1)
-        { // Can't be ++
+        for (i = 0; i < validVIsPerFrame; i++)
+        { 
             MQ_WAIT_FOR_MESG(&gGfxVImesgQueue, NULL);
         }
 

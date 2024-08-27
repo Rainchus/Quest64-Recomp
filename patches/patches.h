@@ -21,7 +21,7 @@
 #define osContStartQuery osContStartQuery_recomp
 #define osContGetQuery osContGetQuery_recomp
 
-#define sinf __sinf_recomp
+#define __sinf __sinf_recomp
 #define cosf __cosf_recomp
 #define bzero bzero_recomp
 #define gRandFloat sRandFloat
@@ -67,6 +67,7 @@
 
 int recomp_printf(const char* fmt, ...);
 float recomp_powf(float, float);
+f32 __sinf(f32);
 
 #define INCBIN(identifier, filename)          \
     asm(".pushsection .rodata\n"              \
