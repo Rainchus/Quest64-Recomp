@@ -18,7 +18,6 @@
 					<div class="launcher__title-quadrant">
 						<button class="subtitle-title" disabled>
 							<div><h3>Starfox 64: Recompiled</h3></div>
-							<div class="subtitle-title__disclaimer">Coming Soon™</div>
 						</button>
 					</div>
 					<div class="launcher__content-quadrant"></div>
