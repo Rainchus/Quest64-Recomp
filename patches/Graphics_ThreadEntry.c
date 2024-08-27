@@ -11,6 +11,7 @@
 #include "../lib/sf64decomp/include/sys.h"
 #include "../lib/sf64decomp/include/sf64audio_external.h"
 #include "../lib/rt64/include/rt64_extended_gbi.h"
+#include "misc_funcs.h"
 
 extern OSMesgQueue gControllerMesgQueue;
 extern OSContPad gControllerPress[4];
@@ -19,7 +20,9 @@ extern FrameBuffer gFrameBuffers[3];
 void Graphics_InitializeTask(u32 frameCount);
 void Graphics_SetTask(void);
 void Main_SetVIMode(void);
+int recomp_printf(const char* fmt, ...);
 
+// FPS fix
 RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
 {
     u8 i;
@@ -68,8 +71,8 @@ RECOMP_PATCH void Graphics_ThreadEntry(void *arg0)
             gSPEndDisplayList(gUnkDisp2++);
             gSPDisplayList(gMasterDisp++, gGfxPool->unkDL2);
 
-            visPerFrame = MIN(gVIsPerFrame, 4);
-            validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1);
+            visPerFrame = MIN(gVIsPerFrame, 4);  // @recomp
+            validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1);  // @recomp
             gEXSetRefreshRate(gMasterDisp++, 60 / validVIsPerFrame);  // @recomp
 
             gDPFullSync(gMasterDisp++);
