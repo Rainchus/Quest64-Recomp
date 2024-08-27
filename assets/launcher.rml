@@ -16,7 +16,7 @@
 			<div class="launcher">
 				<div class="launcher__vertical-split">
 					<div class="launcher__title-quadrant">
-						<button class="subtitle-title" disabled>
+						<button class="subtitle-title" enabled>
 							<div><h3>Starfox 64: Recompiled</h3></div>
 						</button>
 					</div>
@@ -28,7 +28,6 @@
 					</div>
 					<div class="launcher__title-quadrant launcher__title-quadrant--right">
 						<button class="subtitle-title subtitle-title--right" selected>
-							<div><h3>Starfox 64: Recompiled</h3></div>
 						</button>
 					</div>
 					<div class="launcher__content-quadrant">
