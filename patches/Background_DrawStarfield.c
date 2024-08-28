@@ -1,7 +1,9 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #define __sinf __sinf_recomp
 #define __cosf __cosf_recomp
-#if 0
+
+#if 1
+
 #include "PR/ultratypes.h"
 #include "context.h"
 #include "PR/gbi.h"

@@ -11,7 +11,7 @@
 
 void Game_InitFullViewport(void);
 
-/*
+#if 0
 
 TODO: This function crashes the Recompiler.
 
@@ -79,5 +79,4 @@ RECOMP_PATCH void Game_InitViewport(Gfx** dList, u8 camCount, u8 camIndex) {
     }
     gSPViewport((*dList)++, gViewport++);
 }
-
-*/
+#endif

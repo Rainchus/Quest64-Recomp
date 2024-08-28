@@ -1,6 +1,5 @@
-// TODO: This patch doesn't work at all, the background doesn't get drawn even though the function is the same straight from the decomp
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
-#if 0
+#if 1
 #define __sinf __sinf_recomp
 
 #include "PR/ultratypes.h"

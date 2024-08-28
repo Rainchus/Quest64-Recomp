@@ -1,7 +1,5 @@
-// TODO: DOESN'T WORK, FUNCTION IS COPIED FROM DECOMP AS IS
-
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
-#if 0
+#if 1
 #include "PR/ultratypes.h"
 #include "sf64math.h"
 #include "context.h"
