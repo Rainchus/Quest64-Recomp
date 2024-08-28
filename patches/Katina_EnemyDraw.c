@@ -2,6 +2,7 @@
 
 #include "../lib/sf64decomp/include/PR/ultratypes.h"
 #include "gfx.h"
+#include "PR/gbi.h"
 #include "macros.h"
 #include "sf64thread.h"
 #include "sf64object.h"
@@ -17,7 +18,6 @@ extern Gfx aKaEnemy1DL[];
 extern Gfx aKaCornerianFighterDL[];
 
 void Actor_DrawEngineGlow(Actor*, EngineGlowColor);
-
 
 // @recomp Disable LOD on Katina enemies
 RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange *this)

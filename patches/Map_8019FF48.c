@@ -50,6 +50,7 @@ void Map_801A61B4(LevelId level);
 void Map_801A6368(void);
 void Map_801A914C(void);
 void Map_801A6628(void);
+void Fault_Printf(s32 xPos, s32 yPos, const char *fmt, ...);
 
 RECOMP_PATCH void Map_8019FF48(void)
 {
@@ -110,4 +111,10 @@ RECOMP_PATCH void Map_8019FF48(void)
     gGameFrameCount++;
 
     Map_LevelSelect();
+
+    // Print test, doesn't work!
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+
+    Graphics_DisplaySmallText(20, 200, 1.0f, 1.0f, "TEST");
 }
