@@ -325,8 +325,8 @@ gpr get_entrypoint_address();
 std::vector<recomp::GameEntry> supported_games = {
     {
         .rom_hash = 0xca4cec808f2d5859,
-        .internal_name = "ZELDA MAJORA'S MASK",
-        .game_id = u8"mm.n64.us.1.0",
+        .internal_name = "STARFOX64           ",
+        .game_id = u8"sf64.n64.us.1.1",
         .is_enabled = true,
         .entrypoint_address = get_entrypoint_address(),
         .entrypoint = recomp_entrypoint,
