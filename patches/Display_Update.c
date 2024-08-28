@@ -1,5 +1,6 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
-#if 1
+
+#include "debug.h"
 #include "PR/ultratypes.h"
 #include "sf64math.h"
 #include "context.h"
@@ -269,5 +270,13 @@ RECOMP_PATCH void Display_Update(void) {
     Display_DrawHelpAlert();
     sPlayersVisible[gPlayerNum] = false;
     Matrix_Pop(&gGfxMatrix);
-}
+
+#if DEBUG_CHEATS == 1
+    if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
+        return;
+    } else {
+        gLaserStrength[0] = 2;
+        gBombCount[0] = 2;
+    }
 #endif
+}

@@ -8,7 +8,7 @@
  * state. Two presets (map and main menu) are provided.
  * For the full list of game states, see sf64thread.h.
  */
-#define DEBUG_BOOT_STATE 3  // main menu
+// #define DEBUG_BOOT_STATE 3  // main menu
 // #define DEBUG_BOOT_STATE 4 // map
 
 /**
@@ -17,7 +17,7 @@
  * an advanced level phase (warp zone or Andross fight).
  * Useful for debugging and speedrunning training.
  */
-#define DEBUG_LEVEL_SELECT 1
+#define DEBUG_LEVEL_SELECT 0
 
 /**
  * Sound Effects Jukebox:
@@ -42,5 +42,11 @@
  * WARNING: Spawning an object that's not loaded in memory will likely result in a crash.
  */
 #define DEBUG_SPAWNER 0
+
+/**
+ * Cheats:
+ * Max Bombs and Max Laser upgrade
+ */
+#define DEBUG_CHEATS 0
 
 #endif
