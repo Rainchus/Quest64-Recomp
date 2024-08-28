@@ -1,5 +1,6 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 
+#include "debug.h"
 #include "../lib/sf64decomp/include/PR/ultratypes.h"
 #include "../lib/sf64decomp/include/PR/gbi.h"
 #include "../lib/sf64decomp/include/context.h"
@@ -110,5 +111,7 @@ RECOMP_PATCH void Map_8019FF48(void)
     }
     gGameFrameCount++;
 
-    Map_LevelSelect();
+    #if DEBUG_LEVEL_SELECT == 1
+        Map_LevelSelect();
+    #endif
 }
