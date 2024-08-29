@@ -26,7 +26,13 @@
 #define bzero bzero_recomp
 #define gRandFloat sRandFloat
 // #include "global.h"
-#include "../lib/sf64decomp/include/PR/ultratypes.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "gfx.h"
+#include "sf64thread.h"
+#include "sf64object.h"
+#include "context.h"
+#include "functions.h"
 #include "rt64_extended_gbi.h"
 
 #ifndef gEXFillRectangle

@@ -82,25 +82,6 @@ void Map_LevelSelect(void) {
         startOption ^= 1;
     }
 
-    // if (contPress->button & U_CBUTTONS) {
-    //     zInc = 100.0f;
-    // } else if (contPress->button & R_CBUTTONS) {
-    //     zInc = 1000.0f;
-    // } else if (contPress->button & D_CBUTTONS) {
-    //     zInc = -100.0f;
-    // } else if (contPress->button & L_CBUTTONS) {
-    //     zInc = -1000.0f;
-    // }
-    // if (gControllerHold[0].button & R_TRIG) {
-    //     zInc *= 100.0f;
-    // }
-    // zStart += zInc;
-    // if(zStart < 0.0f) {
-    //     zStart = 0.0f;
-    // } else if (zStart > 500000.0f) {
-    //     zStart = 500000.0f;
-    // }
-
     /* Draw */
     if ((sCurrentPlanetId >= 0) && (sCurrentPlanetId < PLANET_MAX)) {
         RCP_SetupDL(&gMasterDisp, SETUPDL_83);

@@ -7,7 +7,7 @@ typedef unsigned int   size_t;
 
 typedef char *outfun(char*,const char*,size_t);
 
-int _Printf(void* prout, char *arg, const char *fmt, va_list args);
+// int _Printf(void* prout, char *arg, const char *fmt, va_list args);
 
 void* proutPrintf(void* dst, const char* fmt, size_t size) {
     recomp_puts(fmt, size);
@@ -15,12 +15,12 @@ void* proutPrintf(void* dst, const char* fmt, size_t size) {
 }
 
 int recomp_printf(const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-
-    int ret = _Printf(&proutPrintf, NULL, fmt, args);
-
-    va_end(args);
-
-    return ret;
+    //va_list args;
+    //va_start(args, fmt);
+//
+    //int ret = _Printf((&proutPrintf, NULL, fmt, args);
+//
+    //va_end(args);
+//
+    //return ret;
 }
