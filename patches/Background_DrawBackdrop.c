@@ -69,7 +69,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
     Matrix_Push(&gGfxMatrix);
 
-    if (gFovYMode == 2) {
+    if (gFovYMode == 2) { // sets FOV makes 16:9 work set to 0
         Matrix_Scale(gGfxMatrix, 1.2f, 1.2f, 1.0f, MTXF_APPLY);
     }
 
@@ -84,7 +84,8 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     sp134 = (gPlayer[gPlayerNum].camPitch * -6000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.4f);
                     sp13C = Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f, 7280.0f);
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                    Matrix_Translate(gGfxMatrix, sp13C, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
+                    // Start by translating the matrix to the far left position
+                    Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
 
                     if (gCurrentLevel == LEVEL_FORTUNA) {
                         Matrix_Translate(gGfxMatrix, 0.0f, -2000.0f, 0, MTXF_APPLY);
@@ -93,86 +94,75 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     }
                     Matrix_SetGfxMtx(&gMasterDisp);
 
-                    switch ((s32)gCurrentLevel) {
-                        case LEVEL_VERSUS:
-                            if (gVersusStage == VS_STAGE_CORNERIA) {
-                                gSPDisplayList(gMasterDisp++, D_versus_302D4D0);
-                            } else if (gVersusStage == VS_STAGE_KATINA) {
-                                gSPDisplayList(gMasterDisp++, D_versus_30146B0);
-                            } else {
-                                gSPDisplayList(gMasterDisp++, D_versus_3011E40);
-                            }
-                            break;
-                        case LEVEL_FORTUNA:
-                            gSPDisplayList(gMasterDisp++, D_FO_600D9F0);
-                            break;
-                        case LEVEL_KATINA:
-                            gSPDisplayList(gMasterDisp++, D_KA_600F1D0);
-                            break;
-                        case LEVEL_VENOM_2:
-                            gSPDisplayList(gMasterDisp++, D_VE2_600F670);
-                            break;
-                    }
-                    Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
+                    // Render the textures across the screen (left to right)
+                    for (int i = 0; i < 6; i++) {
+                        switch ((s32)gCurrentLevel) {
+                            case LEVEL_VERSUS:
+                                if (gVersusStage == VS_STAGE_CORNERIA) {
+                                    gSPDisplayList(gMasterDisp++, D_versus_302D4D0);
+                                } else if (gVersusStage == VS_STAGE_KATINA) {
+                                    gSPDisplayList(gMasterDisp++, D_versus_30146B0);
+                                } else {
+                                    gSPDisplayList(gMasterDisp++, D_versus_3011E40);
+                                }
+                                break;
+                            case LEVEL_FORTUNA:
+                                gSPDisplayList(gMasterDisp++, D_FO_600D9F0);
+                                break;
+                            case LEVEL_KATINA:
+                                gSPDisplayList(gMasterDisp++, D_KA_600F1D0);
+                                break;
+                            case LEVEL_VENOM_2:
+                                gSPDisplayList(gMasterDisp++, D_VE2_600F670);
+                                break;
+                        }
 
-                    switch ((s32)gCurrentLevel) {
-                        case LEVEL_VERSUS:
-                            if (gVersusStage == VS_STAGE_CORNERIA) {
-                                gSPDisplayList(gMasterDisp++, D_versus_302D4D0);
-                            } else if (gVersusStage == VS_STAGE_KATINA) {
-                                gSPDisplayList(gMasterDisp++, D_versus_30146B0);
-                            } else {
-                                gSPDisplayList(gMasterDisp++, D_versus_3011E40);
-                            }
-                            break;
-                        case LEVEL_FORTUNA:
-                            gSPDisplayList(gMasterDisp++, D_FO_600D9F0);
-                            break;
-                        case LEVEL_KATINA:
-                            gSPDisplayList(gMasterDisp++, D_KA_600F1D0);
-                            break;
-                        case LEVEL_VENOM_2:
-                            gSPDisplayList(gMasterDisp++, D_VE2_600F670);
-                            break;
+                        // Translate to the next position (move right by 7280.0f each time)
+                        Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                        Matrix_SetGfxMtx(&gMasterDisp);
                     }
                     break;
 
                 case LEVEL_CORNERIA:
-                case LEVEL_VENOM_1:
-                    sp134 = (gPlayer[gPlayerNum].camPitch * -6000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.6f);
-                    sp13C = Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f, 7280.0f);
+                case LEVEL_VENOM_1: {
+                    // Calculate vertical and horizontal offsets
+                    f32 sp134 = (gPlayer[gPlayerNum].camPitch * -6000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.6f);
+                    f32 sp13C =
+                        Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f, 7280.0f);
+
+                    // Apply camera roll and translate matrix to the starting position (far left)
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                    Matrix_Translate(gGfxMatrix, sp13C, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
-                    switch ((s32)gCurrentLevel) {
-                        case LEVEL_CORNERIA:
-                            gSPDisplayList(gMasterDisp++, D_CO_60059F0);
-                            break;
-                        case LEVEL_VENOM_1:
-                            gSPDisplayList(gMasterDisp++, D_VE1_60046F0);
-                            break;
+                    // Render the textures across a wider range to cover the screen
+                    for (int i = 0; i < 10; i++) {
+                        switch ((s32) gCurrentLevel) {
+                            case LEVEL_CORNERIA:
+                                gSPDisplayList(gMasterDisp++, D_CO_60059F0);
+                                break;
+                            case LEVEL_VENOM_1:
+                                gSPDisplayList(gMasterDisp++, D_VE1_60046F0);
+                                break;
+                        }
+
+                        // Translate to the next position (move right by 7280.0f each time)
+                        Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                        Matrix_SetGfxMtx(&gMasterDisp);
                     }
 
-                    Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
-
-                    switch ((s32)gCurrentLevel) {
-                        case LEVEL_CORNERIA:
-                            gSPDisplayList(gMasterDisp++, D_CO_60059F0);
-                            break;
-                        case LEVEL_VENOM_1:
-                            gSPDisplayList(gMasterDisp++, D_VE1_60046F0);
-                            break;
-                    }
                     break;
+                }
 
                 case LEVEL_VENOM_ANDROSS:
                     if (gDrawBackdrop != 6) {
+                        // Get screen aspect ratio (width / height)
+                        f32 aspectRatio = (f32) SCREEN_WIDTH / (f32) SCREEN_HEIGHT;
+
                         if ((gDrawBackdrop == 2) || (gDrawBackdrop == 7)) {
                             Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                            Matrix_Translate(gGfxMatrix, 0.0f, -4000.0f, -7000.0f, MTXF_APPLY);
+                            // Adjust Y translation based on aspect ratio
+                            Matrix_Translate(gGfxMatrix, 0.0f, -4000.0f * aspectRatio, -7000.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_600F670);
                         } else if ((gDrawBackdrop == 3) || (gDrawBackdrop == 4)) {
@@ -193,11 +183,14 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             sp13C = Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f,
                                               7280.0f);
                             Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                            Matrix_Translate(gGfxMatrix, sp13C, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
-                            Matrix_Translate(gGfxMatrix, 0.0f, -2500.0f, 0.0f, MTXF_APPLY);
+                            // Adjust X and Y translations based on aspect ratio
+                            Matrix_Translate(gGfxMatrix, sp13C * aspectRatio, (-2000.0f + sp134) * aspectRatio,
+                                             -6000.0f, MTXF_APPLY);
+                            Matrix_Translate(gGfxMatrix, 0.0f, -2500.0f * aspectRatio, 0.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
-                            Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                            // Adjust X translation based on aspect ratio
+                            Matrix_Translate(gGfxMatrix, 7280.0f * aspectRatio, 0.0f, 0.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
                         } else {
@@ -207,9 +200,10 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             } else {
                                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 0, 255, 128, (s32) gAndrossUnkAlpha);
                             }
+                            // Adjust translation and scaling based on aspect ratio
                             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -290.0f, MTXF_APPLY);
                             Matrix_Push(&gGfxMatrix);
-                            Matrix_Scale(gGfxMatrix, 11.0f, 11.0f, 1.0f, MTXF_APPLY);
+                            Matrix_Scale(gGfxMatrix, 11.0f * aspectRatio, 11.0f, 1.0f, MTXF_APPLY);
                             Matrix_RotateZ(gGfxMatrix, (gPlayer[0].camRoll + (gGameFrameCount * 1.5f)) * M_DTOR,
                                            MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
@@ -217,7 +211,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             Matrix_Pop(&gGfxMatrix);
                             if (gDrawBackdrop != 5) {
                                 Matrix_Push(&gGfxMatrix);
-                                Matrix_Scale(gGfxMatrix, 10.0f, 10.0f, 1.0f, MTXF_APPLY);
+                                Matrix_Scale(gGfxMatrix, 10.0f * aspectRatio, 10.0f, 1.0f, MTXF_APPLY);
                                 Matrix_RotateZ(gGfxMatrix, (gPlayer[0].camRoll + (gGameFrameCount * -1.3f)) * M_DTOR,
                                                MTXF_APPLY);
                                 Matrix_SetGfxMtx(&gMasterDisp);
@@ -255,7 +249,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         Matrix_SetGfxMtx(&gMasterDisp);
                         if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) {
                             gSPDisplayList(gMasterDisp++, D_AQ_601AFF0);
-
                         } else {
                             gSPDisplayList(gMasterDisp++, D_AQ_601C080);
                         }
@@ -288,39 +281,29 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
 
                     if ((gCurrentLevel == LEVEL_TITANIA) || (gCurrentLevel == LEVEL_ZONESS)) {
-                        Matrix_Translate(gGfxMatrix, sp13C, -3000.0f + sp134, -7000.0f, MTXF_APPLY);
+                        Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -3000.0f + sp134, -7000.0f, MTXF_APPLY);
                     } else if (gCurrentLevel == LEVEL_SOLAR) {
-                        Matrix_Translate(gGfxMatrix, sp13C, -3500.0f + sp134, -7000.0f, MTXF_APPLY);
+                        Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -3500.0f + sp134, -7000.0f, MTXF_APPLY);
                     } else if (gCurrentLevel == LEVEL_MACBETH) {
-                        Matrix_Translate(gGfxMatrix, sp13C, -4000.0f + sp134, -7000.0f, MTXF_APPLY);
+                        Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -4000.0f + sp134, -7000.0f, MTXF_APPLY);
                     }
                     Matrix_SetGfxMtx(&gMasterDisp);
 
-                    if (gCurrentLevel == LEVEL_TITANIA) {
-                        gSPDisplayList(gMasterDisp++, D_TI_6000A80);
-                    } else if (gCurrentLevel == LEVEL_MACBETH) {
-                        gSPDisplayList(gMasterDisp++, D_MA_6019220);
-                    } else if (gCurrentLevel == LEVEL_ZONESS) {
-                        gSPDisplayList(gMasterDisp++, D_ZO_6013480);
-                    } else if (gCurrentLevel == LEVEL_SOLAR) {
-                        gSPDisplayList(gMasterDisp++, D_SO_601E150);
-                    }
-                    if (sp13C < 0) {
-                        sp13C = 1.0f;
-                    } else {
-                        sp13C = -1.0f;
-                    }
-                    Matrix_Translate(gGfxMatrix, 7280.0f * sp13C, 0.0f, 0.0f, MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
+                    // Render the textures across a wider range to cover the screen
+                    for (int i = 0; i < 5; i++) {
+                        if (gCurrentLevel == LEVEL_TITANIA) {
+                            gSPDisplayList(gMasterDisp++, D_TI_6000A80);
+                        } else if (gCurrentLevel == LEVEL_MACBETH) {
+                            gSPDisplayList(gMasterDisp++, D_MA_6019220);
+                        } else if (gCurrentLevel == LEVEL_ZONESS) {
+                            gSPDisplayList(gMasterDisp++, D_ZO_6013480);
+                        } else if (gCurrentLevel == LEVEL_SOLAR) {
+                            gSPDisplayList(gMasterDisp++, D_SO_601E150);
+                        }
 
-                    if (gCurrentLevel == LEVEL_TITANIA) {
-                        gSPDisplayList(gMasterDisp++, D_TI_6000A80);
-                    } else if (gCurrentLevel == LEVEL_MACBETH) {
-                        gSPDisplayList(gMasterDisp++, D_MA_6019220);
-                    } else if (gCurrentLevel == LEVEL_ZONESS) {
-                        gSPDisplayList(gMasterDisp++, D_ZO_6013480);
-                    } else if (gCurrentLevel == LEVEL_SOLAR) {
-                        gSPDisplayList(gMasterDisp++, D_SO_601E150);
+                        // Move the matrix to the right by 7280.0f each time to draw the next texture
+                        Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                        Matrix_SetGfxMtx(&gMasterDisp);
                     }
                     break;
             }
