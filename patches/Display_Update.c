@@ -33,6 +33,8 @@ void Display_Reticle(Player* player);
 void Display_LandmasterMuzzleFlash(Player* player);
 void Display_OnFootMuzzleFlash(Player* player);
 void Display_DrawHelpAlert(void);
+void Spawner(void);
+
 f32 __sinf(f32);
 float sqrtf(float f);
 
@@ -278,5 +280,9 @@ RECOMP_PATCH void Display_Update(void) {
         gLaserStrength[0] = 2;
         gBombCount[0] = 2;
     }
+#endif
+
+#if DEBUG_SPAWNER == 1
+    Spawner();
 #endif
 }
