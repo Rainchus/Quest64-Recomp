@@ -48,3 +48,4 @@ recomp_get_resolution_scale = 0x8F0000AC;
 recomp_get_analog_inverted_axes = 0x8F0000B0;
 osEepromRead_recomp = 0x8F000040;
 osEepromWrite_recomp = 0x8F000044;
+osWritebackDCacheAll_recomp = 0x8F0000BC;

@@ -2,6 +2,8 @@
 
 #include "patches.h"
 
+#if 1 // full scope
+
 extern Vec3f sViewPos;
 extern bool sDrewActor;
 extern Vec3f gLockOnTargetViewPos[];
@@ -39,9 +41,12 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         }
 
         // @recomp draw no matter what
-        if (1/*(var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)*/) {
-            if (1/*fabsf(sViewPos.x) < (fabsf(sViewPos.z * 0.5f) + 500.0f)*/) {
-                if (1/*fabsf(sViewPos.y) < (fabsf(sViewPos.z * 0.5f) + 500.0f)*/) {
+        goto render;
+
+        if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
+            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * 0.5f) + 500.0f)) {
+                if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * 0.5f) + 500.0f)) {
+                render:
                     Matrix_RotateY(gCalcMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gCalcMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
                     Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
@@ -73,9 +78,12 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         }
 
         // @recomp draw no matter what
-        if (1/*(var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)*/) {
-            if (1/*fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1) + var_ft5)*/) {
-                if (1/*fabsf(sViewPos.y) < (fabsf(sViewPos.z * var_fa1) + var_ft5)*/) {
+        goto render2;
+
+        if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
+            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
+                if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
+                render2:
                     if (this->info.draw != NULL) {
                         Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                         Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -154,10 +162,14 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     }
 
     sp3C = -1.0f;
+
     // @recomp draw no matter what
-    if (1/*(D_edisplay_801615D0.z < var_fv0) && (var_fv1 < D_edisplay_801615D0.z)*/) {
-        if (1/*fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)*/) {
-            if (1/*fabsf(D_edisplay_801615D0.y) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)*/) {
+    goto render;
+
+    if ((D_edisplay_801615D0.z < var_fv0) && (var_fv1 < D_edisplay_801615D0.z)) {
+        if (fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
+            if (fabsf(D_edisplay_801615D0.y) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
+            render:
                 sp3C = 1.0f;
                 if (this->obj.id != OBJ_BOSS_BO_BASE) {
                     if (this->obj.id != OBJ_BOSS_KA_SAUCERER) {
@@ -184,26 +196,28 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     }
 }
 
+#if 0
 RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
-    Vec3f sp54 = { 0.0f, 0.0f, 0.0f };
-    Vec3f sp48;
-    f32 sp44 = 1000.0f;
-    f32 sp40 = -12000.0f;
-    f32 sp3C = 2000.0f;
-    f32 sp38 = 0.5f;
+    Vec3f src = { 0.0f, 0.0f, 0.0f };
+    Vec3f dest;
+
+    f32 maxZdist = 1000.0f;
+    f32 minZdist = -12000.0f;
+    f32 xyOffsetBounds = 2000.0f + 1000.0f;
+    f32 xyObjDistBoundMod = 0.5f;
 
     if (this->obj.id == OBJ_SCENERY_UNK_156) {
-        sp44 = 4000.0f;
-        sp40 = -13000.0f;
-        sp3C = 4500.0f;
+        maxZdist = 4000.0f;
+        minZdist = -13000.0f;
+        xyOffsetBounds = 4500.0f;
     } else if (gCurrentLevel == LEVEL_VENOM_ANDROSS) {
-        sp40 = -20000.0f;
-        sp38 = 0.4f;
+        minZdist = -20000.0f;
+        xyObjDistBoundMod = 0.4f;
     } else if (this->obj.id == OBJ_SCENERY_VS_KA_FLBASE) {
-        sp44 = 6000.0f;
-        sp40 = -20000.0f;
-        sp3C = 6000.0f;
-        sp38 = 0.9f;
+        maxZdist = 6000.0f;
+        minZdist = -20000.0f;
+        xyOffsetBounds = 6000.0f;
+        xyObjDistBoundMod = 0.9f;
     }
 
     if ((gLevelType == LEVELTYPE_PLANET) || (gCurrentLevel == LEVEL_BOLSE)) {
@@ -212,12 +226,18 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
         Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, MTXF_APPLY);
     }
 
-    Matrix_MultVec3f(gGfxMatrix, &sp54, &sp48);
+    Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    // @recomp draw no matter what
-    if (1/*(sp48.z < sp44) && (sp40 < sp48.z)*/) {
-        if (1/*fabsf(sp48.y) < (fabsf(sp48.z * sp38) + sp3C)*/) {
-            if (1/*fabsf(sp48.x) < (fabsf(sp48.z * sp38) + sp3C)*/) {
+    // @recomp Sector Z performance decreases significantly. Interpolation related
+    // TODO: tag objects
+    if (gCurrentLevel != LEVEL_SECTOR_Z) {
+        goto render;
+    }
+
+    if ((dest.z < maxZdist) && (minZdist < dest.z)) {
+        if (fabsf(dest.y) < (fabsf(dest.z * xyObjDistBoundMod) + xyOffsetBounds)) {
+            if (fabsf(dest.x) < (fabsf(dest.z * xyObjDistBoundMod) + xyOffsetBounds)) {
+            render:
                 Display_SetSecondLight(&this->obj.pos);
                 if (this->obj.id == OBJ_SCENERY_AND_PASSAGE) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
@@ -230,6 +250,11 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
                 } else {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
+
+                    // @recomp fix garbage dList, see RECOMP_PATCH void SectorY_SyShogun_Init
+                    if ((gCurrentLevel == LEVEL_SECTOR_Y) && (gScenery360[0].info.dList == NULL)) {
+                        return;
+                    }
                     gSPDisplayList(gMasterDisp++, this->info.dList);
                 }
             }
@@ -237,61 +262,72 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
     }
 }
 
-RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 arg1) {
-    this->obj.pos.y += gCameraShakeY;
-    func_edisplay_8005D008(&this->obj, this->info.drawType);
-    this->obj.pos.y -= gCameraShakeY;
+void SectorY_8019AEC0(SyShogun*);
+void SectorY_80198244(SyShogun*);
+extern f32 D_SY_60342A0[];
+extern f32 D_SY_6034304[];
+extern Gfx aSySaruzinDL[];
 
-    if (this->info.drawType == 0) {
-        if ((this->obj.id == OBJ_SCENERY_CO_TOWER) || (this->obj.id == OBJ_SCENERY_CO_ROCKWALL) ||
-            (this->obj.id == OBJ_SCENERY_CO_HIGHWAY_4) || (this->obj.id == OBJ_SCENERY_VE1_WALL_3)) {
-            RCP_SetupDL_57(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-            gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK); // @recomp Not sure if i should disable this
+RECOMP_PATCH void SectorY_SyShogun_Init(SyShogun* this) {
+    gScenery360[0].info.dList = NULL; // @recomp initialize dList to NULL to avoid crash
+    this->fwork[9] = 0.0f;
+    this->swork[33] = 5500;
+    this->timer_050 = 10;
+    this->timer_058 = 0;
 
-            if (arg1 < 0) {
-                Object_ApplyWaterDistortion();
-            }
+    D_ctx_80177A10[8] = 0;
 
-            gSPDisplayList(gMasterDisp++, this->info.dList);
-            RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-        } else {
-            if (this->obj.id == OBJ_SCENERY_CO_HIGHWAY_3) {
-                if (arg1 < 0) {
-                    return; // weird control flow
-                }
-                RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-            }
+    if (this->index == 0) {
+        this->info.hitbox = SEGMENTED_TO_VIRTUAL(D_SY_60342A0);
+        this->health = 150;
 
-            Object_SetCullDirection(arg1);
+        this->swork[28] = 5;
+        this->fwork[43] = 3.5f;
+        this->fwork[45] = 40.0f;
 
-            if (arg1 < 0) {
-                Object_ApplyWaterDistortion();
-            }
-
-            gSPDisplayList(gMasterDisp++, this->info.dList);
-
-            if (this->obj.id == OBJ_SCENERY_CO_HIGHWAY_3) {
-                RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-            }
+        if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_START_360) {
+            this->obj.pos.z = -28900.0f;
+            gScenery360[0].obj.pos.z = -30000.0f;
         }
-    } else if (this->info.draw != NULL) {
-        Object_SetCullDirection(arg1);
-        this->info.draw(&this->obj);
-    }
-}
 
-// @recomp Not sure if i should disable this
-RECOMP_PATCH void Object_SetCullDirection(s32 arg0) {
-    if (arg0 < 0) {
-        gSPSetGeometryMode(gMasterDisp++, G_CULL_FRONT);
-        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+        this->rot_078.y = 0.0f;
+        SectorY_8019AEC0(this);
+    } else {
+        this->fwork[34] = 2.8f;
+        this->info.hitbox = SEGMENTED_TO_VIRTUAL(D_SY_6034304);
+        this->health = 100;
+        this->swork[28] = 0;
+        this->swork[25] = 1;
+        this->fwork[45] = 35.0f;
+
+        if (this->index == 1) {
+            this->rot_078.y = 15.0f;
+        } else {
+            this->rot_078.y = 345.0f;
+        }
+
+        this->vel.x = SIN_DEG(this->rot_078.y) * this->fwork[45] * 0.2f;
+        this->vel.z = COS_DEG(this->rot_078.y) * this->fwork[45] * 0.2f;
+        SectorY_80198244(this);
+        this->timer_056 = 250;
+    }
+
+    if (gLevelMode == LEVELMODE_ON_RAILS) {
+        if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) {
+            gPlayer[0].state_1C8 = PLAYERSTATE_1C8_START_360;
+            gPlayer[0].csState = 0;
+            SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM, 50);
+            SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 50);
+        }
+        Object_Kill(&this->obj, this->sfxSource);
     }
 }
+#endif
 
 RECOMP_PATCH void Scenery_Move(Scenery* this) {
     if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) {
         this->obj.pos.z += this->effectVel.z;
-        if ((this->info.cullDistance * 1.5f)  < this->obj.pos.z) {
+        if ((this->info.cullDistance * 1.5f) < this->obj.pos.z) {
             Object_Kill(&this->obj, this->sfxSource);
         }
     } else if ((gLevelMode == LEVELMODE_ON_RAILS) && (gBossActive != 2)) {
@@ -306,12 +342,15 @@ RECOMP_PATCH void Scenery_Move(Scenery* this) {
             temp_fv0 = 0.0f;
         }
         temp_fv0 -= gPlayer[0].cam.eye.z;
+
+        // @recomp increase cullDistance by 50%.
         if (((this->info.cullDistance * 1.5f) - temp_fv0) < (this->obj.pos.z + gPathProgress)) {
             Object_Kill(&this->obj, this->sfxSource);
         }
     }
 }
 
+#if 1
 RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
@@ -323,9 +362,12 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
     drawn = false;
 
     // @recomp draw no matter what
-    if (1/*(dest.z < 0.0f) && (dest.z > -12000.0f)*/) {
-        if (1/*fabsf(dest.x) < (fabsf(dest.z * 0.5f) + 500.0f)*/) {
-            if (1/*fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)*/) {
+    goto render;
+
+    if ((dest.z < 0.0f) && (dest.z > -12000.0f)) {
+        if (fabsf(dest.x) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+            if (fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+            render:
                 if (this->info.draw != NULL) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -349,7 +391,9 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
         Object_Kill(&this->obj, this->sfxSource);
     }
 }
+#endif
 
+#if 1
 RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
@@ -372,9 +416,12 @@ RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
     }
 
     // @recomp draw no matter what
-    if (1/*(dest.z < 0.0f) && (minZ < dest.z)*/) {
-        if (1/*fabsf(dest.x) < (fabsf(dest.z * 0.5f) + 500.0f)*/) {
-            if (1/*fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)*/) {
+    goto render;
+
+    if ((dest.z < 0.0f) && (minZ < dest.z)) {
+        if (fabsf(dest.x) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+            if (fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+            render:
                 if (this->info.draw != NULL) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -393,3 +440,6 @@ RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
         Object_Kill(&this->obj, this->sfxSource);
     }
 }
+#endif
+
+#endif // full scope

@@ -22,10 +22,11 @@
 #define osContGetQuery osContGetQuery_recomp
 
 #define __sinf __sinf_recomp
-#define cosf __cosf_recomp
+#define __cosf __cosf_recomp
+#define sqrtf sqrtf_recomp
 #define bzero bzero_recomp
 #define gRandFloat sRandFloat
-// #include "global.h"
+
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "gfx.h"
@@ -34,6 +35,10 @@
 #include "context.h"
 #include "functions.h"
 #include "rt64_extended_gbi.h"
+#include "audioseq_cmd.h"
+#include "macros.h"
+#include "variables.h"
+#include "debug.h"
 
 #ifndef gEXFillRectangle
 #define gEXFillRectangle(cmd, lorigin, rorigin, ulx, uly, lrx, lry) \
@@ -74,6 +79,8 @@
 int recomp_printf(const char* fmt, ...);
 float recomp_powf(float, float);
 f32 __sinf(f32);
+f32 __cosf(f32);
+float sqrtf(float f);
 
 #define INCBIN(identifier, filename)          \
     asm(".pushsection .rodata\n"              \

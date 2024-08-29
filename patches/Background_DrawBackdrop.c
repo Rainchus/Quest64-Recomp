@@ -1,12 +1,7 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
-#if 1
-#define __sinf __sinf_recomp
 
-#include "PR/ultratypes.h"
-#include "PR/gbi.h"
-#include "gfx.h"
-#include "sf64math.h"
-#include "context.h"
+#if 1
+
 #include "patches.h"
 
 extern u8 gDrawBackdrop;
@@ -493,4 +488,5 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
     }
     Matrix_Pop(&gGfxMatrix);
 }
-#endif
+
+#endif // full scope

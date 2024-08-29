@@ -1,8 +1,4 @@
-#define RECOMP_EXPORT __attribute__((section(".recomp_export")))
-#define RECOMP_PATCH __attribute__((section(".recomp_patch")))
-#define RECOMP_FORCE_PATCH __attribute__((section(".recomp_force_patch")))
-
-#include "../lib/sf64decomp/include/sf64save.h"
+#include "patches.h"
 
 extern unsigned char gControllerPlugged[4];
 extern SaveFile gSaveFile;

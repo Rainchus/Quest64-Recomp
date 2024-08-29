@@ -17,7 +17,7 @@
  * an advanced level phase (warp zone or Andross fight).
  * Useful for debugging and speedrunning training.
  */
-#define DEBUG_LEVEL_SELECT 0
+#define DEBUG_LEVEL_SELECT 1
 
 /**
  * Sound Effects Jukebox:
@@ -47,6 +47,6 @@
  * Cheats:
  * Max Bombs and Max Laser upgrade
  */
-#define DEBUG_CHEATS 0
+#define DEBUG_CHEATS 1
 
 #endif

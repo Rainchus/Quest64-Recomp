@@ -6,6 +6,7 @@
 
 void AudioHeap_UnapplySampleCache(SampleCacheEntry* entry, Sample* sample);
 
+// @recomp Fix undefined behaviour in audio, present in the original game
 RECOMP_PATCH void AudioHeap_DiscardSampleCaches(void) {
     s32 fontId;
     s32 i;
@@ -19,7 +20,7 @@ RECOMP_PATCH void AudioHeap_DiscardSampleCaches(void) {
     Instrument* instrument;
     SampleCacheEntry* entry;
 
-    entry = gPersistentSampleCache.entries;
+    entry = gPersistentSampleCache.entries; // @recomp
 
     for (fontId = 0; fontId < numFonts; fontId++) {
         sampleBankId1 = gSoundFontList[fontId].sampleBankId1;

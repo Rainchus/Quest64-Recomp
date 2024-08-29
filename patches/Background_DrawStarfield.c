@@ -2,7 +2,7 @@
 #define __sinf __sinf_recomp
 #define __cosf __cosf_recomp
 
-#if 1
+#if 0
 
 #include "PR/ultratypes.h"
 #include "context.h"

@@ -1,21 +1,12 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 
+#include "patches.h"
 #include "debug.h"
-#include "PR/ultratypes.h"
-#include "sf64math.h"
-#include "context.h"
-#include "PR/gbi.h"
-#include "gfx.h"
-#include "sf64object.h"
-#include "variables.h"
-#include "macros.h"
-#include "functions.h"
 #include "i3.h"
 #include "i5.h"
 #include "i6.h"
 
 #define __sinf __sinf_recomp
-#define sqrtf sqrtf_recomp
 
 extern bool sDrawCockpit;
 extern u8 sPlayersVisible[];
@@ -35,9 +26,6 @@ void Display_OnFootMuzzleFlash(Player* player);
 void Display_DrawHelpAlert(void);
 void Spawner(void);
 
-f32 __sinf(f32);
-float sqrtf(float f);
-
 RECOMP_PATCH void Display_Update(void) {
     s32 i;
     Vec3f tempVec;
@@ -49,10 +37,13 @@ RECOMP_PATCH void Display_Update(void) {
 
     sDrawCockpit = false;
 
+    // @recomp remove 511 cap, hated from generations
+    #if 0
     // 511 hit count cap
     if (gHitCount > 511) {
         gHitCount = 511;
     }
+    #endif
 
     Matrix_Push(&gGfxMatrix);
 
@@ -284,5 +275,16 @@ RECOMP_PATCH void Display_Update(void) {
 
 #if DEBUG_SPAWNER == 1
     Spawner();
+#endif
+
+// @recomp DEBUG SECTION:
+#if 0
+    {
+        Player* player = &gPlayer[0];
+        
+        if (gControllerPress[0].button & L_TRIG) {
+            player->state_1C8 = PLAYERSTATE_1C8_START_360;
+        }
+    }
 #endif
 }
