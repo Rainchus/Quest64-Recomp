@@ -1,13 +1,3 @@
-# Starfox64 Recompiled
-
-Place an uncompressed rom in the root of the repository and name it:
-
-starfox64.us.rev1.uncompressed.z64
-
-open folder in visual studio, wait for cmake to finish scanning
-
-Build->Build All
-
 # Starfox 64: Recompiled
 Starfox 64: Recompiled is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Starfox 64 into a native port with many new features and enhancements. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
 
