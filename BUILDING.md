@@ -1,6 +1,6 @@
 # Building Guide
 
-This guide will help you build the project on your local machine. The process will require you to provide a decompressed ROM of the US version of the game.
+This guide will help you build the project on your local machine. The process will require you to provide a decompressed ROM of the 1.1 US version of the game.
 
 These steps cover: decompressing the ROM, running the recompiler and finally building the project.
 
