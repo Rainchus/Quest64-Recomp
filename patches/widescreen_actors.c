@@ -15,6 +15,7 @@ void func_edisplay_8005D1F0(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32 arg0);
 void func_edisplay_8005D008(Object* obj, s32 drawType);
 
+#if 1
 RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
     s32 playerNum;
     Vec3f srcViewPos = { 0.0f, 0.0f, 0.0f };
@@ -124,7 +125,13 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
     Object_SetSfxSourceToView(this->sfxSource, &sViewPos);
     this->iwork[24] = sDrewActor;
 }
+#endif
 
+/**
+ * Problems:
+ * Causing KaSaucerer not to spawn in Katina. Provisional patch: Except katina in the patch
+ */
+#if 1
 RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     f32 var_fa1;
     f32 var_ft5;
@@ -149,6 +156,7 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
         var_fv0 = 6000.0f;
         var_ft5 = 0.9f;
         var_fv1 = -20000.0f;
+
     } else if (this->obj.id == OBJ_BOSS_SZ_GREAT_FOX) {
         var_fv1 = -25000.0f;
         var_ft5 = 0.7f;
@@ -164,7 +172,9 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     sp3C = -1.0f;
 
     // @recomp draw no matter what
-    goto render;
+    if (gCurrentLevel != LEVEL_KATINA) { // Excepting Katina because of KaSaucerer's bug
+        goto render;
+    }
 
     if ((D_edisplay_801615D0.z < var_fv0) && (var_fv1 < D_edisplay_801615D0.z)) {
         if (fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
@@ -195,8 +205,13 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
         this->info.draw(&this->obj);
     }
 }
+#endif
 
-#if 0
+/**
+ * Problems:
+ * Causing serious slowdown in Sector Z, omitting that level for now.
+ */
+#if 1
 RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
@@ -324,6 +339,11 @@ RECOMP_PATCH void SectorY_SyShogun_Init(SyShogun* this) {
 }
 #endif
 
+/**
+ * Problems:
+ * Game crash before the Titania's Boss with 50% more cullingdistance
+ */
+#if 1
 RECOMP_PATCH void Scenery_Move(Scenery* this) {
     if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) {
         this->obj.pos.z += this->effectVel.z;
@@ -344,11 +364,18 @@ RECOMP_PATCH void Scenery_Move(Scenery* this) {
         temp_fv0 -= gPlayer[0].cam.eye.z;
 
         // @recomp increase cullDistance by 50%.
-        if (((this->info.cullDistance * 1.5f) - temp_fv0) < (this->obj.pos.z + gPathProgress)) {
+        f32 recompCulldistance = 1.5f;
+
+        if (gCurrentLevel == LEVEL_TITANIA) {
+            recompCulldistance = 1.0f;
+        }
+        
+        if (((this->info.cullDistance * recompCulldistance) - temp_fv0) < (this->obj.pos.z + gPathProgress)) {
             Object_Kill(&this->obj, this->sfxSource);
         }
     }
 }
+#endif
 
 #if 1
 RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
@@ -393,7 +420,8 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
 }
 #endif
 
-#if 1
+// Causes problem with Effects still being drawn when they shouldn't (Granga's plasma beam)
+#if 0
 RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
