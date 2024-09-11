@@ -76,7 +76,6 @@ RECOMP_PATCH void Graphics_ThreadEntry(void* arg0) {
     Graphics_InitializeTask(gSysFrameCount);
     {
         gSPSegment(gUnkDisp1++, 0, 0);
-        gEXEnable(gMasterDisp++);
         gSPDisplayList(gMasterDisp++, gExGfxPool->unkDL1); // @recomp
         Game_Update();
         gSPEndDisplayList(gUnkDisp1++);
@@ -202,11 +201,12 @@ RECOMP_PATCH void Graphics_SetTask(void) {
     osSendMesg(&gTaskMesgQueue, gGfxTask, OS_MESG_NOBLOCK);
 }
 
-// @recomp Remove screen margin
+// @recomp Remove screen margin & gEXSetScissor
 RECOMP_PATCH void Game_InitMasterDL(Gfx** dList) {
     gSPDisplayList((*dList)++, gRcpInitDL);
-    gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN_RECOMP, SCREEN_MARGIN_RECOMP,
-                  SCREEN_WIDTH - SCREEN_MARGIN_RECOMP, SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP);
+    // gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN_RECOMP, SCREEN_MARGIN_RECOMP,// @recomp
+    //               SCREEN_WIDTH - SCREEN_MARGIN_RECOMP, SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP);
+    gEXSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, 0, SCREEN_HEIGHT); // @recomp
     gDPSetDepthImage((*dList)++, &gZBuffer);
     gDPSetColorImage((*dList)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, &gZBuffer);
     gDPSetFillColor((*dList)++, FILL_COLOR(GPACK_ZDZ(G_MAXFBZ, 0)));
@@ -244,7 +244,9 @@ RECOMP_PATCH void Ending_8018D398(u32 arg0, AssetInfo* asset) {
 
     gFillScreenRed = gFillScreenGreen = gFillScreenBlue = gFillScreenAlpha = gFillScreenAlphaTarget =
         gFillScreenAlphaStep = 0;
-
-    Graphics_FillRectangle(&gMasterDisp, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH - SCREEN_MARGIN,
-                           SCREEN_HEIGHT - SCREEN_MARGIN, asset->prim.r, asset->prim.g, asset->prim.b, alpha);
+    // @recomp use of SCREEN_MARGIN_RECOMP instead of SCREEN_MARGIN
+    Graphics_FillRectangle(&gMasterDisp, SCREEN_MARGIN_RECOMP, SCREEN_MARGIN_RECOMP,
+                           SCREEN_WIDTH - SCREEN_MARGIN_RECOMP,
+                           SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP, asset->prim.r, asset->prim.g, asset->prim.b,
+                           alpha);
 }
