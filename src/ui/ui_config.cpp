@@ -556,7 +556,8 @@ public:
 
 		recompui::register_event(listener, "open_quit_game_prompt",
 			[](const std::string& param, Rml::Event& event) {
-                zelda64::open_quit_game_prompt();
+                // zelda64::open_quit_game_prompt();
+				ultramodern::quit(); // @Starfox64Recomp
 			});
 
 		recompui::register_event(listener, "toggle_input_device",

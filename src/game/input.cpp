@@ -160,7 +160,8 @@ bool sdl_event_filter(void* userdata, SDL_Event* event) {
             recompui::set_current_menu(recompui::Menu::Config);
         }
 
-        zelda64::open_quit_game_prompt();
+        // zelda64::open_quit_game_prompt();
+        ultramodern::quit(); // @Starfox64Recomp
         recompui::activate_mouse();
         break;
     }
