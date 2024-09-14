@@ -37,13 +37,13 @@ RECOMP_PATCH void Display_Update(void) {
 
     sDrawCockpit = false;
 
-    // @recomp remove 511 cap, hated from generations
-    #if 0
+// @recomp remove 511 cap, hated from generations
+#if 0
     // 511 hit count cap
     if (gHitCount > 511) {
         gHitCount = 511;
     }
-    #endif
+#endif
 
     Matrix_Push(&gGfxMatrix);
 
@@ -267,10 +267,14 @@ RECOMP_PATCH void Display_Update(void) {
 #if DEBUG_CHEATS == 1
     if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
         return;
-    } else {
-        gLaserStrength[0] = 2;
-        gBombCount[0] = 2;
     }
+#if 1
+    if (gControllerPress[0].button & L_TRIG) {
+        gPlayer[0].state_1C8 = PLAYERSTATE_1C8_START_360;
+    }
+#endif
+    gLaserStrength[0] = 2;
+    gBombCount[0] = 9;
 #endif
 
 #if DEBUG_SPAWNER == 1
