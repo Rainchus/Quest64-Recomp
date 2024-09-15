@@ -81,6 +81,7 @@ float recomp_powf(float, float);
 f32 __sinf(f32);
 f32 __cosf(f32);
 float sqrtf(float f);
+void Game_InitFullViewport(void);
 
 #define INCBIN(identifier, filename)          \
     asm(".pushsection .rodata\n"              \
