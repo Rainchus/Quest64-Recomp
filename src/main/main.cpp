@@ -112,7 +112,7 @@ bool SetImageAsIcon(const char* filename, SDL_Window* window)
 }
 #endif
 
-SDL_Window* window;
+SDL_Window* window; // RESOLUTION
 
 ultramodern::renderer::WindowHandle create_window(ultramodern::gfx_callbacks_t::gfx_data_t) {
     window = SDL_CreateWindow("Starfox 64: Recompiled", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900, SDL_WINDOW_RESIZABLE );
