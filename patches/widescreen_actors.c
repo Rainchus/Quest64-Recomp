@@ -245,7 +245,7 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
 
     // @recomp Sector Z performance decreases significantly. Interpolation related
     // TODO: tag objects
-    if (gCurrentLevel != LEVEL_SECTOR_Z) {
+    if ((gCurrentLevel != LEVEL_SECTOR_Z) && ((gCurrentLevel != LEVEL_SECTOR_Y) && (gScenery360[0].info.dList != this->info.dList))) {
         goto render;
     }
 
@@ -266,17 +266,13 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
-                    // @recomp fix garbage dList, see RECOMP_PATCH void SectorY_SyShogun_Init
-                    if ((gCurrentLevel == LEVEL_SECTOR_Y) && (gScenery360[0].info.dList == NULL)) {
-                        return;
-                    }
                     gSPDisplayList(gMasterDisp++, this->info.dList);
                 }
             }
         }
     }
 }
-
+/*
 void SectorY_8019AEC0(SyShogun*);
 void SectorY_80198244(SyShogun*);
 extern f32 D_SY_60342A0[];
@@ -337,6 +333,7 @@ RECOMP_PATCH void SectorY_SyShogun_Init(SyShogun* this) {
         Object_Kill(&this->obj, this->sfxSource);
     }
 }
+*/
 #endif
 
 /**
