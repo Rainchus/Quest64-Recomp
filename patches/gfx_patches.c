@@ -250,3 +250,14 @@ RECOMP_PATCH void Ending_8018D398(u32 arg0, AssetInfo* asset) {
                            SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP, asset->prim.r, asset->prim.g, asset->prim.b,
                            alpha);
 }
+
+RECOMP_PATCH void Game_InitStandbyDL(Gfx** dList) {
+    gSPDisplayList((*dList)++, gRcpInitDL);
+    // gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT * 3);
+    gEXSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, 0, SCREEN_HEIGHT);
+    gDPSetFillColor((*dList)++, FILL_COLOR(0x0001));
+    gDPSetColorImage((*dList)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, gFrameBuffers[0].data);
+    gDPFillRectangle((*dList)++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT * 3 - 1);
+    gDPPipeSync((*dList)++);
+    gDPSetColorDither((*dList)++, G_CD_MAGICSQ);
+}
