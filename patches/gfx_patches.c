@@ -123,7 +123,16 @@ RECOMP_PATCH void Graphics_ThreadEntry(void* arg0) {
             visPerFrame = MIN(gVIsPerFrame, 4);                                  // @recomp
             validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1); // @recomp
             gEXSetRefreshRate(gMasterDisp++, 60 / validVIsPerFrame);             // @recomp
-
+#if 1
+            // Noise
+            // gDPSetAlphaDither(gMasterDisp++, G_AD_NOISE);
+            gDPSetColorDither(gMasterDisp++, G_CD_NOISE);
+            // Fill the screen with a White rectangle
+            gDPSetRenderMode(gMasterDisp++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+            gDPSetCombineMode(gMasterDisp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 175, 175, 175, 2); // White with 100 alpha (semi-transparent)
+            gDPFillRectangle(gMasterDisp++, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+#endif
             gDPFullSync(gMasterDisp++);
             gSPEndDisplayList(gMasterDisp++);
         }
@@ -206,7 +215,8 @@ RECOMP_PATCH void Game_InitMasterDL(Gfx** dList) {
     gSPDisplayList((*dList)++, gRcpInitDL);
     // gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN_RECOMP, SCREEN_MARGIN_RECOMP,// @recomp
     //               SCREEN_WIDTH - SCREEN_MARGIN_RECOMP, SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP);
-    gEXSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, 0, SCREEN_HEIGHT); // @recomp
+    gEXSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, 0,
+                  SCREEN_HEIGHT); // @recomp
     gDPSetDepthImage((*dList)++, &gZBuffer);
     gDPSetColorImage((*dList)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, &gZBuffer);
     gDPSetFillColor((*dList)++, FILL_COLOR(GPACK_ZDZ(G_MAXFBZ, 0)));
@@ -246,9 +256,8 @@ RECOMP_PATCH void Ending_8018D398(u32 arg0, AssetInfo* asset) {
         gFillScreenAlphaStep = 0;
     // @recomp use of SCREEN_MARGIN_RECOMP instead of SCREEN_MARGIN
     Graphics_FillRectangle(&gMasterDisp, SCREEN_MARGIN_RECOMP, SCREEN_MARGIN_RECOMP,
-                           SCREEN_WIDTH - SCREEN_MARGIN_RECOMP,
-                           SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP, asset->prim.r, asset->prim.g, asset->prim.b,
-                           alpha);
+                           SCREEN_WIDTH - SCREEN_MARGIN_RECOMP, SCREEN_HEIGHT - SCREEN_MARGIN_RECOMP, asset->prim.r,
+                           asset->prim.g, asset->prim.b, alpha);
 }
 
 RECOMP_PATCH void Game_InitStandbyDL(Gfx** dList) {
