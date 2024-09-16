@@ -245,7 +245,7 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
 
     // @recomp Sector Z performance decreases significantly. Interpolation related
     // TODO: tag objects
-    if ((gCurrentLevel != LEVEL_SECTOR_Z) && ((gCurrentLevel != LEVEL_SECTOR_Y) && (gScenery360[0].info.dList != this->info.dList))) {
+    if ((gCurrentLevel != LEVEL_SECTOR_Z) && ((gCurrentLevel != LEVEL_SECTOR_Y))) {
         goto render;
     }
 
