@@ -39,6 +39,7 @@
 #include "macros.h"
 #include "variables.h"
 #include "debug.h"
+#include "sfx.h"
 
 #ifndef gEXFillRectangle
 #define gEXFillRectangle(cmd, lorigin, rorigin, ulx, uly, lrx, lry) \
