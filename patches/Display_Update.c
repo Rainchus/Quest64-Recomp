@@ -257,7 +257,7 @@ RECOMP_PATCH void Display_Update(void) {
     if ((gCamCount != 1) &&
         ((camPlayer->state_1C8 == PLAYERSTATE_1C8_ACTIVE) || (camPlayer->state_1C8 == PLAYERSTATE_1C8_U_TURN))) {
         HUD_Draw();
-        HUD_DrawEdgeArrows();
+        HUD_EdgeArrows_Update();
     }
     Matrix_Pop(&gGfxMatrix);
     Display_DrawHelpAlert();
@@ -282,12 +282,12 @@ RECOMP_PATCH void Display_Update(void) {
 #endif
 
 // @recomp DEBUG SECTION:
-#if 0
+#if 1
     {
         Player* player = &gPlayer[0];
         
         if (gControllerPress[0].button & L_TRIG) {
-            player->state_1C8 = PLAYERSTATE_1C8_START_360;
+            player->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
         }
     }
 #endif

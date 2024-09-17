@@ -4,7 +4,7 @@ extern unsigned char gControllerPlugged[4];
 extern SaveFile gSaveFile;
 
 // Controller detection bypass
-RECOMP_PATCH int Title_80187ABC(void) {
+RECOMP_PATCH int Title_CheckControllers(void) {
     int ret = -1;
     int i;
 

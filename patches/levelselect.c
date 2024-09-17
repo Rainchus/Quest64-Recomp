@@ -9,38 +9,38 @@ extern PlanetId sPlanetList[15];
 extern PlanetId sCurrentPlanetId;
 extern OSContPad gControllerPress[4];
 extern s32 gBombCount[4];
-extern s32 D_menu_801B8280;
+extern s32 sLevelStartState;
 extern s32 D_menu_801CD968;
-extern s32 D_menu_801CD944;
-extern s32 D_menu_801CD948;
-extern f32 D_menu_801CDA00;
-extern f32 D_menu_801CDA04;
-extern f32 D_menu_801CDA08;
-extern f32 D_menu_801CD9F4;
-extern f32 D_menu_801CD9F8;
-extern f32 D_menu_801CD9FC;
+extern s32 sMapState;
+extern s32 sMapSubState;
+extern f32 sMapCamAtX;
+extern f32 sMapCamAtY;
+extern f32 sMapCamAtZ;
+extern f32 sMapCamEyeX;
+extern f32 sMapCamEyeY;
+extern f32 sMapCamEyeZ;
 extern f32 D_menu_801CDA0C;
 extern f32 D_menu_801CDA18;
 extern f32 D_menu_801CDA14;
 extern f32 D_menu_801CDA10;
 extern f32 D_menu_801CDA1C;
 
-void Map_801A61B4(LevelId level);
-void Map_801A6368(void);
-void Map_801A914C(void);
-void Map_801A6628(void);
-void Map_801AD718(f32, f32, f32, f32*, f32*, f32*, f32, f32, f32);
-void Map_801A6694(void);
-void Map_801A68E4(void);
-void Map_801A6A24(void);
-void Map_801A0954(void);
-void Map_801A1528(void);
-void Map_801AD11C(void);
-void Map_801A1C14(void);
-void Map_801A5E80(void);
-void Map_801A2B8C(void);
-void Map_801A4AE8(void);
-void Map_801A36A8(void);
+void Map_LevelStart_AudioSpecSetup(LevelId level);
+void Map_CurrentLevel_Setup(void);
+void Map_PositionCursor(void);
+void Map_PlayLevel(void);
+void Map_SetCamRot(f32, f32, f32, f32*, f32*, f32*, f32, f32, f32);
+void Map_PositionPlanets(void);
+void Map_PlanetOrderZpos(void);
+void Map_Fade_Update(void);
+void Map_Prologue_Update(void);
+void Map_LylatCard_Update(void);
+void Map_Idle_Update(void);
+void Map_ZoomPlanet_Update(void);
+void Map_LevelStart_Update(void);
+void Map_ZoomPlanetPath_Update(void);
+void Map_PathChange_Update(void);
+void Map_GameOver_Update(void);
 
 PlanetId sPlanetArray[][3] = {
     {PLANET_CORNERIA, PLANET_CORNERIA, PLANET_CORNERIA},
@@ -99,8 +99,8 @@ void Map_LevelSelect(void) {
     if (sCurrentPlanetId != nextPlanetId) {
         sCurrentPlanetId = nextPlanetId;
         startOption = 0;
-        Map_801A6368();
-        Map_801A914C();
+        Map_CurrentLevel_Setup();
+        Map_PositionCursor();
     }
     if (contPress->button & L_TRIG) {
         startOption ^= 1;
@@ -126,7 +126,7 @@ void Map_LevelSelect(void) {
     }
 
     // Bypass briefing
-    if ((D_menu_801CD944 == 2) && (D_menu_801CD948 > 0)) {
+    if ((sMapState == 2) && (sMapSubState > 0)) {
         if (sCurrentPlanetId == PLANET_VENOM) {
             if (startOption) {
                 gCurrentLevel = LEVEL_VENOM_ANDROSS;
@@ -136,10 +136,10 @@ void Map_LevelSelect(void) {
         } else if ((sCurrentPlanetId == PLANET_AREA_6) && startOption) {
             gCurrentLevel = LEVEL_UNK_4;
         }
-        Map_801A61B4(gCurrentLevel);
-        D_menu_801B8280 = 0;
+        Map_LevelStart_AudioSpecSetup(gCurrentLevel);
+        sLevelStartState = 0;
         D_menu_801CD968 = 0;
-        Map_801A6628();
+        Map_PlayLevel();
         if (startOption && ((gCurrentLevel == LEVEL_METEO) || (gCurrentLevel == LEVEL_SECTOR_X) ||
                             (sPlanetArray[mission][difficulty] == SAVE_SLOT_VENOM_2))) {
             gLevelPhase = 1;
@@ -147,58 +147,58 @@ void Map_LevelSelect(void) {
     }
 }
 
-RECOMP_PATCH void Map_8019FF48(void) {
+RECOMP_PATCH void Map_Update(void) {
 
-    Map_801A6694();
-    Map_801A68E4();
-    Map_801A6A24();
+    Map_PositionPlanets();
+    Map_PlanetOrderZpos();
+    Map_Fade_Update();
 
-    switch (D_menu_801CD944) {
+    switch (sMapState) {
         case 0:
-            Map_801A0954();
+            Map_Prologue_Update();
             gStarfieldScrollX += 0.09f;
             break;
 
         case 1:
-            Map_801A1528();
+            Map_LylatCard_Update();
             D_menu_801CDA1C += 0.03f;
             break;
 
         case 3:
-            Map_801AD11C();
+            Map_Idle_Update();
             D_menu_801CDA1C += 0.03f;
             break;
 
         case 2:
-            Map_801A1C14();
+            Map_ZoomPlanet_Update();
             break;
 
         case 4:
-            Map_801A5E80();
+            Map_LevelStart_Update();
             break;
 
         case 5:
-            Map_801A2B8C();
+            Map_ZoomPlanetPath_Update();
             break;
 
         case 6:
-            Map_801A4AE8();
+            Map_PathChange_Update();
             break;
 
         case 7:
-            Map_801A36A8();
+            Map_GameOver_Update();
             break;
 
         default:
             break;
     }
 
-    if ((D_menu_801CD944 == 0) || (D_menu_801CD944 == 1) || (D_menu_801CD944 == 7) || (D_menu_801CD944 == 3)) {
-        Map_801AD718(D_menu_801CDA00, D_menu_801CDA04, D_menu_801CDA08, &D_menu_801CD9F4, &D_menu_801CD9F8,
-                     &D_menu_801CD9FC, D_menu_801CDA14, D_menu_801CDA0C + D_menu_801CDA18,
+    if ((sMapState == 0) || (sMapState == 1) || (sMapState == 7) || (sMapState == 3)) {
+        Map_SetCamRot(sMapCamAtX, sMapCamAtY, sMapCamAtZ, &sMapCamEyeX, &sMapCamEyeY,
+                     &sMapCamEyeZ, D_menu_801CDA14, D_menu_801CDA0C + D_menu_801CDA18,
                      D_menu_801CDA10 + D_menu_801CDA1C);
-        Camera_SetStarfieldPos(D_menu_801CD9F4, D_menu_801CD9F8, D_menu_801CD9FC, D_menu_801CDA00, D_menu_801CDA04,
-                               D_menu_801CDA08);
+        Camera_SetStarfieldPos(sMapCamEyeX, sMapCamEyeY, sMapCamEyeZ, sMapCamAtX, sMapCamAtY,
+                               sMapCamAtZ);
     }
     gGameFrameCount++;
 

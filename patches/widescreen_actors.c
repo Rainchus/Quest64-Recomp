@@ -221,7 +221,7 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
     f32 xyOffsetBounds = 2000.0f + 1000.0f;
     f32 xyObjDistBoundMod = 0.5f;
 
-    if (this->obj.id == OBJ_SCENERY_UNK_156) {
+    if (this->obj.id == OBJ_SCENERY_SY_SHOGUN_SHIP) {
         maxZdist = 4000.0f;
         minZdist = -13000.0f;
         xyOffsetBounds = 4500.0f;

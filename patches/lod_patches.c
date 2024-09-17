@@ -14,7 +14,7 @@
 #define EG_RED (0)
 
 
-extern Gfx aKaEnemy1DL[];
+extern Gfx aKaEnemyDL[];
 extern Gfx aKaCornerianFighterDL[];
 
 void Actor_DrawEngineGlow(Actor*, EngineGlowColor);
@@ -48,7 +48,7 @@ RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange *this)
     switch (this->animFrame)
     {
     case 0:
-        gSPDisplayList(gMasterDisp++, aKaEnemy1DL);
+        gSPDisplayList(gMasterDisp++, aKaEnemyDL);
         break;
 
     case 1:

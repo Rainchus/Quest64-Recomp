@@ -7,7 +7,7 @@
 
 #include "patches.h"
 
-extern s32 D_80161810[10];
+extern s32 sPauseScreenIwork[10];
 
 typedef struct {
     s32 unk_0;
@@ -147,43 +147,43 @@ RECOMP_PATCH bool Option_8019C418(s32* arg0, s32 arg1, bool arg2, s32 arg3, s32 
     return ret;
 }
 
-RECOMP_PATCH s32 func_hud_800886B8(void) {
+RECOMP_PATCH s32 HUD_PauseScreenInput(void) {
     s32 var_v1 = 0;
     f32 y = gInputPress->stick_y;
 
-    if ((y != 0.0f) && (D_80161810[4] != 0)) {
+    if ((y != 0.0f) && (sPauseScreenIwork[4] != 0)) {
         return 0;
     }
 
-    D_80161810[4] = 0;
+    sPauseScreenIwork[4] = 0;
 
     if (fabsf(y) < 30.0f) {
         y = 0.0f;
     }
 
     if (y != 0.0f) {
-        if (D_80161810[2] == 0) {
+        if (sPauseScreenIwork[2] == 0) {
             if (y > 0) {
                 var_v1 = 1;
             } else {
                 var_v1 = -1;
             }
-            D_80161810[2] = 1;
+            sPauseScreenIwork[2] = 1;
         } else {
-            D_80161810[2] = 0;
+            sPauseScreenIwork[2] = 0;
         }
     } else {
         if ((gControllerPress[0].button & D_JPAD) || (gControllerPress[0].button & U_JPAD)) {
-            if (D_80161810[2] == 0) {
+            if (sPauseScreenIwork[2] == 0) {
                 if (gControllerPress[0].button & U_JPAD) {
                     var_v1 = 1;
                 } else {
                     var_v1 = -1;
                 }
-                D_80161810[2] = 1;
+                sPauseScreenIwork[2] = 1;
             }
         } else {
-            D_80161810[2] = 0;
+            sPauseScreenIwork[2] = 0;
         }
     }
     return var_v1;
