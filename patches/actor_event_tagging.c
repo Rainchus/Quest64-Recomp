@@ -134,6 +134,7 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT_COMMON + this->index, G_EX_PUSH,
                                                G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
                 gSPDisplayList(gMasterDisp++, sEventActorInfo[this->eventType].dList);
 
                 // @recomp Pop the transform id.
@@ -169,11 +170,19 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     break;
 
                 case EVID_TEAMMATE:
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT + this->index, G_EX_PUSH,
+                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
                     if (gLevelType == LEVELTYPE_PLANET) {
                         gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
                     } else {
                         gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4007870);
                     }
+
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
                     Actor_DrawEngineAndContrails(this);
                     break;
 
@@ -225,7 +234,15 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_SPACE_MINE:
                     RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT + this->index, G_EX_PUSH,
+                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
                     gSPDisplayList(gMasterDisp++, aA6SpaceMineDL);
+
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     break;
 
                 case EVID_A6_NINJIN_MISSILE:
@@ -394,11 +411,11 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                 case EVID_VE1_PILLAR:
                     Matrix_Scale(gGfxMatrix, 0.6f, 0.6f, 0.6f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, aVe1PillarDL);
-
                     // @recomp Tag the transform.
                     gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT + this->index, G_EX_PUSH,
                                                    G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+                    gSPDisplayList(gMasterDisp++, aVe1PillarDL);
 
                     // @recomp Pop the transform id.
                     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
