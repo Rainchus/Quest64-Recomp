@@ -34,7 +34,6 @@ RECOMP_PATCH void HUD_PlayerShieldGauge_Draw(f32 x, f32 y) {
     HUD_ShieldGaugeFrame_Draw(x + 7.0f, y, D_801617A8 * 6.0f, 1.0f);
 
     gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
-
 }
 #endif
 
@@ -214,8 +213,9 @@ static f32 tempx = 0;
 static f32 tempy = 0;
 
 RECOMP_PATCH void HUD_GoldRings_Draw(void) {
-    Gfx* sGoldRingDLs[] = { aGoldRingFrame1DL, aGoldRingFrame2DL, aGoldRingFrame3DL, aGoldRingFrame4DL, aGoldRingFrame5DL, aGoldRingFrame6DL,
-                          aGoldRingFrame7DL, aGoldRingFrame8DL, aGoldRingFrame9DL, aGoldRingFrame10DL, aGoldRingFrame11DL, aGoldRingFrame12DL };
+    Gfx* sGoldRingDLs[] = { aGoldRingFrame1DL, aGoldRingFrame2DL,  aGoldRingFrame3DL,  aGoldRingFrame4DL,
+                            aGoldRingFrame5DL, aGoldRingFrame6DL,  aGoldRingFrame7DL,  aGoldRingFrame8DL,
+                            aGoldRingFrame9DL, aGoldRingFrame10DL, aGoldRingFrame11DL, aGoldRingFrame12DL };
     s32 i;
     s32 j;
     f32 D_800D1AC4[] = { 0.0f, -30.0f, -26.0f, -22.0f, -18.0f };
@@ -309,7 +309,8 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, D_800D1AC4[i + 1], D_800D1AD8[i + 1], -100.0f, MTXF_NEW);
                     Matrix_RotateZ(gGfxMatrix, M_DTOR * sGoldRingsFwork[0], MTXF_APPLY);
-                    Matrix_Scale(gGfxMatrix, sGoldRingsFwork[i + 2], sGoldRingsFwork[i + 2], sGoldRingsFwork[i + 2], MTXF_APPLY);
+                    Matrix_Scale(gGfxMatrix, sGoldRingsFwork[i + 2], sGoldRingsFwork[i + 2], sGoldRingsFwork[i + 2],
+                                 MTXF_APPLY);
 
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, aStarDL);
@@ -785,16 +786,21 @@ RECOMP_PATCH void HUD_BombCounter_Draw(f32 x, f32 y) {
                 HUD_VS_LivesCount_Draw(x + 29.0f, y + 1.0f, sHudBombCount, D_8016177C, D_80161780, D_80161784);
             } else {
                 for (i = (sHudBombCount - 1); i >= 0; i--) {
-                    Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (30.0f - (i * 10)), y, 1.0f, 1.0f);
+                    Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (30.0f - (i * 10)),
+                                        y, 1.0f, 1.0f);
                 }
             }
             break;
 
         case 1:
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 3.0f), y, 1.0f, 1.0f);
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 2.0f), y, 1.0f, 1.0f);
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 1.0f), y, 1.0f, 1.0f);
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 0.0f), y, 1.0f, 1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 3.0f), y, 1.0f,
+                                1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 2.0f), y, 1.0f,
+                                1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 1.0f), y, 1.0f,
+                                1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (D_800D19F0 * 0.0f), y, 1.0f,
+                                1.0f);
             break;
 
         case 2:
@@ -804,22 +810,27 @@ RECOMP_PATCH void HUD_BombCounter_Draw(f32 x, f32 y) {
                 } else {
                     temp = D_800D19F0;
                 }
-                Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (30.0f - (i * 10)) + temp, y, 1.0f,
-                                1.0f);
+                Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16,
+                                    x + (30.0f - (i * 10)) + temp, y, 1.0f, 1.0f);
             }
             break;
 
         case 3:
             for (i = (sHudBombCount - 2); i >= 0; i--) {
-                Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (30.0f - (i * 10)), y, 1.0f, 1.0f);
+                Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + (30.0f - (i * 10)), y,
+                                    1.0f, 1.0f);
             }
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 50.0f - D_800D19F0, y, 1.0f, 1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 50.0f - D_800D19F0, y, 1.0f,
+                                1.0f);
             break;
 
         case 4:
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 30.0f - (D_800D19F0 * 3.0f), y, 1.0f, 1.0f);
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 20.0f - (D_800D19F0 * 2.0f), y, 1.0f, 1.0f);
-            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 10.0f - (D_800D19F0 * 1.0f), y, 1.0f, 1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 30.0f - (D_800D19F0 * 3.0f),
+                                y, 1.0f, 1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 20.0f - (D_800D19F0 * 2.0f),
+                                y, 1.0f, 1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x + 10.0f - (D_800D19F0 * 1.0f),
+                                y, 1.0f, 1.0f);
             Lib_TextureRect_CI4(&gMasterDisp, aVsBombIconTex, aVsBombIconTLUT, 16, 16, x, y, 1.0f, 1.0f);
             break;
 
@@ -832,7 +843,8 @@ RECOMP_PATCH void HUD_BombCounter_Draw(f32 x, f32 y) {
         case 6:
             RCP_SetupDL(&gMasterDisp, SETUPDL_78);
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            Lib_TextureRect_CI4(&gMasterDisp, D_blue_marine_3000090, D_blue_marine_3000120, 32, 9, x + 1.0f, y, 1.0f, 1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, D_blue_marine_3000090, D_blue_marine_3000120, 32, 9, x + 1.0f, y, 1.0f,
+                                1.0f);
             break;
     }
     gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
@@ -849,9 +861,11 @@ extern Gfx aArrowDL[];
 RECOMP_PATCH void HUD_EdgeArrows_Draw(s32 idx, bool arg1) {
     static const f32 D_800D1EF8[] = { 0.0f, 0.0f, -9.0f, 9.0f, 10.0f, 10.0f, 10.0f, 10.0f, 0.0f, 0.0f, -8.0f, 8.0f };
     static const f32 D_800D1F28[] = { -7.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 8.0f, -8.0f, 0.0f, 0.0f };
-    static const f32 D_800D1F58[] = { -22.0f, -22.0f, -22.0f, -22.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f };
+    static const f32 D_800D1F58[] = { -22.0f, -22.0f, -22.0f, -22.0f, -28.0f, -28.0f,
+                                      -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f };
     static const f32 D_800D1F88[] = { 0.0f, 0.0f, 0.0f, 0.0f, 495.0f, 405.0f, 585.0f, 675.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-    static const f32 D_800D1FB8[] = { 180.0f, 0.0f, 270.0f, 90.0f, 270.0f, 270.0f, 270.0f, 270.0f, 0.0f, 180.0f, 90.0f, 270.0f };
+    static const f32 D_800D1FB8[] = { 180.0f, 0.0f,   270.0f, 90.0f,  270.0f, 270.0f,
+                                      270.0f, 270.0f, 0.0f,   180.0f, 90.0f,  270.0f };
     static const f32 D_800D1FE8[] = { 0.0f, 0.0f, 2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, 0.0f, 0.0f, 2.0f, -2.0f };
     static const f32 D_800D2018[] = { 2.0f, -2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -2.0f, 2.0f, 0.0f, 0.0f };
 
@@ -918,7 +932,8 @@ void HUD_RadarMarks_Update(void);
 RECOMP_PATCH void HUD_Radar(void) {
 
     Game_InitFullViewport();
-    gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0, -(SCREEN_WIDTH) * 4, 0);
+    gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0, -(SCREEN_WIDTH) * 4,
+                    0);
     gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, 0);
     gSPViewport(gMasterDisp++, gViewport);
 
@@ -1375,7 +1390,6 @@ RECOMP_PATCH void Radio_Draw(void) {
     gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
     gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_NONE, 0, 0);
     gSPViewport(gMasterDisp++, gViewport);
-
 }
 #endif
 
@@ -1394,9 +1408,7 @@ RECOMP_PATCH void HUD_RadioDamage(void) {
         HUD_RadioDamage_Draw();
         gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_NONE, 0, 0);
         gSPViewport(gMasterDisp++, gViewport);
-
     }
-
 }
 #endif
 
@@ -1411,7 +1423,7 @@ extern s32 D_801617E8[10];
 void HUD_MsgWindowBg_Draw2(f32 xPos, f32 yPos, f32 xScale, f32 yScale);
 void HUD_TeammateStatus_Draw(void);
 
-RECOMP_PATCH void HUD_DrawLevelClearStatusScreen(void) {
+RECOMP_PATCH void HUD_LevelClearStatusScreen_Draw(void) {
     s32 i;
     s32 temp;
     f32 x0;
@@ -1640,7 +1652,8 @@ RECOMP_PATCH void Training_RingPassCount_Draw(void) {
     if (gRingPassCount != 0) {
         RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-        gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0, -(SCREEN_WIDTH) * 4, 0);
+        gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0,
+                        -(SCREEN_WIDTH) * 4, 0);
         HUD_Number_Draw(250.0f, 50.0f, gRingPassCount, 1.0f, 0, 999);
         gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
     }
@@ -1648,7 +1661,7 @@ RECOMP_PATCH void Training_RingPassCount_Draw(void) {
 #endif
 
 #if 1
-void Ending_80191234(s32 arg0, s32 arg1) {
+RECOMP_PATCH void Ending_80191234(s32 arg0, s32 arg1) {
     gLastGameState = GSTATE_ENDING;
     gGameState = GSTATE_MENU;
     gNextGameStateTimer = 2;
@@ -1659,18 +1672,18 @@ void Ending_80191234(s32 arg0, s32 arg1) {
     gControllerLock = 10;
 
     // Set up rendering state for opaque black rectangles
-gDPSetRenderMode(gMasterDisp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-gDPSetCombineMode(gMasterDisp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 0, 0, 255);
+    gDPSetRenderMode(gMasterDisp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+    gDPSetCombineMode(gMasterDisp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 0, 0, 255);
 
-// Draw left black rectangle
-gEXTextureRectangle(gMasterDisp++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_CENTER,(-SCREEN_WIDTH)*2, 0,(-SCREEN_WIDTH*2), SCREEN_WIDTH*3, 0, 0, 0, 0, 0);
+    // Draw left black rectangle
+    gEXTextureRectangle(gMasterDisp++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_CENTER, (-SCREEN_WIDTH) * 2, 0,
+                        (-SCREEN_WIDTH * 2), SCREEN_WIDTH * 3, 0, 0, 0, 0, 0);
 
-// Draw right black rectangle
-gEXTextureRectangle(gMasterDisp++, G_EX_ORIGIN_CENTER, G_EX_ORIGIN_RIGHT, SCREEN_WIDTH*2, 0, SCREEN_WIDTH*2, SCREEN_WIDTH*3, 0, 0, 0, 0, 0);
-gDPSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, (SCREEN_WIDTH - 320) / 2, 0, (SCREEN_WIDTH + 320) / 2, 240);
-
-
+    // Draw right black rectangle
+    gEXTextureRectangle(gMasterDisp++, G_EX_ORIGIN_CENTER, G_EX_ORIGIN_RIGHT, SCREEN_WIDTH * 2, 0, SCREEN_WIDTH * 2,
+                        SCREEN_WIDTH * 3, 0, 0, 0, 0, 0);
+    gDPSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, (SCREEN_WIDTH - 320) / 2, 0, (SCREEN_WIDTH + 320) / 2, 240);
 }
 #endif
 
