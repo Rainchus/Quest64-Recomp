@@ -1,5 +1,6 @@
 #include "patches.h"
 
+#define TAG_ACTOR (0x20000)
 #define TAG_FACE (0x100)
 
 extern Limb* D_arwing_3016610[19];
