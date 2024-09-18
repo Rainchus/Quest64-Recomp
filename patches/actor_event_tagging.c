@@ -1,8 +1,5 @@
 #include "patches.h"
 
-#define TAG_ACTOR_EVENT (0x10000)
-#define TAG_ACTOR_EVENT_COMMON (TAG_ACTOR_EVENT + 0x10500)
-
 typedef struct {
     /* 0x00 */ Gfx* dList;
     /* 0x04 */ f32* hitbox;

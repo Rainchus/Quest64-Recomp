@@ -3,6 +3,8 @@
 extern Gfx D_VE2_600C2D0[];
 extern Gfx D_VE2_600C560[];
 extern Limb* D_VE2_600C0A4[];
+extern Gfx aKaFLBaseDL[];
+extern Gfx aKaFLBaseDestroyedDL[];
 
 bool Andross_8018B47C(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
 
@@ -51,7 +53,7 @@ RECOMP_PATCH void Andross_AndBrain_Draw(AndBrain* this) {
                 Matrix_Translate(gGfxMatrix, 0.0f, -5.0f, 0.0f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, this->index + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS + this->index + i, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
                 if (j == 9) {
                     gSPDisplayList(gMasterDisp++, D_VE2_600C2D0);
@@ -66,4 +68,21 @@ RECOMP_PATCH void Andross_AndBrain_Draw(AndBrain* this) {
             Matrix_Pop(&gGfxMatrix);
         }
     }
+}
+
+RECOMP_PATCH void Katina_KaFrontlineBase_Draw(KaFrontlineBase* this) {
+    gSPFogPosition(gMasterDisp++, gFogNear, 1002);
+    Matrix_Translate(gGfxMatrix, 0.0f, 20.0f, 0.0f, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS + this->index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    if (this->state == 0) {
+        gSPDisplayList(gMasterDisp++, aKaFLBaseDL);
+    } else {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_57);
+        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+        gSPDisplayList(gMasterDisp++, aKaFLBaseDestroyedDL);
+    }
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }

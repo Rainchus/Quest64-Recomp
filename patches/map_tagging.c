@@ -1,11 +1,6 @@
 #include "patches.h"
 #include "fox_map.h"
 
-#define TAG_PLANET_SHADOW (0x200)
-#define TAG_PLANET_ANIM (TAG_PLANET_SHADOW + PLANET_MAX)
-#define TAG_PLANET_ANIM_2 (TAG_PLANET_ANIM + PLANET_MAX)
-#define TAG_PLANET_METEOR (TAG_PLANET_SHADOW + PLANET_MAX)
-
 extern PlanetId sCurrentPlanetId;
 extern Planet sPlanets[15];
 extern s32 sMapState;

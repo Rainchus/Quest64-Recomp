@@ -243,9 +243,7 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    // @recomp Sector Z performance decreases significantly. Interpolation related
-    // TODO: tag objects
-    if ((gCurrentLevel != LEVEL_SECTOR_Z) && ((gCurrentLevel != LEVEL_SECTOR_Y))) {
+    if (((gCurrentLevel != LEVEL_SECTOR_Y))) {
         goto render;
     }
 
@@ -261,17 +259,29 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
                     Matrix_RotateY(gGfxMatrix, M_PI / 2, MTXF_APPLY);
                     Matrix_Translate(gGfxMatrix, -551.0f, 0.0f, 0.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, (u32) (this) & 0xFFFFFFFF, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, D_VE2_6007650);
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 } else {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
+                    // u32 cur_transform_id = scenery360_transform_id(this);
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, (u32) (this) & 0xFFFFFFFF, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, this->info.dList);
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
             }
         }
     }
 }
+
 /*
 void SectorY_8019AEC0(SyShogun*);
 void SectorY_80198244(SyShogun*);
@@ -366,7 +376,7 @@ RECOMP_PATCH void Scenery_Move(Scenery* this) {
         if (gCurrentLevel == LEVEL_TITANIA) {
             recompCulldistance = 1.0f;
         }
-        
+
         if (((this->info.cullDistance * recompCulldistance) - temp_fv0) < (this->obj.pos.z + gPathProgress)) {
             Object_Kill(&this->obj, this->sfxSource);
         }
@@ -398,7 +408,12 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
                     Matrix_RotateZ(gGfxMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     if (this->info.drawType == 0) {
+                        // @recomp Tag the transform.
+                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, this->index, G_EX_PUSH,
+                                                       G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
                         gSPDisplayList(gMasterDisp++, this->info.dList);
+                        // @recomp Pop the transform id.
+                        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     } else {
                         this->info.draw(&this->obj);
                     }

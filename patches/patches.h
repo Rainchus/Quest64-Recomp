@@ -41,6 +41,7 @@
 #include "debug.h"
 #include "sfx.h"
 #include "sf64event.h"
+#include "sf64_tagging.h"
 
 #ifndef gEXFillRectangle
 #define gEXFillRectangle(cmd, lorigin, rorigin, ulx, uly, lrx, lry) \
