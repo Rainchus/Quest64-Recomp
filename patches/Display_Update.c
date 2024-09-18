@@ -268,11 +268,6 @@ RECOMP_PATCH void Display_Update(void) {
     if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
         return;
     }
-#if 1
-    if (gControllerPress[0].button & L_TRIG) {
-        gPlayer[0].state_1C8 = PLAYERSTATE_1C8_START_360;
-    }
-#endif
     gLaserStrength[0] = 2;
     gBombCount[0] = 9;
 #endif
@@ -282,12 +277,22 @@ RECOMP_PATCH void Display_Update(void) {
 #endif
 
 // @recomp DEBUG SECTION:
-#if 1
+#if 0
     {
         Player* player = &gPlayer[0];
         
         if (gControllerPress[0].button & L_TRIG) {
             player->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
+        }
+    }
+#endif
+#if 0
+    {
+        Player* player = gPlayer;
+        if (gControllerPress[0].button & L_JPAD) {
+            player->baseSpeed+=50;
+        } else if (gControllerPress[0].button & R_JPAD) {
+            player->baseSpeed-=50;
         }
     }
 #endif
