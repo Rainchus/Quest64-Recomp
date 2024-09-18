@@ -40,6 +40,7 @@
 #include "variables.h"
 #include "debug.h"
 #include "sfx.h"
+#include "sf64event.h"
 
 #ifndef gEXFillRectangle
 #define gEXFillRectangle(cmd, lorigin, rorigin, ulx, uly, lrx, lry) \
