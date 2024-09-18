@@ -169,10 +169,10 @@ RECOMP_PATCH void Map_MeteoMeteors_Draw(void) {
                 gSPDisplayList(gMasterDisp++, sMapPlanets[PLANET_METEO]);
 
                 Matrix_Pop(&gGfxMatrix);
-                
+
+                // @recomp Pop the transform id.
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
         }
-        // @recomp Pop the transform id.
     }
 }
