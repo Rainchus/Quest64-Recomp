@@ -1660,7 +1660,7 @@ RECOMP_PATCH void Training_RingPassCount_Draw(void) {
 }
 #endif
 
-#if 1
+#if 0
 RECOMP_PATCH void Ending_80191234(s32 arg0, s32 arg1) {
     gLastGameState = GSTATE_ENDING;
     gGameState = GSTATE_MENU;
