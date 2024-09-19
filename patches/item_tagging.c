@@ -32,7 +32,7 @@ RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
     Matrix_RotateZ(gGfxMatrix, this->unk_58 * M_DTOR, MTXF_APPLY);
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
     G_EX_EDIT_ALLOW);
     for (i = 0; i < 8; i++) {
         Matrix_Push(&gGfxMatrix);
@@ -54,7 +54,7 @@ RECOMP_PATCH void ItemSilverRing_Draw(ItemSilverRing* this) {
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR);
     Graphics_SetScaleMtx(this->width);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, D_101A570);
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -67,7 +67,7 @@ RECOMP_PATCH void ItemSilverStar_Draw(ItemSilverStar* this) {
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR);
     Graphics_SetScaleMtx(this->width);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, D_1019CA0);
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -80,7 +80,7 @@ RECOMP_PATCH void ItemGoldRing_Draw(ItemGoldRing* this) {
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR);
     Graphics_SetScaleMtx(this->width);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, D_1016870);
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -91,7 +91,7 @@ RECOMP_PATCH void ItemBomb_Draw(ItemBomb* this) {
     if (gCurrentLevel == LEVEL_AQUAS) {
         Graphics_SetScaleMtx(this->width);
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                        G_EX_EDIT_ALLOW);
         gSPDisplayList(gMasterDisp++, D_blue_marine_3005980);
         // @recomp Pop the transform id.
@@ -102,7 +102,7 @@ RECOMP_PATCH void ItemBomb_Draw(ItemBomb* this) {
         gSPTexture(gMasterDisp++, 2000, 2000, 0, G_TX_RENDERTILE, G_ON);
         gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                        G_EX_EDIT_ALLOW);
         gSPDisplayList(gMasterDisp++, D_10231A0);
         gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
@@ -120,7 +120,7 @@ RECOMP_PATCH void ItemLasers_Draw(ItemLasers* this) {
     gSPTexture(gMasterDisp++, 2000, 2000, 0, G_TX_RENDERTILE, G_ON);
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM + this->index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, D_1019820);
     gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     RCP_SetupDL(&gMasterDisp, SETUPDL_27);
