@@ -209,7 +209,7 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
 
 /**
  * Problems:
- * Causing serious slowdown in Sector Z, omitting that level for now.
+ * Causing crash in Sector Y Boss, omitting that level for now.
  */
 #if 1
 RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
