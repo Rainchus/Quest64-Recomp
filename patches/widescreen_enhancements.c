@@ -84,7 +84,6 @@ f32 sGroundPositions360z[4] = {
 
 void Bolse_DrawDynamicGround(void);
 
-
 #if 1 // Play_UpdateDynaFloor  ********
 
 extern Vtx D_SO_6001C50[];
@@ -174,7 +173,7 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
 
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &spC4, &spB8);
 
-        //spB4[*spB0].n.n[0] = spB8.x; // Disable to fix mirror
+        // spB4[*spB0].n.n[0] = spB8.x; // Disable to fix mirror
         spB4[*spB0].n.n[1] = spB8.y;
         spB4[*spB0].n.n[2] = spB8.z;
     }
@@ -193,7 +192,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
     s32 i;
     u8 levelType;
     s32 levelId;
-    
 
     if (gDrawBackdrop == 0) {
         return;
@@ -270,7 +268,8 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                 case LEVEL_VENOM_1: {
                     // Calculate vertical and horizontal offsets
                     f32 sp134 = (gPlayer[gPlayerNum].camPitch * -6000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.6f);
-                    f32 sp13C = Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f, 7280.0f);
+                    f32 sp13C =
+                        Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f, 7280.0f);
 
                     // Apply camera roll and translate matrix to the starting position (far left)
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
@@ -591,7 +590,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, aSzBackgroundDL);
                             break;
-                            
+
                         case LEVEL_SECTOR_Y:
                             Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
                             Matrix_Scale(gGfxMatrix, 0.4f, 0.4f, 1.0f, MTXF_APPLY);
@@ -1327,52 +1326,55 @@ RECOMP_PATCH void Background_DrawGround(void) {
             }
             break;
 
-case LEVEL_SOLAR: // WIP
-    RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+        case LEVEL_SOLAR: // WIP
+            RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
-    // Render the object at the center (No mirroring)
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -2000.0f, MTXF_APPLY);
-    Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
-    Matrix_Pop(&gGfxMatrix);
+            // Render the object at the center (No mirroring)
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -2000.0f, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
+            Matrix_Pop(&gGfxMatrix);
 
-    // Render mirrored objects on both sides (Left: -1, Right: 1)
-    // Render mirrored objects on both sides (Left: -1, Right: 1)
-for (s32 i = -1; i <= 1; i += 2) {
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, i * 4800.0f, 0.0f, -2000.0f, MTXF_APPLY); // Translate left (-) or right (+)
-    Matrix_Scale(gGfxMatrix, -3.0f, 2.0f, 3.0f, MTXF_APPLY);               // Mirror geometry (negative X scale)
-    Matrix_SetGfxMtx(&gMasterDisp);
+            // Render mirrored objects on both sides (Left: -1, Right: 1)
+            // Render mirrored objects on both sides (Left: -1, Right: 1)
+            for (s32 i = -1; i <= 1; i += 2) {
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, i * 4800.0f, 0.0f, -2000.0f,
+                                 MTXF_APPLY);                            // Translate left (-) or right (+)
+                Matrix_Scale(gGfxMatrix, -3.0f, 2.0f, 3.0f, MTXF_APPLY); // Mirror geometry (negative X scale)
+                Matrix_SetGfxMtx(&gMasterDisp);
 
-    // Disable backface culling for mirrored geometry
-    gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+                // Disable backface culling for mirrored geometry
+                gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
 
-    // Apply texture mirroring
-    gSPTexture(gMasterDisp++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+                // Apply texture mirroring
+                gSPTexture(gMasterDisp++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
 
-    // Adjust UV mapping for the left side only
-    if (i == -1) {
-        // Adjust UVs slightly for the left side to fix texture alignment
-        gDPSetTileSize(gMasterDisp++, G_TX_RENDERTILE, 4 << G_TEXTURE_IMAGE_FRAC, 0, (31 << G_TEXTURE_IMAGE_FRAC), (31 << G_TEXTURE_IMAGE_FRAC));
-    } else {
-        // Standard UVs for the right side
-        gDPSetTileSize(gMasterDisp++, G_TX_RENDERTILE, 0 << G_TEXTURE_IMAGE_FRAC, 0, (31 << G_TEXTURE_IMAGE_FRAC), (31 << G_TEXTURE_IMAGE_FRAC));
-    }
+                // Adjust UV mapping for the left side only
+                if (i == -1) {
+                    // Adjust UVs slightly for the left side to fix texture alignment
+                    gDPSetTileSize(gMasterDisp++, G_TX_RENDERTILE, 4 << G_TEXTURE_IMAGE_FRAC, 0,
+                                   (31 << G_TEXTURE_IMAGE_FRAC), (31 << G_TEXTURE_IMAGE_FRAC));
+                } else {
+                    // Standard UVs for the right side
+                    gDPSetTileSize(gMasterDisp++, G_TX_RENDERTILE, 0 << G_TEXTURE_IMAGE_FRAC, 0,
+                                   (31 << G_TEXTURE_IMAGE_FRAC), (31 << G_TEXTURE_IMAGE_FRAC));
+                }
 
-    gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0,
-               G_TX_WRAP, 5, G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD);
+                gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5,
+                           G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD);
 
-    // Render the display list based on the current frame
-    gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
+                // Render the display list based on the current frame
+                gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
 
-    // Re-enable backface culling
-    gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
-    Matrix_Pop(&gGfxMatrix);
-}
+                // Re-enable backface culling
+                gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
+                Matrix_Pop(&gGfxMatrix);
+            }
 
-    break;
+            break;
 
         case LEVEL_ZONESS:
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
@@ -1441,165 +1443,7 @@ for (s32 i = -1; i <= 1; i += 2) {
 }
 #endif
 
-#if 1 // Full scope Starfield
-
-extern f32 D_bg_8015F96C;
-
-f32 xScale = 2.0f;  // Apply a scaling factor for X-axis expansion
-
-#if 1 // Background_DrawStarfield
-
-RECOMP_PATCH void Background_DrawStarfield(void) {
-    f32 by;
-    f32 bx;
-    s16 vy;
-    s16 vx;
-    s32 i;
-    s32 starCount;
-    f32 zCos;
-    f32 zSin;
-    f32 xField;
-    f32 yField;
-    f32* xStar;
-    f32* yStar;
-    u32* color;
-
-
-    // Set up the scissor area for clipping the rendering
-
-    gDPPipeSync(gMasterDisp++);
-    gDPSetCycleType(gMasterDisp++, G_CYC_FILL);
-    gDPSetCombineMode(gMasterDisp++, G_CC_SHADE, G_CC_SHADE);
-    gDPSetRenderMode(gMasterDisp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-    
-    starCount = gStarCount;
-    if (starCount != 0) {
-        if (gStarfieldX >= 480) {
-            gStarfieldX -= 480;
-        }
-        if (gStarfieldY >= 360) {
-            gStarfieldY -= 360;
-        }
-        if (gStarfieldX < 0.0f) {
-            gStarfieldX += 480;
-        }
-        if (gStarfieldY < 0.0f) {
-            gStarfieldY += 360;
-        }
-
-        xField = gStarfieldX;
-        yField = gStarfieldY;
-
-        xStar = gStarOffsetsX;
-        yStar = gStarOffsetsY;
-        color = gStarFillColors;
-
-        if (gGameState != GSTATE_PLAY) {
-            starCount = 1000;
-        }
-
-        zCos = __cosf(gStarfieldRoll);
-        zSin = __sinf(gStarfieldRoll);
-
-        for (i = 0; i < starCount; i++, yStar++, xStar++, color++) {
-            bx = (*xStar + xField) * xScale;
-            by = *yStar + yField;
-
-            if (bx >= 400 * xScale) {
-                bx -= 480 * xScale;
-            }
-            bx -= 160 * xScale;
-
-            if (by >= 300) {
-                by -= 360;
-            }
-            by -= 120;
-
-            vx = (zCos * bx) + (zSin * by) + 160;
-            vy = (-zSin * bx) + (zCos * by) + 120;
-
-            // Star rendering logic remains the same
-            if ((vx >= 0) && (vx < 320 * xScale) && (vy > 0) && (vy < 240)) {
-                gDPPipeSync(gMasterDisp++);
-                gDPSetFillColor(gMasterDisp++, *color);
-                gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, -SCREEN_WIDTH * xScale, 0, -SCREEN_WIDTH* xScale, 0);
-                gDPFillRectangle(gMasterDisp++, vx, vy, vx, vy);
-                gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
-            }
-        }
-    }
-    gDPPipeSync(gMasterDisp++);
-    gDPSetColorDither(gMasterDisp++, G_CD_MAGICSQ);
-    
-}
-
-#endif
-
-#if 1 // Camera_SetStarfieldPos
-
-RECOMP_PATCH void Camera_SetStarfieldPos(f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt) {
-    f32 sp34;
-    f32 sp30;
-    f32 pitch;
-    f32 yaw;
-    f32 tempf;
-    f32 sp20;
-
-    yaw = -Math_Atan2F(xEye - xAt, zEye - zAt);
-    tempf = sqrtf(SQ(zEye - zAt) + SQ(xEye - xAt));
-    pitch = -Math_Atan2F(yEye - yAt, tempf);
-    if (yaw >= M_PI / 2) {
-        yaw -= M_PI;
-    }
-    if (yaw <= -M_PI / 2) {
-        yaw += M_PI;
-    }
-
-    tempf = 0.0f;
-    if (gCurrentLevel == LEVEL_UNK_15) {
-        tempf = gPlayer[0].cam.eye.y * 0.03f;
-    }
-
-    sp30 = (-pitch * (-8.0f / 3.0f * M_RTOD) * 2.0f) + 3000.0f + gStarfieldScrollY + tempf;
-    sp34 = (yaw * (-8.0f / 3.0f * M_RTOD) * 2.0f) + (3000.0f + gStarfieldScrollX) / xScale;
-    sp20 = gStarfieldX;
-
-    gStarfieldX = Math_ModF(sp34, SCREEN_WIDTH * 1.5f);
-    gStarfieldY = Math_ModF(sp30, SCREEN_HEIGHT * 1.5f);
-
-    if ((gGameState == GSTATE_PLAY) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) &&
-        (gCurrentLevel == LEVEL_METEO)) {
-        if (fabsf(gStarfieldX - sp20) < 50.0f) {
-            D_bg_8015F96C = 0.0f;
-            if (fabsf(gStarfieldX - sp20) > 3.0f) {
-                D_bg_8015F96C = fabsf(gStarfieldX - sp20 - 3.0f) * 0.5f;
-            }
-        }
-    }
-}
-#endif
-
-#if 1 // Play_GenerateStarfield
-
-RECOMP_PATCH void Play_GenerateStarfield(void) {
-    u32 i;
-
-
-MEM_ARRAY_ALLOCATE(gStarOffsetsX, 1000);
-MEM_ARRAY_ALLOCATE(gStarOffsetsY, 1000);   
-MEM_ARRAY_ALLOCATE(gStarFillColors, 1000);
-
-    Rand_SetSeed(1, 29000, 9876);
-
-   for (i = 0; i < 1000; i++) {
-        gStarOffsetsX[i] = RAND_FLOAT_SEEDED(480.0f) - 80.0f;
-        gStarOffsetsY[i] = RAND_FLOAT_SEEDED(360.0f) - 60.0f;
-        gStarFillColors[i] = FILL_COLOR(gStarColors[i % ARRAY_COUNT(gStarColors)]);
-    }
-}
-#endif
-
-#if 1 // Background_DrawPartialStarfield
+#if 1                                                                   // Background_DrawPartialStarfield
 RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars that are in the Epilogue
     f32 by;
     f32 bx;
@@ -1668,9 +1512,51 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
 }
 #endif
 
-#if 0// Background_DrawStarfield TESTING
+#endif
 
-extern void* alloc_display_list(int size);
+#if 1 // NEW STARFIELD TESTING
+
+// Define constants for starfield multipliers
+#define STARFIELD_WIDTH_MULTIPLIER 1.0f
+#define STARFIELD_HEIGHT_MULTIPLIER 1.0f
+
+// Declare global variables for screen dimensions
+float gCurrentScreenWidth = 320.0f * 3;  // Default width
+float gCurrentScreenHeight = 240.0f * 3; // Default height
+
+// Function to set the current screen dimensions
+void SetCurrentScreenDimensions(float width, float height) {
+    gCurrentScreenWidth = width;
+    gCurrentScreenHeight = height;
+}
+
+// Function to get the current screen width
+float GetCurrentScreenWidth() {
+    return gCurrentScreenWidth;
+}
+
+// Function to get the current screen height
+float GetCurrentScreenHeight() {
+    return gCurrentScreenHeight;
+}
+
+// Custom floating-point modulo function (replaces fmodf)
+float FloatMod(float a, float b) {
+    float result = a - ((int) (a / b)) * b;
+    if (result < 0.0f) {
+        result += b;
+    }
+    return result;
+}
+
+// Call this function to initialize the starfield
+void InitializeStarfield(void) {
+    // Set the desired screen dimensions (modify as needed)
+    SetCurrentScreenDimensions(320.0f, 240.0f); // Example: 1280x720 resolution
+
+    // Set up the starfield
+    Play_SetupStarfield();
+}
 
 RECOMP_PATCH void Background_DrawStarfield(void) {
     f32 by;
@@ -1687,33 +1573,33 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
     f32* yStar;
     u32* color;
 
-    Mtx projectionMtx;  // Static allocation for the projection matrix
+    // Get current screen dimensions
+    float currentScreenWidth = GetCurrentScreenWidth();
+    float currentScreenHeight = GetCurrentScreenHeight();
+    float starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
+    float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
-    // Set up the scissor area for clipping the rendering
+    // Graphics pipeline setup
     gDPPipeSync(gMasterDisp++);
     gDPSetCycleType(gMasterDisp++, G_CYC_FILL);
     gDPSetCombineMode(gMasterDisp++, G_CC_SHADE, G_CC_SHADE);
     gDPSetRenderMode(gMasterDisp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-
-    // Set up the orthographic projection matrix for the viewport
-    guOrtho(&projectionMtx, -160, 160, -120, 120, -1000, 1000, 1.0f);
-    gSPMatrix(gMasterDisp++, &projectionMtx, G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
-
     starCount = gStarCount;
+
     if (starCount != 0) {
-        if (gStarfieldX >= 480) {
-            gStarfieldX -= 480;
+        // Wrapping logic for starfield positions
+        if (gStarfieldX >= starfieldWidth) {
+            gStarfieldX -= starfieldWidth;
         }
-        if (gStarfieldY >= 360) {
-            gStarfieldY -= 360;
+        if (gStarfieldY >= starfieldHeight) {
+            gStarfieldY -= starfieldHeight;
         }
         if (gStarfieldX < 0.0f) {
-            gStarfieldX += 480;
+            gStarfieldX += starfieldWidth;
         }
         if (gStarfieldY < 0.0f) {
-            gStarfieldY += 360;
+            gStarfieldY += starfieldHeight;
         }
-
         xField = gStarfieldX;
         yField = gStarfieldY;
 
@@ -1725,55 +1611,192 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
             starCount = 1000;
         }
 
+        starCount = starCount * 3; // multiplying has no effect for aditional stars for some reason.
+
         zCos = __cosf(gStarfieldRoll);
         zSin = __sinf(gStarfieldRoll);
-
         for (i = 0; i < starCount; i++, yStar++, xStar++, color++) {
-            bx = (*xStar + xField) * xScale;
+            // Adjust star positions with field offsets
+            bx = *xStar + xField;
             by = *yStar + yField;
 
-            if (bx >= 400 * xScale) {
-                bx -= 480 * xScale;
+            // Wrapping logic for individual stars along X-axis
+            if (bx >= starfieldWidth) {
+                bx -= starfieldWidth;
             }
-            bx -= 160 * xScale;
-
-            if (by >= 300) {
-                by -= 360;
+            if (bx < 0.0f) {
+                bx += starfieldWidth;
             }
-            by -= 120;
 
-            vx = (zCos * bx) + (zSin * by) + 160;
-            vy = (-zSin * bx) + (zCos * by) + 120;
+            // Wrapping logic for individual stars along Y-axis
+            if (by >= starfieldHeight) {
+                by -= starfieldHeight;
+            }
+            if (by < 0.0f) {
+                by += starfieldHeight;
+            }
 
-            // Star rendering logic with ortho viewport
-            if ((vx >= -160) && (vx < 160) && (vy > -120) && (vy < 120)) {
-                Vtx starVtx[1];  // Use a local array (stack-allocated) for a single vertex
+            // Center the positions
+            bx -= starfieldWidth / 2.0f;
+            by -= starfieldHeight / 2.0f;
 
-                starVtx[0].v.ob[0] = vx;
-                starVtx[0].v.ob[1] = vy;
-                starVtx[0].v.ob[2] = 0;
-                starVtx[0].v.flag = 0;
-                starVtx[0].v.tc[0] = 0;
-                starVtx[0].v.tc[1] = 0;
-                starVtx[0].v.cn[0] = (*color >> 24) & 0xFF;
-                starVtx[0].v.cn[1] = (*color >> 16) & 0xFF;
-                starVtx[0].v.cn[2] = (*color >> 8) & 0xFF;
-                starVtx[0].v.cn[3] = *color & 0xFF;
+            // Apply rotation
+            vx = (zCos * bx) + (zSin * by) + currentScreenWidth / 2.0f;
+            vy = (-zSin * bx) + (zCos * by) + currentScreenHeight / 2.0f;
 
-                gSPVertex(gMasterDisp++, starVtx, 1, 0);
-                gSP1Triangle(gMasterDisp++, 0, 0, 0, 0);  // Draw point
+            // Check if the star is within the visible screen area
+            if ((vx >= 0) && (vx < currentScreenWidth) && (vy >= 0) && (vy < currentScreenHeight)) {
+                gDPPipeSync(gMasterDisp++);
+                gDPSetFillColor(gMasterDisp++, *color);
+                // gDPFillRectangle(gMasterDisp++, vx, vy, vx, vy);
+                gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, -SCREEN_WIDTH * 4,
+                                -SCREEN_HEIGHT * 4, -SCREEN_WIDTH * 4, -SCREEN_HEIGHT * 4);
+                gDPFillRectangle(gMasterDisp++, vx, vy, vx, vy);
+                gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
             }
         }
     }
-
-    // End rendering
     gDPPipeSync(gMasterDisp++);
     gDPSetColorDither(gMasterDisp++, G_CD_MAGICSQ);
 }
 
-#endif
+RECOMP_PATCH void Play_GenerateStarfield(void) {
+    u32 i;
+    float currentScreenWidth = GetCurrentScreenWidth();
+    float currentScreenHeight = GetCurrentScreenHeight();
+    float starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
+    float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
-#endif
+    MEM_ARRAY_ALLOCATE(gStarOffsetsX, 3000);
+    MEM_ARRAY_ALLOCATE(gStarOffsetsY, 2000);
+    MEM_ARRAY_ALLOCATE(gStarFillColors, 2000);
 
+    Rand_SetSeed(1, 29000, 9876);
 
-#endif
+    for (i = 0; i < 2000; i++) {
+        gStarOffsetsX[i] = RAND_FLOAT_SEEDED(starfieldWidth);
+        gStarOffsetsY[i] = RAND_FLOAT_SEEDED(starfieldHeight);
+        gStarFillColors[i] = FILL_COLOR(gStarColors[i % ARRAY_COUNT(gStarColors)]);
+    }
+}
+
+RECOMP_PATCH void Camera_SetStarfieldPos(f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt) {
+    f32 sp34;
+    f32 sp30;
+    f32 pitch;
+    f32 yaw;
+    f32 tempf;
+    f32 sp20;
+
+    // Get current screen dimensions
+    float currentScreenWidth = GetCurrentScreenWidth();
+    float currentScreenHeight = GetCurrentScreenHeight();
+    float starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
+    float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
+
+    yaw = -Math_Atan2F(xEye - xAt, zEye - zAt);
+    tempf = sqrtf(SQ(zEye - zAt) + SQ(xEye - xAt));
+    pitch = -Math_Atan2F(yEye - yAt, tempf);
+
+    // Adjust yaw to stay within the range [-π/2, π/2]
+    if (yaw >= M_PI / 2) {
+        yaw -= M_PI;
+    }
+    if (yaw <= -M_PI / 2) {
+        yaw += M_PI;
+    }
+
+    tempf = 0.0f;
+    if (gCurrentLevel == LEVEL_UNK_15) {
+        tempf = gPlayer[0].cam.eye.y * 0.03f;
+    }
+
+    // Calculate new starfield positions
+    sp30 = (-pitch * (-8.0f / 3.0f * M_RTOD) * 2.0f) + 3000.0f + gStarfieldScrollY + tempf;
+    sp34 = (yaw * (-8.0f / 3.0f * M_RTOD) * 2.0f) + 3000.0f + gStarfieldScrollX;
+    sp20 = gStarfieldX;
+
+    // Wrap the starfield positions within the starfield dimensions
+    gStarfieldX = FloatMod(sp34, starfieldWidth);
+    gStarfieldY = FloatMod(sp30, starfieldHeight);
+
+    // Special case handling for specific game state and level
+    if ((gGameState == GSTATE_PLAY) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) &&
+        (gCurrentLevel == LEVEL_METEO)) {
+        if (fabsf(gStarfieldX - sp20) < 50.0f) {
+            D_bg_8015F96C = 0.0f;
+            if (fabsf(gStarfieldX - sp20) > 3.0f) {
+                D_bg_8015F96C = fabsf(gStarfieldX - sp20 - 3.0f) * 0.5f;
+            }
+        }
+    }
+}
+
+RECOMP_PATCH void Play_SetupStarfield(void) {
+    // Get current screen dimensions
+    float currentScreenWidth = GetCurrentScreenWidth();
+    float currentScreenHeight = GetCurrentScreenHeight();
+    float baseAspectRatio = 4.0f / 3.0f; // Original aspect ratio
+    float baseScreenWidth = gCurrentScreenHeight * baseAspectRatio;
+    float baseArea = baseScreenWidth * gCurrentScreenHeight;
+    float currentArea = currentScreenWidth * currentScreenHeight;
+    float areaRatio = currentArea / baseArea;
+
+    Play_GenerateStarfield();
+    gGroundHeight = -25000.0f;
+
+    // Base star count adjusted for screen area
+    gStarCount = (s32) (600 * areaRatio);
+    if (gStarCount > 1000) {
+        gStarCount = 1000; // Cap the star count to 1000
+    }
+
+    // Adjust star count based on the current level
+    if (gCurrentLevel == LEVEL_AREA_6) {
+        gStarCount = (s32) (300 * areaRatio);
+        if (gStarCount > 1000) {
+            gStarCount = 1000;
+        }
+    }
+    if (gCurrentLevel == LEVEL_UNK_15) {
+        gStarCount = (s32) (400 * areaRatio);
+        if (gStarCount > 1000) {
+            gStarCount = 1000;
+        }
+    }
+    if (gGameState != GSTATE_PLAY) {
+        gStarCount = (s32) (800 * areaRatio);
+        if (gStarCount > 1000) {
+            gStarCount = 1000;
+        }
+    }
+    if (gCurrentLevel == LEVEL_FORTUNA) {
+        gStarCount = (s32) (500 * areaRatio);
+        if (gStarCount > 1000) {
+            gStarCount = 1000;
+        }
+    }
+    if (gVersusMode) {
+        gStarCount = 0; // No stars in versus mode
+    }
+    if (gCurrentLevel == LEVEL_BOLSE) {
+        gStarCount = (s32) (300 * areaRatio);
+        if (gStarCount > 1000) {
+            gStarCount = 1000;
+        }
+        gGroundHeight = -0.0f;
+    }
+    if (gCurrentLevel == LEVEL_TRAINING) {
+        gStarCount = (s32) (800 * areaRatio);
+        if (gStarCount > 1000) {
+            gStarCount = 1000;
+        }
+        gGroundHeight = -0.0f;
+    }
+
+    // Initialize starfield position with dynamic screen dimensions
+    gStarfieldX = currentScreenWidth;
+    gStarfieldY = currentScreenHeight;
+}
+
+#endif // End of NEW STARFIELD TESTING block
