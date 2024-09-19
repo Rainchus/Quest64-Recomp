@@ -93,7 +93,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
             case AI360_ANDREW:
                 if (gCurrentLevel == LEVEL_VENOM_2) {
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                    G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, aStarWolfUpgradedShipDL);
                     // @recomp Pop the transform id.
@@ -110,7 +110,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                     ActorAllRange_DrawShield(this);
                 } else {
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                    G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, aStarWolfStandardShipDL);
                     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -60.0f, MTXF_APPLY);
@@ -126,7 +126,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
 
             case AI360_KATT:
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
                 gSPDisplayList(gMasterDisp++, aKattShipDL);
                 // @recomp Pop the transform id.
@@ -136,7 +136,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
 
             case AI360_BILL:
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
                 gSPDisplayList(gMasterDisp++, aBillShipDL);
                 // @recomp Pop the transform id.
@@ -164,7 +164,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 60.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                    G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, D_FO_6006BE0);
                     // @recomp Pop the transform id.
@@ -176,7 +176,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                     switch (this->animFrame) {
                         case 0:
                             // @recomp Tag the transform.
-                            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH,
+                            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH,
                                                            G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
                             gSPDisplayList(gMasterDisp++, aKaEnemyLowPolyDL);
                             // @recomp Pop the transform id.
@@ -184,7 +184,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                             break;
                         case 1:
                             // @recomp Tag the transform.
-                            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH,
+                            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH,
                                                            G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
                             gSPDisplayList(gMasterDisp++, aKaCornerianFighterDL);
                             // @recomp Pop the transform id.
@@ -194,7 +194,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                             break;
                         case 3:
                             // @recomp Tag the transform.
-                            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH,
+                            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH,
                                                            G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
                             gSPDisplayList(gMasterDisp++, aKaEnemyDL);
                             // @recomp Pop the transform id.
@@ -205,7 +205,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                     }
                 } else if (gCurrentLevel == LEVEL_SECTOR_Z) {
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                    G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, aSzInvaderIIIDL);
                     // @recomp Pop the transform id.
@@ -214,7 +214,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                     Actor_DrawEngineGlow(this, EG_GREEN);
                 } else if (gCurrentLevel == LEVEL_BOLSE) {
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                    G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, D_BO_6008770);
                     // @recomp Pop the transform id.
@@ -230,7 +230,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                     Animation_DrawSkeleton(0, D_VE2_600C2AC, this->vwork, NULL, NULL, this, &gIdentityMatrix);
                 } else if (gCurrentLevel == LEVEL_VERSUS) {
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                                    G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, D_versus_3015740);
                     // @recomp Pop the transform id.
@@ -238,7 +238,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                 } else if (gCurrentLevel == LEVEL_TRAINING) {
                     if (this->aiIndex == AI360_FOX) {
                         // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH,
+                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH,
                                                        G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
                         gSPDisplayList(gMasterDisp++, aStarWolfStandardShipDL);
                         // @recomp Pop the transform id.
@@ -247,7 +247,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
                         Actor_DrawEngineGlow(this, EG_ORANGE);
                     } else {
                         // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH,
+                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH,
                                                        G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
                         gSPDisplayList(gMasterDisp++, aVenomFighter1DL);
                         // @recomp Pop the transform id.
@@ -294,7 +294,7 @@ RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange* this) {
     switch (this->animFrame) {
         case 0:
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                            G_EX_EDIT_ALLOW);
             gSPDisplayList(gMasterDisp++, aKaEnemyDL);
             // @recomp Pop the transform id.
@@ -303,7 +303,7 @@ RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange* this) {
 
         case 1:
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR + this->index, G_EX_PUSH, G_MTX_MODELVIEW,
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
                                            G_EX_EDIT_ALLOW);
             gSPDisplayList(gMasterDisp++, aKaCornerianFighterDL);
             // @recomp Pop the transform id.
