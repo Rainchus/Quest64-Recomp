@@ -2,23 +2,24 @@
 #define SF64_TAGGING
 
 /* For dynamic actors */
-#define TAG_ADDRESS(ptr) ((u32)(ptr) & 0x0FFFFFFF)
+#define TAG_ADDRESS(ptr) ((u32) (ptr) & 0x0FFFFFFF)
 
 /* Actor Types */
-#define TAG_ACTOR (0x10000)
-#define TAG_ACTOR_EVENT (0x20000)
-#define TAG_BOSS (0x30000)
-#define TAG_SCENERY(ptr) (0x60000 + (ptr)->index)
-#define TAG_SCENERY_360(ptr) ((u32)((0x10000000) | (TAG_ADDRESS(ptr))))
-#define TAG_EFFECT (0x40000)
-#define TAG_ITEM (0x50000)
+#define TAG_ACTOR(actor) ((u32) ((0x10000000) | (TAG_ADDRESS(actor))))
+#define TAG_ACTOR_EVENT(actor) ((u32) ((0x20000000) | (TAG_ADDRESS(actor))))
+#define TAG_BOSS(boss) ((u32) ((0x30000000) | (TAG_ADDRESS(boss))))
+#define TAG_SCENERY(scenery) ((u32) ((0x40000000) | (TAG_ADDRESS(scenery))))
+#define TAG_SCENERY_360(scenery360) ((u32) ((0x50000000) | (TAG_ADDRESS(scenery360))))
+#define TAG_EFFECT(effect) ((u32) ((0x60000000) | (TAG_ADDRESS(effect))))
+#define TAG_ITEM(item) ((u32) ((0x70000000) | (TAG_ADDRESS(item))))
 
 /* Derivatives */
-#define TAG_ACTOR_EVENT_COMMON (TAG_ACTOR_EVENT + 0x10500)
+#define TAG_ACTOR_EVENT_COMMON(actor) (TAG_ACTOR_EVENT(actor) + 0x1000)
 #define TAG_FACE (0x100)
+#define TAG_CS_GREAT_FOX (0x200)
 
 /* Map */
-#define TAG_PLANET_SHADOW (0x200)
+#define TAG_PLANET_SHADOW (0x300)
 #define TAG_PLANET_ANIM (TAG_PLANET_SHADOW + PLANET_MAX)
 #define TAG_PLANET_ANIM_2 (TAG_PLANET_ANIM + PLANET_MAX)
 #define TAG_PLANET_METEOR (TAG_PLANET_SHADOW + PLANET_MAX)
@@ -29,16 +30,14 @@
 
 // Use 16 bits of compiler-inserted padding to hold the scenery transform ID.
 // offset 0x46 in Scenery360
-#define scenery360IdByte0(scenery360) ((u8*)(scenery360))[0x46]
+#define scenery360IdByte0(scenery360) ((u8*) (scenery360))[0x46]
 // offset 0x47 in Scenery360
-#define scenery360IdByte1(scenery360) ((u8*)(scenery360))[0x47]
+#define scenery360IdByte1(scenery360) ((u8*) (scenery360))[0x47]
 
 u32 create_scenery360_transform_id(void);
 
 static inline u32 scenery360_transform_id(Scenery360* scenery360) {
-    u32 scenery360_id = 
-        (scenery360IdByte0(scenery360) <<  0) |
-        (scenery360IdByte1(scenery360) <<  8);
+    u32 scenery360_id = (scenery360IdByte0(scenery360) << 0) | (scenery360IdByte1(scenery360) << 8);
 
     return (scenery360_id * ACTOR_TRANSFORM_ID_COUNT) + ACTOR_TRANSFORM_ID_START;
 }
