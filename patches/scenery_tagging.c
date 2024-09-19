@@ -24,6 +24,10 @@ extern Gfx aCoBuilding8DL[];
 extern Gfx aCoBuilding9DL[];
 extern Gfx aCoBuilding10DL[];
 extern Gfx D_CO_60199D0[];
+extern Gfx aCoIBeamDL[];
+extern Gfx aSyDebrisDL[];
+extern Gfx aAqBump2DL[];
+extern Gfx aCoShadow1DL[];
 
 void func_edisplay_8005D008(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32);
@@ -182,6 +186,86 @@ RECOMP_PATCH void SceneryRotateTowardsCamera(Scenery* this) {
     } else {
         this->obj.rot.y = 0.0f;
     }
+}
+
+RECOMP_PATCH void CoIBeam_Draw(CoIBeam* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gSPDisplayList(gMasterDisp++, aCoIBeamDL);
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH s32 SyShipDebris_Draw(SyShipDebris* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_60);
+    gSPDisplayList(gMasterDisp++, aSyDebrisDL);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    return 0;
+}
+
+RECOMP_PATCH void Aquas_AqBump2_Draw(AqBump2* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    Matrix_Scale(gGfxMatrix, 0.5f, 0.5f, 0.5f, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, aAqBump2DL);
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void FogShadow_Draw(FogShadow* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    RCP_SetupDL_47(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 180);
+
+    switch (this->sceneryId) {
+        case OBJ_SCENERY_CO_STONE_ARCH:
+            Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.7f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aCoShadow1DL);
+            break;
+
+        case OBJ_SCENERY_CO_ARCH_2:
+            Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.7f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aCoShadow1DL);
+            break;
+
+        case OBJ_SCENERY_CO_HIGHWAY_1:
+        case OBJ_SCENERY_CO_HIGHWAY_2:
+            Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 10.55f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aCoHighwayShadowDL);
+            break;
+
+        case OBJ_SCENERY_CO_DOORS:
+            Matrix_Scale(gGfxMatrix, 1.6f, 1.0f, 1.0f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aCoShadow1DL);
+            break;
+
+        case OBJ_SCENERY_CO_ARCH_1:
+            Matrix_Scale(gGfxMatrix, 1.2f, 1.0f, 1.3f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aCoShadow1DL);
+            break;
+
+        case OBJ_SCENERY_CO_ARCH_3:
+            Matrix_Scale(gGfxMatrix, 2.2f, 1.0f, 1.4f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aCoShadow1DL);
+            break;
+    }
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    
+    RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 }
 
 #endif
