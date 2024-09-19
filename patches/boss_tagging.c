@@ -53,7 +53,7 @@ RECOMP_PATCH void Andross_AndBrain_Draw(AndBrain* this) {
                 Matrix_Translate(gGfxMatrix, 0.0f, -5.0f, 0.0f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS + this->index + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this) + i, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
                 if (j == 9) {
                     gSPDisplayList(gMasterDisp++, D_VE2_600C2D0);
@@ -75,7 +75,7 @@ RECOMP_PATCH void Katina_KaFrontlineBase_Draw(KaFrontlineBase* this) {
     Matrix_Translate(gGfxMatrix, 0.0f, 20.0f, 0.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS + this->index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     if (this->state == 0) {
         gSPDisplayList(gMasterDisp++, aKaFLBaseDL);
     } else {
