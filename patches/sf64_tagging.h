@@ -1,10 +1,15 @@
 #ifndef SF64_TAGGING
 #define SF64_TAGGING
 
+/* For dynamic actors */
+#define TAG_ADDRESS(ptr) ((u32)(ptr) & 0x0FFFFFFF)
+
 /* Actor Types */
 #define TAG_ACTOR (0x10000)
 #define TAG_ACTOR_EVENT (0x20000)
 #define TAG_BOSS (0x30000)
+#define TAG_SCENERY(ptr) (0x60000 + (ptr)->index)
+#define TAG_SCENERY_360(ptr) ((u32)((0x10000000) | (TAG_ADDRESS(ptr))))
 #define TAG_EFFECT (0x40000)
 #define TAG_ITEM (0x50000)
 
