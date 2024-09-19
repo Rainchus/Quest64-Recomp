@@ -286,13 +286,13 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
-#if 0
+#if 0 // baseSpeed control
     {
         Player* player = gPlayer;
         if (gControllerPress[0].button & L_JPAD) {
-            player->baseSpeed+=50;
-        } else if (gControllerPress[0].button & R_JPAD) {
             player->baseSpeed-=50;
+        } else if (gControllerPress[0].button & R_JPAD) {
+            player->baseSpeed+=50;
         }
     }
 #endif
