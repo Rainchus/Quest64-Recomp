@@ -861,11 +861,8 @@ extern Gfx aArrowDL[];
 RECOMP_PATCH void HUD_EdgeArrows_Draw(s32 idx, bool arg1) {
     static const f32 D_800D1EF8[] = { 0.0f, 0.0f, -9.0f, 9.0f, 10.0f, 10.0f, 10.0f, 10.0f, 0.0f, 0.0f, -8.0f, 8.0f };
     static const f32 D_800D1F28[] = { -7.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 8.0f, -8.0f, 0.0f, 0.0f };
-    static const f32 D_800D1F58[] = { -22.0f, -22.0f, -22.0f, -22.0f, -28.0f, -28.0f,
-                                      -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f };
-    static const f32 D_800D1F88[] = { 0.0f, 0.0f, 0.0f, 0.0f, 495.0f, 405.0f, 585.0f, 675.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-    static const f32 D_800D1FB8[] = { 180.0f, 0.0f,   270.0f, 90.0f,  270.0f, 270.0f,
-                                      270.0f, 270.0f, 0.0f,   180.0f, 90.0f,  270.0f };
+    static const f32 D_800D1F58[] = { -22.0f, -22.0f, -22.0f, -22.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f };
+    static const f32 D_800D1FB8[] = { 180.0f, 0.0f, 270.0f, 90.0f, 270.0f, 270.0f, 270.0f, 270.0f, 0.0f, 180.0f, 90.0f, 270.0f };
     static const f32 D_800D1FE8[] = { 0.0f, 0.0f, 2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, 0.0f, 0.0f, 2.0f, -2.0f };
     static const f32 D_800D2018[] = { 2.0f, -2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -2.0f, 2.0f, 0.0f, 0.0f };
 
@@ -875,41 +872,25 @@ RECOMP_PATCH void HUD_EdgeArrows_Draw(s32 idx, bool arg1) {
         Matrix_RotateZ(gGfxMatrix, M_DTOR * gPlayer[0].camRoll, MTXF_APPLY);
     }
 
-    if (D_800D1F88[idx]) {
-        Matrix_RotateZ(gGfxMatrix, M_DTOR * D_800D1F88[idx], MTXF_APPLY);
-    }
-
     if (arg1 != 0) {
-        Matrix_Translate(gGfxMatrix, D_800D1EF8[idx] + D_800D1FE8[idx], D_800D1F28[idx] + D_800D2018[idx],
-                         D_800D1F58[idx], MTXF_APPLY);
+        Matrix_Translate(gGfxMatrix, D_800D1EF8[idx] + D_800D1FE8[idx], D_800D1F28[idx], D_800D1F58[idx], MTXF_APPLY);
     } else {
         Matrix_Translate(gGfxMatrix, D_800D1EF8[idx], D_800D1F28[idx], D_800D1F58[idx], MTXF_APPLY);
     }
 
-    // Check whether we're on rails or in free-move mode
-    if (gLevelMode == LEVELMODE_ON_RAILS) {
-        // Handle on-rails specific viewport alignments
-        if (D_800D1FB8[idx] == 270.0f) { // Right
-            gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, 0);
-            gSPViewport(gMasterDisp++, gViewport);
-        } else if (D_800D1FB8[idx] == 90.0f) { // Left
-            gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
-            gSPViewport(gMasterDisp++, gViewport);
-        } else if (D_800D1FB8[idx] == 0.0f || D_800D1FB8[idx] == 180.0f) { // Up or Down
-            gSPViewport(gMasterDisp++, gViewport);
-        }
-    } else {
-        // Handle free-move specific viewport alignments (if different)
-        if (D_800D1FB8[idx] == 270.0f) { // Right
-            gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
-            gSPViewport(gMasterDisp++, gViewport);
-        } else if (D_800D1FB8[idx] == 90.0f) { // Left
-            gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, 0);
-            gSPViewport(gMasterDisp++, gViewport);
-        } else if (D_800D1FB8[idx] == 0.0f || D_800D1FB8[idx] == 180.0f) { // Up or Down
-            gSPViewport(gMasterDisp++, gViewport);
-        }
+    // Simplified viewport alignment based on X position
+    f32 xPos = D_800D1EF8[idx];
+    
+    if (xPos < 0.0f) {
+        // Align viewport to the left if X is negative
+        gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
+    } else if (xPos > 0.0f) {
+        // Align viewport to the right if X is positive
+        gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, 0);
     }
+    // Otherwise, no special alignment (centered)
+
+    gSPViewport(gMasterDisp++, gViewport);
 
     Matrix_RotateZ(gGfxMatrix, M_DTOR * D_800D1FB8[idx], MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, 0.026f, 0.026f, 0.026f, MTXF_APPLY);
