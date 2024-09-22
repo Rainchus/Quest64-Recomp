@@ -32,8 +32,7 @@ RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
     Matrix_RotateZ(gGfxMatrix, this->unk_58 * M_DTOR, MTXF_APPLY);
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
-    G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     for (i = 0; i < 8; i++) {
         Matrix_Push(&gGfxMatrix);
         Matrix_RotateZ(gGfxMatrix, i * 45.0f * M_DTOR, MTXF_APPLY);
@@ -75,43 +74,41 @@ RECOMP_PATCH void ItemSilverStar_Draw(ItemSilverStar* this) {
 }
 
 RECOMP_PATCH void ItemGoldRing_Draw(ItemGoldRing* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
     RCP_SetupDL(&gMasterDisp, SETUPDL_29);
     gSPTexture(gMasterDisp++, 1900, 1700, 0, G_TX_RENDERTILE, G_ON);
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR);
     Graphics_SetScaleMtx(this->width);
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, D_1016870);
+    gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR);
+    
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR);
 }
 
 RECOMP_PATCH void ItemBomb_Draw(ItemBomb* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
     if (gCurrentLevel == LEVEL_AQUAS) {
         Graphics_SetScaleMtx(this->width);
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                       G_EX_EDIT_ALLOW);
         gSPDisplayList(gMasterDisp++, D_blue_marine_3005980);
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     } else {
         Graphics_SetScaleMtx(this->width * 0.1f);
         RCP_SetupDL(&gMasterDisp, SETUPDL_29);
         gSPTexture(gMasterDisp++, 2000, 2000, 0, G_TX_RENDERTILE, G_ON);
         gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                       G_EX_EDIT_ALLOW);
         gSPDisplayList(gMasterDisp++, D_10231A0);
         gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
         RCP_SetupDL(&gMasterDisp, SETUPDL_27);
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
         gSPDisplayList(gMasterDisp++, D_1022E80);
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 RECOMP_PATCH void ItemLasers_Draw(ItemLasers* this) {
@@ -121,11 +118,46 @@ RECOMP_PATCH void ItemLasers_Draw(ItemLasers* this) {
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     // @recomp Tag the transform.
     gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
     gSPDisplayList(gMasterDisp++, D_1019820);
     gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     RCP_SetupDL(&gMasterDisp, SETUPDL_27);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
     gSPDisplayList(gMasterDisp++, D_101A8E0);
+
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void ItemMeteoWarp_Draw(ItemMeteoWarp* this) {
+    s32 i;
+
+    this->obj.rot.y = (Math_Atan2F(gPlayer[gPlayerNum].cam.eye.x - this->obj.pos.x,
+                                   gPlayer[gPlayerNum].cam.eye.z - (this->obj.pos.z + gPathProgress)) *
+                       180.0f) /
+                      M_PI;
+    if (this->state != 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_41);
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, this->unk_44);
+    } else {
+        RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+    }
+
+    gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK | G_LIGHTING);
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    for (i = 0; i < 7; i++) {
+        Matrix_Push(&gGfxMatrix);
+        Matrix_RotateZ(gGfxMatrix, (i * 360.0f / 7.0f) * M_DTOR, MTXF_APPLY);
+        Matrix_Translate(gGfxMatrix, 0.0f, this->width, 0.0f, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, D_102FE80);
+        Matrix_Pop(&gGfxMatrix);
+    }
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+    gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK | G_LIGHTING);
 }
