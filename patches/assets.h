@@ -11,6 +11,13 @@ typedef struct UnkStruct_D_i4_801A03E0 {
 } UnkStruct_D_i4_801A03E0;
 
 extern Gfx aCoBuilding5DL[];
+extern Gfx aTitleArwingShadowDL[];
+extern Gfx gMapVenomCloudDL[];
+extern Gfx aMapVenomCloudDL[];
+extern Gfx D_MAP_605C230[];
+extern Gfx aMapArwingDL[];
+extern Gfx aMapCursorDL[];
+extern Gfx aMapArea6ShipDL[];
 extern Gfx aCoBuilding6DL[];
 extern Gfx aCoBuilding7DL[];
 extern Gfx aCoBuilding8DL[];
