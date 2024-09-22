@@ -1,5 +1,5 @@
-#define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #if 1
+#define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #define __sinf __sinf_recomp
 
 #include "PR/ultratypes.h"
@@ -1512,7 +1512,6 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
 }
 #endif
 
-#endif
 
 #if 1 // NEW STARFIELD TESTING
 
@@ -1800,3 +1799,5 @@ RECOMP_PATCH void Play_SetupStarfield(void) {
 }
 
 #endif // End of NEW STARFIELD TESTING block
+
+#endif
