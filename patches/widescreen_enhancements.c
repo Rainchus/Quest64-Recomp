@@ -888,6 +888,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
             }
 
             if (gLevelMode == LEVELMODE_ON_RAILS) {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_CO_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+
                 gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(D_CO_601B6C0));
                 temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f)); // 0.64f / 3.0f
                 temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
@@ -955,6 +959,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 Matrix_Pop(&gGfxMatrix);
             } else {
                 gGroundSurface = SURFACE_GRASS;
@@ -1511,7 +1517,6 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
     gDPSetColorDither(gMasterDisp++, G_CD_MAGICSQ);
 }
 #endif
-
 
 #if 1 // NEW STARFIELD TESTING
 
