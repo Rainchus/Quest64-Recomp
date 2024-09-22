@@ -1,4 +1,5 @@
 #include "patches.h"
+#include "fox_map.h"
 
 typedef struct UnkStruct_D_i4_801A03E0 {
     f32 unk_00;
@@ -10,10 +11,49 @@ typedef struct UnkStruct_D_i4_801A03E0 {
     s32 unk_18;
 } UnkStruct_D_i4_801A03E0;
 
+extern s32 D_menu_801CEEA0;
+extern s32 sMapTimer2;
+extern s32 D_menu_801CEEA4;
+extern f32 D_menu_801CD818[9];
 extern Gfx aCoBuilding5DL[];
+extern s32 D_menu_801CEEC4;
 extern Gfx aTitleArwingShadowDL[];
+extern Gfx D_MAP_604D680[];
 extern Gfx gMapVenomCloudDL[];
 extern Gfx aMapVenomCloudDL[];
+extern Gfx aMapVenomCloud1Tex[];
+extern u8 *gBSSMapPlanetTextures[9];
+extern u8 *gAssetMapPlanetTextures[9];
+extern Matrix D_menu_801CE1E0[15];
+extern f32 D_menu_801CEAB8[15];
+extern bool D_menu_801CD980;
+extern f32 D_menu_801CEAF8[15];
+extern s32 D_menu_801CD900[15];
+extern s32 D_menu_801CD984;
+extern s32 D_menu_801CEEAC;
+extern f32 sMapCamEyeX;
+extern f32 sMapCamEyeY;
+extern f32 sMapCamEyeZ;
+extern f32 sMapCamAtX;
+extern f32 sMapCamAtY;
+extern f32 sMapCamAtZ;
+extern f32 sMapCamUpX;
+extern f32 sMapCamUpY;
+extern f32 sMapCamUpZ;
+extern f32 D_menu_801CEA58;
+extern f32 D_menu_801CEA5C;
+extern f32 D_menu_801CEA60;
+extern s32 D_menu_801CEEC8;
+extern s32 D_menu_801CEFC4;
+extern s32 sMapSubState;
+extern s32 D_menu_801CD968;
+extern s32 D_menu_801CD964;
+extern s32 D_menu_801CD964;
+extern bool D_menu_801CD96C;
+extern s32 D_menu_801CD8A0[15];
+extern PlanetPath sPaths[24];
+extern bool D_menu_801CD974;
+extern Gfx D_MAP_6048F80[];
 extern Gfx D_MAP_605C230[];
 extern Gfx aMapArwingDL[];
 extern Gfx aMapCursorDL[];
