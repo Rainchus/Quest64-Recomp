@@ -35,6 +35,7 @@
 #include "context.h"
 #include "functions.h"
 #include "rt64_extended_gbi.h"
+#include "graphics.h"
 #include "audioseq_cmd.h"
 #include "macros.h"
 #include "variables.h"
@@ -42,6 +43,8 @@
 #include "sfx.h"
 #include "sf64event.h"
 #include "sf64_tagging.h"
+#include "assets.h"
+#include "bgm.h"
 
 #ifndef gEXFillRectangle
 #define gEXFillRectangle(cmd, lorigin, rorigin, ulx, uly, lrx, lry) \
@@ -106,6 +109,7 @@ void Game_InitFullViewport(void);
 
 //void set_camera_skipped(bool skipped);
 void clear_camera_skipped();
+float recomp_get_aspect_ratio(float);
 //bool camera_was_skipped();
 
 void recomp_crash(const char* err);
