@@ -39,12 +39,108 @@ void Map_PlanetMedal_Draw(PlanetId planetId);
 void Map_PlanetExplosions_Draw(s32, PlanetExplosions);
 void Map_PlanetCleared_Draw(PlanetId planetId);
 void Map_PlanetAnim2(PlanetId planetId);
+void Map_PlanetCleared2_Draw(PlanetId planetId);
+s32 Map_CheckPlanetMedal(PlanetId planetId);
+void Map_Prologue_Draw(void);
+void Map_LylatCard_Draw(void);
+void Map_GameOver_Draw(void);
+void Map_RestartLevelLifeDown_Draw(void);
+void Map_801A9DE8(void);
+void Map_801A9A8C(void);
+void Map_Wipe_Draw(void);
+void Map_8019E800(void);
+void Map_Setup(void);
+void Map_Setup_Play(void);
+void Map_Setup_GameOver(void);
+void Map_Setup_Menu(void);
+void Map_TeamStatus_Refill(void);
+void Map_Level_CamSetup(void);
+void Map_PathStatus_Setup(void);
+void Map_CurrentPlanet_SetAlpha(void);
+void Map_PlanetExplosions_Setup(void);
+bool Map_PlanetSaveSlot_Setup(LevelId, PlanetSaveSlotTypes);
+void Map_Update(void);
+s32 Map_801A05B4(void);
+void Map_Starfield_Setup(void);
+void Map_Prologue_Update(void);
+void Map_Prologue_Draw(void);
+void Map_LylatCard_Update(void);
+void Map_PrologueArwing_Draw(void);
+void Map_LylatCard_Draw(void);
+void Map_ZoomPlanet_Update(void);
+bool Map_GralPepper_Talk(void);
+f32 Map_GetPlanetCamZDist(PlanetId);
+void Map_801A2674(void);
+void Map_801A281C(void);
+void Map_ZoomPlanetPath_Update(void);
+void Map_801A2EB8(void);
+void Map_801A3440(f32);
+void Map_801A3550(Vec3f*, Vec3f*, Vec3f*, f32);
+void Map_GameOver_Update(void);
+void Map_GameOver_3DFont(void);
+void Map_801A4394(void);
+void Map_GameOver_Draw(void);
+void Map_801A48C0(f32 speed);
+void Map_801A4A38(f32 arg0);
+void Map_PathChange_Update(void);
+void Map_PathChange_UpdateEntry(u32);
+void Map_PathChange_Input(void);
+void Map_GoToGameOver(void);
+void Map_RetryCourse(void);
+void Map_ChangePath(void);
+void Map_PathChange_DrawOptions(void);
+void Map_RestartLevelLifeDown_Draw(void);
+bool Map_Input_CursorY(void);
+void Map_LevelStart_Update(void);
+void Map_CurrentLevel_Setup(void);
+void Map_LevelStart_AudioSpecSetup(LevelId level);
+bool Map_LevelPlayedStatus_Check(PlanetId planet);
+s32 Map_GetPathId(PlanetId start, PlanetId end);
+void Map_PlayLevel(void);
+void Map_PositionPlanets(void);
+void Map_PlanetOrderZpos(void);
+void Map_Fade_Update(void);
+void Map_Planet_Draw(PlanetId);
+s32 Map_CheckPlanetMedal(PlanetId planetId);
+void Map_PlanetAnim2(PlanetId planetId);
 void Map_PlanetAnim(PlanetId planetId);
+void Map_SolarRays_Draw(PlanetId);
+void Map_VenomCloud2_Draw(PlanetId planetId);
+void Map_PlanetShadow_Draw(PlanetId planetId);
 void Map_Titania_DrawRings1(PlanetId planetId);
 void Map_Titania_DrawRings2(PlanetId planetId);
 void Map_VenomCloud_Draw(f32* zAngle, f32 next, f32 scale);
 void Map_PlanetCleared2_Draw(PlanetId planetId);
-s32 Map_CheckPlanetMedal(PlanetId planetId);
+void Map_PositionCursor(void);
+void Map_TotalHits_Draw(void);
+void Map_Idle_Update(void);
+void Map_SetCamRot(f32, f32, f32, f32*, f32*, f32*, f32, f32, f32);
+PlanetId Map_GetPlanetId(LevelId level);
+void Map_PlanetMedal_Draw(PlanetId planetId);
+void Map_CorneriaExplosion_Draw(void);
+void Map_Cursor_draw(void);
+void Map_MeteoMeteors_Draw(void);
+void Map_Area6Ships_Draw(void);
+void Map_Wipe_Draw(void);
+void Map_TitleCards_Draw(void);
+void Map_801A9A8C(void);
+void Map_801A9DE8(void);
+void Map_PathLineBox_Draw(s32);
+void Map_PathInfo_Draw(s32, f32, f32, s32);
+void Map_PathPlanet_Draw(s32, f32, f32, PlanetId);
+void Map_PathPlanetMedal_Draw(f32 x, f32 y, f32 z);
+void Map_BriefingRadio_Setup(void);
+void Map_BriefingRadio_Update(void);
+void Map_BriefingRadio_Draw(s32);
+void Map_TeamDownWrench_Draw(s32 teamIdx, s32 alpha);
+void Map_GralPepperFace_Draw(void);
+void Map_Path_Draw(s32);
+void Map_Arwing_Draw(s32 index);
+void Map_PathLine_Draw(PathType);
+void Map_PathLines_Draw(s32);
+void Map_PathLinePos(s32 index, Vec3f* src, Vec3f* dest);
+void Map_CamMatrixRot(void);
+void Map_Texture_Sphere(u8* textureDest, u8* textureSrc, f32* offset);
 
 #if 1
 
@@ -83,7 +179,7 @@ RECOMP_PATCH void Map_Planet_Draw(PlanetId planetId) __attribute__((optnone)) {
         }
 
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, (TAG_PLANET_ANIM_2) + planetId, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLANET_ANIM + planetId, G_EX_PUSH, G_MTX_MODELVIEW,
                                        G_EX_EDIT_ALLOW);
         Map_PlanetAnim(planetId);
         // @recomp Pop the transform id.
@@ -101,7 +197,14 @@ RECOMP_PATCH void Map_Planet_Draw(PlanetId planetId) __attribute__((optnone)) {
         if (sPlanets[planetId].anim == PL_ANIM_SPIN) {
             if (planetId != PLANET_VENOM) {
                 if ((planetId != PLANET_AQUAS) && (planetId != PLANET_TITANIA)) {
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VENOM_CLOUD_2 + planetId, G_EX_PUSH,
+                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
                     Map_VenomCloud2_Draw(planetId);
+
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLANET_SHADOW + planetId, G_EX_PUSH, G_MTX_MODELVIEW,
@@ -111,8 +214,14 @@ RECOMP_PATCH void Map_Planet_Draw(PlanetId planetId) __attribute__((optnone)) {
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
             if (planetId == PLANET_VENOM) {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VENOM_CLOUD_1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
                 Map_VenomCloud_Draw(&D_menu_801CEEBC, +0.1f, 3.1f);
                 Map_VenomCloud_Draw(&D_menu_801CEEC0, -0.1f, 2.9f);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
         }
 
@@ -635,8 +744,8 @@ RECOMP_PATCH void Map_PathPlanet_Draw(s32 missionIdx, f32 x, f32 y, PlanetId pla
 
     if (gMissionMedal[missionIdx] != 0) {
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PATH_PLANET_MEDAL, G_EX_PUSH, G_MTX_MODELVIEW,
-                                       G_EX_EDIT_ALLOW);
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_PATH_PLANET_MEDAL + missionIdx, G_EX_PUSH, G_MTX_MODELVIEW,
+                                        G_EX_EDIT_ALLOW);
 
         Map_PathPlanetMedal_Draw(x, y, 0.0f);
 
@@ -644,71 +753,257 @@ RECOMP_PATCH void Map_PathPlanet_Draw(s32 missionIdx, f32 x, f32 y, PlanetId pla
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 }
-/*
-RECOMP_PATCH void Map_VenomCloud_Draw(f32* zAngle, f32 next, f32 scale) {
-    s32 alpha = sPlanets[PLANET_VENOM].alpha;
 
-    if (sPlanets[PLANET_VENOM].alpha > 128) {
-        alpha = 128;
-    }
-    
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VENOM_CLOUD_1, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
-
-    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
-
-    gDPSetPrimColor(gMasterDisp++, 0, 0, 63, 95, 30, alpha);
-    gDPSetEnvColor(gMasterDisp++, 0, 0, 0, 0);
+RECOMP_PATCH void Map_Draw(void) {
+    s32 i;
+    s32* ptr;
 
     Matrix_Push(&gGfxMatrix);
-
-    Matrix_Copy(gGfxMatrix, &D_menu_801CDE20[PLANET_VENOM]);
-    Matrix_RotateZ(gGfxMatrix, M_DTOR * (*zAngle), MTXF_APPLY);
-    Matrix_Scale(gGfxMatrix, scale, scale, scale, MTXF_APPLY);
-
+    Matrix_LookAt(gGfxMatrix, sMapCamEyeX, sMapCamEyeY, sMapCamEyeZ, sMapCamAtX, sMapCamAtY, sMapCamAtZ, sMapCamUpX,
+                  sMapCamUpY, sMapCamUpZ, MTXF_APPLY);
+    Matrix_Translate(gGfxMatrix, D_menu_801CEA58, D_menu_801CEA5C, D_menu_801CEA60, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
 
-    gSPDisplayList(gMasterDisp++, aMapVenomCloudDL);
+    if (D_menu_801CD974 && (sMapState != MAP_PROLOGUE)) {
+        for (i = 0; i < 24; i++) {
+            if (gPlanetPathStatus[i] == 0) {
+                continue;
+            }
+            if (sPaths[i].alpha == 0) {
+                continue;
+            }
 
-    Matrix_Pop(&gGfxMatrix);
+            Map_PathLines_Draw(i);
 
-    *zAngle += next;
+            if (sPaths[i].unk_14 != 0) {
+                Map_Path_Draw(i);
+            }
+
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEXTURED_LINE + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+
+            TexturedLine_DrawPath(i);
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+        }
+    }
+
+    Map_Cursor_draw();
+
+    Map_MeteoMeteors_Draw();
+
+    Map_Area6Ships_Draw();
+
+    for (ptr = D_menu_801CD8A0, i = 0; i < 15; i++, ptr++) {
+        Map_Planet_Draw(*ptr);
+    }
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CORNERIA_EXPLOSION, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    Map_CorneriaExplosion_Draw();
 
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
-
-RECOMP_PATCH void Map_VenomCloud2_Draw(PlanetId planetId) {
-    s32 r;
-    s32 g;
-    s32 b;
-
-    r = g = b = 255;
-
-    if (planetId == PLANET_MACBETH) {
-        r = g = b = 64;
-    }
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VENOM_CLOUD_2, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
-
-    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
-
-    gDPSetPrimColor(gMasterDisp++, 0, 0, r, g, b, sPlanets[planetId].alpha);
-
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Copy(gGfxMatrix, &D_menu_801CDE20[planetId]);
-    Matrix_SetGfxMtx(&gMasterDisp);
-
-    gSPDisplayList(gMasterDisp++, gMapVenomCloudDL);
 
     Matrix_Pop(&gGfxMatrix);
 
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    if (D_menu_801CD96C) {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_PEPPER_FACE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+        Map_GralPepperFace_Draw();
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+
+    Map_BriefingRadio_Update();
+
+    if (D_menu_801CEFC4) {
+        Map_PathChange_DrawOptions();
+    }
+
+    if (D_menu_801CD964) {
+        Map_TitleCards_Draw();
+    }
+
+    Map_Wipe_Draw();
+
+    if (D_menu_801CD968) {
+        Map_801A9A8C();
+    }
+
+    Map_801A9DE8();
+
+    Map_RestartLevelLifeDown_Draw();
+
+    if ((sMapState == MAP_GAME_OVER) && (sMapSubState == 1)) {
+        Map_GameOver_Draw();
+    }
+    if (sMapState == MAP_PROLOGUE) {
+        Map_Prologue_Draw();
+    }
+    if (sMapState == MAP_LYLAT_CARD) {
+        Map_LylatCard_Draw();
+    }
+
+    if (D_menu_801CEEC8 == 0) {
+        Map_Texture_Sphere(gBSSMapPlanetTextures[8], SEGMENTED_TO_VIRTUAL(gAssetMapPlanetTextures[8]),
+                           &D_menu_801CD818[8]);
+        D_menu_801CEEC8 = 5;
+    } else {
+        D_menu_801CEEC8--;
+    }
+
+    Map_Texture_Sphere(gBSSMapPlanetTextures[D_menu_801CEEC4 * 2],
+                       SEGMENTED_TO_VIRTUAL(gAssetMapPlanetTextures[D_menu_801CEEC4 * 2]),
+                       &D_menu_801CD818[D_menu_801CEEC4 * 2]);
+    Map_Texture_Sphere(gBSSMapPlanetTextures[(D_menu_801CEEC4 * 2) + 1],
+                       SEGMENTED_TO_VIRTUAL(gAssetMapPlanetTextures[(D_menu_801CEEC4 * 2) + 1]),
+                       &D_menu_801CD818[(D_menu_801CEEC4 * 2) + 1]);
+
+    D_menu_801CEEC4++;
+    if (D_menu_801CEEC4 > 3) {
+        D_menu_801CEEC4 = 0;
+    }
+
+    Lib_Texture_Mottle((u16*) aMapVenomCloud1Tex, (u16*) D_MAP_6048F80, 5);
 }
-*/
+
+RECOMP_PATCH void Map_PlanetCleared_Draw(PlanetId planetId) {
+    s32 alpha;
+
+    if (D_menu_801CD980 != true) {
+        alpha = D_menu_801CD900[planetId];
+    } else {
+        alpha = D_menu_801CD984;
+        D_menu_801CD900[planetId] = 255;
+    }
+
+    if (alpha != 0) {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_PLANET_CLEARED_MARK + planetId, G_EX_PUSH, G_MTX_MODELVIEW,
+                                        G_EX_EDIT_ALLOW);
+
+        RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, alpha);
+        gDPSetEnvColor(gMasterDisp++, 80, 80, 0, 0);
+
+        Matrix_Push(&gGfxMatrix);
+
+        Matrix_Copy(gGfxMatrix, &D_menu_801CE1E0[planetId]);
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        gSPDisplayList(gMasterDisp++, D_MAP_604D680);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        Matrix_Pop(&gGfxMatrix);
+
+        D_menu_801CEAB8[planetId] += 45.0f;
+        if (D_menu_801CD980 == false) {
+            D_menu_801CEAF8[planetId] += 5.0f;
+        }
+    }
+}
+
+RECOMP_PATCH void Map_Path_Draw(s32 index) {
+    Vec3f v;
+    f32 r;
+    f32 r2;
+    Vec3f vec;
+
+    v.x = gTexturedLines[index].posBB.x - gTexturedLines[index].posAA.x;
+    v.y = gTexturedLines[index].posBB.y - gTexturedLines[index].posAA.y;
+    v.z = gTexturedLines[index].posBB.z - gTexturedLines[index].posAA.z;
+
+    r = VEC3F_MAG(&v);
+
+    if (r == 0.0f) {
+        r = 1.0f;
+    }
+
+    if (sPaths[index].unk_14 == 2) {
+        vec.x = (v.x / r) * (r / (sPaths[index].length - 1));
+        vec.y = (v.y / r) * (r / (sPaths[index].length - 1));
+        vec.z = (v.z / r) * (r / (sPaths[index].length - 1));
+
+        D_menu_801CEEB0.x = gTexturedLines[index].posAA.x + (vec.x * D_menu_801CEEA0);
+        D_menu_801CEEB0.y = gTexturedLines[index].posAA.y + (vec.y * D_menu_801CEEA0);
+        D_menu_801CEEB0.z = gTexturedLines[index].posAA.z + (vec.z * D_menu_801CEEA0);
+
+        switch (D_menu_801CEEA4) {
+            case 0:
+                break;
+
+            case 100:
+                sMapTimer2 = 5;
+                D_menu_801CEEA4 = 10;
+                break;
+
+            case 10:
+                if (sMapTimer2 != 0) {
+                    break;
+                }
+                sMapTimer2 = 5;
+                D_menu_801CEEA4 = 20;
+                break;
+
+            case 20:
+                if (sMapTimer2 != 0) {
+                    break;
+                }
+
+                D_menu_801CEEA0++;
+                if (D_menu_801CEEA0 > sPaths[index].length - 1) {
+                    D_menu_801CEEA0 = 0;
+                }
+
+                D_menu_801CEEA4 = 100;
+                break;
+        }
+
+        if (D_menu_801CEEA4 != 10) {
+            return;
+        }
+    } else {
+        vec.x = (v.x / r) * gTexturedLines[index].zScale;
+        vec.y = (v.y / r) * gTexturedLines[index].zScale;
+        vec.z = (v.z / r) * gTexturedLines[index].zScale;
+
+        D_menu_801CEEB0.x = gTexturedLines[index].posAA.x + vec.x;
+        D_menu_801CEEB0.y = gTexturedLines[index].posAA.y + vec.y;
+        D_menu_801CEEB0.z = gTexturedLines[index].posAA.z + vec.z;
+
+        v.x = D_menu_801CEEB0.x - gTexturedLines[index].posAA.x;
+        v.y = D_menu_801CEEB0.y - gTexturedLines[index].posAA.y;
+        v.z = D_menu_801CEEB0.z - gTexturedLines[index].posAA.z;
+        r2 = VEC3F_MAG(&v);
+
+        if (((r / 9.0f) * 8.0f) < r2) {
+            D_menu_801CEEAC -= 16;
+            if (D_menu_801CEEAC < 0) {
+                D_menu_801CEEAC = 0;
+            }
+        }
+    }
+
+    if (sPaths[index].unk_14 == 5) {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_WARP + index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+        
+        Map_PathLine_Draw(sPaths[index].type);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    } else {
+        Map_Arwing_Draw(index);
+    }
+}
 
 #endif
