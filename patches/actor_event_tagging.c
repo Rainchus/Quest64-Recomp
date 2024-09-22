@@ -118,19 +118,26 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
         case EVID_WZ_METEOR_1:
         case EVID_WZ_METEOR_2:
         case EVID_WZ_GATE:
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+
             RCP_SetupDL(&gMasterDisp, SETUPDL_34);
             gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, (s32) this->fwork[15], (s32) this->fwork[16],
                             (s32) this->fwork[17], 255);
             gSPDisplayList(gMasterDisp++, sEventActorInfo[this->eventType].dList);
             gDPSetTextureFilter(gMasterDisp++, G_TF_BILERP);
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             break;
 
         default:
             if ((this->eventType < EVID_200) && (sEventActorInfo[this->eventType].dList != NULL)) {
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT_COMMON(this), G_EX_PUSH,
-                                               G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT_COMMON(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
 
                 gSPDisplayList(gMasterDisp++, sEventActorInfo[this->eventType].dList);
 
@@ -168,8 +175,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_TEAMMATE:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     if (gLevelType == LEVELTYPE_PLANET) {
                         gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
@@ -233,8 +240,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aA6SpaceMineDL);
 
@@ -246,8 +253,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aA6NinjinMissileDL);
 
@@ -264,8 +271,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aA6RocketDL);
 
@@ -280,8 +287,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_SX_LASER:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     if (this->timer_0C2 != 0) {
                         if (((this->timer_0C2 & 3) == 0) && (gPlayState != PLAY_PAUSE)) {
@@ -306,8 +313,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     Matrix_SetGfxMtx(&gMasterDisp);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aA6UmbraStationDL);
 
@@ -359,8 +366,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     Matrix_SetGfxMtx(&gMasterDisp);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aMeRockGull1DL);
                     Matrix_Pop(&gGfxMatrix);
@@ -376,8 +383,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_ME_FLIP_BOT:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aMeFlipBot1DL);
                     RCP_SetupDL(&gMasterDisp, SETUPDL_53);
@@ -389,8 +396,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_SUPPLY_CRATE:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     ActorSupplies_Draw(this);
 
@@ -409,8 +416,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     Matrix_Scale(gGfxMatrix, 0.6f, 0.6f, 0.6f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aVe1PillarDL);
 
@@ -424,8 +431,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                         Matrix_SetGfxMtx(&gMasterDisp);
 
                         // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                       G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                       G_EX_EDIT_ALLOW);
 
                         Texture_BlendRGBA16(this->fwork[16], 16 * 11, D_VE1_9003890, D_VE1_9003DF0, D_VE1_9003330);
                         gSPDisplayList(gMasterDisp++, aVe1BlockerDL);
@@ -439,8 +446,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aMaLaserTurretDL);
 
@@ -458,8 +465,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_BILL:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aBillShipDL);
 
@@ -471,8 +478,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_KATT:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aKattShipDL);
 
@@ -487,8 +494,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, this->work_046, this->work_046, this->work_046, 255);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aAqStarfishDL);
 
@@ -500,8 +507,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_21);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aAqShellDL);
 
@@ -520,8 +527,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                     gDPSetEnvColor(gMasterDisp++, 0, 0, 0, 0);
 
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH,
-                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     gSPDisplayList(gMasterDisp++, aWzSxEnemy1DL);
 
