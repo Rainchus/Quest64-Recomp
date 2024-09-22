@@ -17,18 +17,6 @@ typedef struct Scenery2 {
     /* 0x7C */ bool skipRot;
 } Scenery2; // size = 0x80
 
-extern Gfx aCoBuilding5DL[];
-extern Gfx aCoBuilding6DL[];
-extern Gfx aCoBuilding7DL[];
-extern Gfx aCoBuilding8DL[];
-extern Gfx aCoBuilding9DL[];
-extern Gfx aCoBuilding10DL[];
-extern Gfx D_CO_60199D0[];
-extern Gfx aCoIBeamDL[];
-extern Gfx aSyDebrisDL[];
-extern Gfx aAqBump2DL[];
-extern Gfx aCoShadow1DL[];
-
 void func_edisplay_8005D008(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32);
 void Recomp_CoBuilding_Draw(Scenery2* this);
@@ -97,6 +85,27 @@ RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 cullDir) {
     } else if (this->info.draw != NULL) {
         Object_SetCullDirection(cullDir);
         this->info.draw(&this->obj);
+    }
+}
+
+RECOMP_PATCH void Sprite_Draw(Sprite* this, s32 arg1) {
+    if (arg1 >= 0) {
+        this->obj.pos.y += gCameraShakeY;
+        func_edisplay_8005D008(&this->obj, 0);
+        this->obj.pos.y -= gCameraShakeY;
+
+        if (this->info.drawType == 0) {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+
+            gSPDisplayList(gMasterDisp++, this->info.dList);
+            
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+        } else if (this->info.draw != NULL) {
+            this->info.draw(&this->obj);
+        }
     }
 }
 
@@ -264,8 +273,195 @@ RECOMP_PATCH void FogShadow_Draw(FogShadow* this) {
     }
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    
+
     RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+}
+
+RECOMP_PATCH void Ve1Wall1_Draw(Ve1Wall1* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    RCP_SetupDL_57(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+    Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, aVe1Wall1DL);
+    RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Ve1Wall2_Draw(Ve1Wall2* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    RCP_SetupDL_57(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+    Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, aVe1Wall2DL);
+    RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Titania_TiPillar_Draw(TiPillar* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    switch (this->unk_44) {
+        case 0:
+            if (this->unk_44 == 0) {
+                gSPDisplayList(gMasterDisp++, D_TI1_7002270);
+            } else {
+                gSPDisplayList(gMasterDisp++, D_TI1_7000A80);
+            }
+            break;
+
+        case 1:
+        case 2:
+            if (this->obj.rot.z != 0.0f) {
+                if (this->obj.rot.z > 0.0f) {
+                    Matrix_Translate(gGfxMatrix, 75.0f, 0.0f, 0.0f, MTXF_APPLY);
+                    Matrix_SetGfxMtx(&gMasterDisp);
+                } else {
+                    Matrix_Translate(gGfxMatrix, -75.0f, 0.0f, 0.0f, MTXF_APPLY);
+                    Matrix_SetGfxMtx(&gMasterDisp);
+                }
+            }
+
+            if (this->unk_44 == 0) { // Can never be true, this condition is never going to pass.
+                gSPDisplayList(gMasterDisp++, D_TI1_7002270);
+            } else {
+                gSPDisplayList(gMasterDisp++, D_TI1_7000A80);
+            }
+            break;
+    }
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Macbeth_MaTower_Draw(Scenery* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
+    gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+    gSPDisplayList(gMasterDisp++, aMaTowerBottomDL);
+    gSPDisplayList(gMasterDisp++, aMaTowerTopDL);
+    gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Macbeth_MaProximityLight_Draw(MaProximityLight* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    if ((gPlayer[0].trueZpos - this->obj.pos.z) < this->vel.z) {
+        if (gPlayState != PLAY_PAUSE) {
+            Math_SmoothStepToF(&this->vel.x, 30, 0.5f, 30.0f, 0.0f);
+            if (this->vel.x < 31.0f) {
+                this->vel.x = 255.0f;
+            }
+        }
+        RCP_SetupDL(&gMasterDisp, SETUPDL_34);
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, this->vel.x, 0, 0, 255);
+    }
+    gSPDisplayList(gMasterDisp++, aMaProximityLightSidesDL);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
+    gSPDisplayList(gMasterDisp++, aMaProximityLightTopDL);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Macbeth_IndicatorSign_Draw(Scenery* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
+        Object_Kill(&this->obj, this->sfxSource);
+    }
+
+    RCP_SetupDL(&gMasterDisp, SETUPDL_57);
+
+    switch (this->obj.id) {
+        case OBJ_SCENERY_MA_INDICATOR_SIGN:
+            gSPDisplayList(gMasterDisp++, aMaIndicatorSignDL);
+            break;
+        case OBJ_SCENERY_MA_DISTANCE_SIGN_1:
+            gSPDisplayList(gMasterDisp++, aMaDistanceSign1DL);
+            break;
+        case OBJ_SCENERY_MA_DISTANCE_SIGN_2:
+            gSPDisplayList(gMasterDisp++, aMaDistanceSign2DL);
+            break;
+        case OBJ_SCENERY_MA_DISTANCE_SIGN_3:
+            gSPDisplayList(gMasterDisp++, aMaDistanceSign3DL);
+            break;
+        case OBJ_SCENERY_MA_DISTANCE_SIGN_4:
+            gSPDisplayList(gMasterDisp++, aMaDistanceSign4DL);
+            break;
+        case OBJ_SCENERY_MA_DISTANCE_SIGN_5:
+            gSPDisplayList(gMasterDisp++, aMaDistanceSign5DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_1:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch1DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_2:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch2DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_3:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch3DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_4:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch4DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_5:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch5DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_6:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch6DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_7:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch7DL);
+            break;
+        case OBJ_SCENERY_MA_RAILROAD_SWITCH_8:
+            gSPDisplayList(gMasterDisp++, aMaRailroadSwitch8DL);
+            break;
+    }
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void MeteoTunnel_Draw(MeTunnel* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    gSPDisplayList(gMasterDisp++, aMeMeteoTunnelDL);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Scenery_DrawTitaniaBones(Scenery* this) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    if (this->obj.id == OBJ_SCENERY_TI_SKULL) {
+        gSPDisplayList(gMasterDisp++, D_TI1_7007350);
+    } else {
+        Graphics_SetScaleMtx(D_edisplay_800CFA2C[this->obj.id - 29]);
+        gSPDisplayList(gMasterDisp++, D_TI1_700BB10);
+    }
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 #endif
