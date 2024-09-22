@@ -9,7 +9,15 @@ extern Vec3f sPlanetPositions[15];
 extern f32 D_menu_801CEA18[15];
 extern f32 D_menu_801CEEBC;
 extern f32 D_menu_801CEEC0;
+extern s32 D_menu_801CEB58[3][10];
+extern s32 D_menu_801CEBD0[3][10];
+extern f32 D_menu_801CEC48[3][10];
+extern f32 D_menu_801CECC0[3][10];
+extern f32 D_menu_801CED38[3][10];
+extern f32 D_menu_801CEDB0[3][10];
+extern f32 D_menu_801CEE28[3][10];
 extern bool sPlanetExplosions[EXPLOSIONS_MAX];
+extern Matrix D_menu_801CDA60[15];
 
 void Map_SolarRays_Draw(PlanetId);
 void Map_VenomCloud2_Draw(PlanetId planetId);
@@ -171,3 +179,92 @@ RECOMP_PATCH void Map_MeteoMeteors_Draw(void) {
         }
     }
 }
+
+#if 0
+
+RECOMP_PATCH void Map_PlanetExplosions_Draw(PlanetId planetId, PlanetExplosions explosionIdx) {
+    s32 i;
+    s32 temp2;
+    f32 temp;
+
+    if (sPlanets[planetId].alpha == 0) {
+        return;
+    }
+
+    if (!sPlanetExplosions[explosionIdx]) {
+        return;
+    }
+
+    temp2 = 10;
+    if (planetId != PLANET_CORNERIA) {
+        temp2 = 5;
+    }
+
+    RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+
+    gDPSetEnvColor(gMasterDisp++, 255, 0, 0, 0);
+
+    for (i = 0; i < temp2; i++) {
+        switch (D_menu_801CEB58[explosionIdx][i]) {
+            case 0:
+                D_menu_801CEC48[explosionIdx][i] += 0.1f;
+                if (D_menu_801CEC48[explosionIdx][i] >= D_menu_801CECC0[explosionIdx][i]) {
+                    D_menu_801CEC48[explosionIdx][i] = D_menu_801CECC0[explosionIdx][i];
+                    D_menu_801CEB58[explosionIdx][i] = 1;
+                }
+                break;
+
+            case 1:
+                D_menu_801CEE28[explosionIdx][i]--;
+                if (D_menu_801CEE28[explosionIdx][i] <= 0) {
+                    D_menu_801CEB58[explosionIdx][i] = 2;
+                }
+                break;
+
+            case 2:
+                D_menu_801CEBD0[explosionIdx][i] -= 48;
+                if (D_menu_801CEBD0[explosionIdx][i] < 0) {
+                    D_menu_801CEBD0[explosionIdx][i] = 0;
+                    D_menu_801CEB58[explosionIdx][i] = 3;
+                }
+                break;
+
+            case 3:
+                D_menu_801CEB58[explosionIdx][i] = RAND_INT(3.0f);
+                D_menu_801CEBD0[explosionIdx][i] = 255;
+                D_menu_801CEC48[explosionIdx][i] = 0.0f;
+                D_menu_801CECC0[explosionIdx][i] = 0.5f + RAND_FLOAT(0.3f);
+                D_menu_801CEE28[explosionIdx][i] = 1 + RAND_INT(4.0f);
+
+                temp = 110.0f;
+                if (explosionIdx == EXPLOSIONS_KATINA) {
+                    temp = 50.0f;
+                }
+
+                D_menu_801CED38[explosionIdx][i] = temp + RAND_INT(30.0f);
+                D_menu_801CEDB0[explosionIdx][i] = -10.0f + RAND_FLOAT(-60.0f);
+                break;
+        }
+
+        if ((D_menu_801CECC0[explosionIdx][i] == 0.0f) || (D_menu_801CEBD0[explosionIdx][i] == 0)) {
+            continue;
+        }
+
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 200, 200, D_menu_801CEBD0[explosionIdx][i]);
+
+        Matrix_Push(&gGfxMatrix);
+
+        Matrix_Mult(gGfxMatrix, &D_menu_801CDA60[planetId], MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, M_DTOR * D_menu_801CEDB0[explosionIdx][i], MTXF_APPLY);
+        Matrix_Translate(gGfxMatrix, 0.0f, D_menu_801CED38[explosionIdx][i], 0.0f, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, D_menu_801CEC48[explosionIdx][i], D_menu_801CEC48[explosionIdx][i],
+                     D_menu_801CEC48[explosionIdx][i], MTXF_APPLY);
+
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        gSPDisplayList(gMasterDisp++, aMapPlanetExplosionDL);
+
+        Matrix_Pop(&gGfxMatrix);
+    }
+}
+#endif
