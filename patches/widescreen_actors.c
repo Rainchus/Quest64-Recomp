@@ -216,21 +216,21 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
 
-    f32 maxZdist = 1000.0f;
-    f32 minZdist = -12000.0f;
+    f32 behindZdist = 1000.0f;
+    f32 frontZdist = -12000.0f;
     f32 xyOffsetBounds = 2000.0f + 1000.0f;
     f32 xyObjDistBoundMod = 0.5f;
 
     if (this->obj.id == OBJ_SCENERY_SY_SHOGUN_SHIP) {
-        maxZdist = 4000.0f;
-        minZdist = -13000.0f;
+        behindZdist = 4000.0f;
+        frontZdist = -13000.0f;
         xyOffsetBounds = 4500.0f;
     } else if (gCurrentLevel == LEVEL_VENOM_ANDROSS) {
-        minZdist = -20000.0f;
+        frontZdist = -20000.0f;
         xyObjDistBoundMod = 0.4f;
     } else if (this->obj.id == OBJ_SCENERY_VS_KA_FLBASE) {
-        maxZdist = 6000.0f;
-        minZdist = -20000.0f;
+        behindZdist = 6000.0f;
+        frontZdist = -20000.0f;
         xyOffsetBounds = 6000.0f;
         xyObjDistBoundMod = 0.9f;
     }
@@ -243,15 +243,29 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    if (((gCurrentLevel != LEVEL_SECTOR_Y))) {
+    if (gCurrentLevel == LEVEL_SECTOR_Z) {
+        behindZdist = 6000.0f;
+        frontZdist = -20000.0f * 2;
+        xyOffsetBounds = 6000.0f * 2;
+        xyObjDistBoundMod = 0.9f;
+        goto check;
+    }
+
+    if ((gCurrentLevel != LEVEL_SECTOR_Y) && (gCurrentLevel != LEVEL_VENOM_ANDROSS)) {
         goto render;
     }
 
-    if ((dest.z < maxZdist) && (minZdist < dest.z)) {
+check:
+    if ((dest.z < behindZdist) && (frontZdist < dest.z)) {
         if (fabsf(dest.y) < (fabsf(dest.z * xyObjDistBoundMod) + xyOffsetBounds)) {
             if (fabsf(dest.x) < (fabsf(dest.z * xyObjDistBoundMod) + xyOffsetBounds)) {
             render:
                 Display_SetSecondLight(&this->obj.pos);
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY_360(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+
                 if (this->obj.id == OBJ_SCENERY_AND_PASSAGE) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -259,24 +273,17 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
                     Matrix_RotateY(gGfxMatrix, M_PI / 2, MTXF_APPLY);
                     Matrix_Translate(gGfxMatrix, -551.0f, 0.0f, 0.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
-                    // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, (u32) (this) & 0xFFFFFFFF, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                   G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, D_VE2_6007650);
-                    // @recomp Pop the transform id.
-                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 } else {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
                     // u32 cur_transform_id = scenery360_transform_id(this);
-                    // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, (u32) (this) & 0xFFFFFFFF, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                   G_EX_EDIT_ALLOW);
                     gSPDisplayList(gMasterDisp++, this->info.dList);
-                    // @recomp Pop the transform id.
-                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
         }
     }
@@ -409,8 +416,8 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
                     Matrix_SetGfxMtx(&gMasterDisp);
                     if (this->info.drawType == 0) {
                         // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, this->index, G_EX_PUSH,
-                                                       G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                       G_EX_EDIT_ALLOW);
                         gSPDisplayList(gMasterDisp++, this->info.dList);
                         // @recomp Pop the transform id.
                         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
