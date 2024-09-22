@@ -242,7 +242,7 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    if ((((fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && !gBossActive) ||
+    if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */!gBossActive) ||
          (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
          (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) &&
         (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
@@ -369,7 +369,7 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     }
 
     if (gGameState == GSTATE_PLAY) {
-        Animation_DrawSkeleton(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw, NULL,
+        Animation_DrawSkeletonArwing(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw, NULL,
                                arwing, &gIdentityMatrix);
     } else {
         if (gGameState == GSTATE_MENU) {
@@ -377,7 +377,7 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
         } else {
             Animation_GetFrameData(&D_arwing_3015C28, 0, frameTable);
         }
-        Animation_DrawSkeleton(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
+        Animation_DrawSkeletonArwing(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
                                &gIdentityMatrix);
     }
 
