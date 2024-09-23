@@ -27,7 +27,8 @@
 #define TAG_ARWING_SKEL(arwing) (0xB0000000 | (((u32)(arwing) << 16) & 0x0FFF0000))
 #define TAG_FACE (0x100)
 #define TAG_CS_GREAT_FOX (0x200)
-#define PLAYER_TRAIL (0x300)
+#define TAG_PLAYER_TRAIL (0x300)
+#define TAG_TEAM_ARROW (0x400)
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)

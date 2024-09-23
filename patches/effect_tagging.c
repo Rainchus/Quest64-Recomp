@@ -844,7 +844,7 @@ RECOMP_PATCH void Effect_Effect360_361_362_Draw(Effect* this) {
  * Causes interpolation problem with Team Tags
  * Steps to reproduce: Play Solar.
  */
-#if 0
+#if 1
 RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
     f32 scale;
 
@@ -867,7 +867,7 @@ RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this)+ (u32)this->unk_4C + 21, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 100, this->unk_44);
 

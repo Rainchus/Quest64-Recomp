@@ -17,6 +17,8 @@ extern s32 D_menu_801CEEA4;
 extern f32 D_menu_801CD818[9];
 extern Gfx aCoBuilding5DL[];
 extern Gfx aBallDL[];
+extern Gfx aSzMissileMark[];
+extern Gfx* sTeammateMarkDLs[];
 extern s32 D_menu_801CEEC4;
 extern Gfx aTitleArwingShadowDL[];
 extern Gfx D_MAP_604D680[];

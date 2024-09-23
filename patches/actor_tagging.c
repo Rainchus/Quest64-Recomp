@@ -31,6 +31,57 @@ RECOMP_PATCH void Scenery360_Initialize(Scenery360* scenery360) {
 }
 */
 
+RECOMP_PATCH void Display_ActorMarks(void) {
+    s32 i;
+    f32 var_fs0;
+
+    if ((gGameFrameCount & 4) == 0) {
+        RCP_SetupDL_40();
+
+        for (i = 0; i < ARRAY_COUNT(gTeamArrowsViewPos); i++) {
+            if (gTeamArrowsViewPos[i].z < 0.0f) {
+                var_fs0 = (VEC3F_MAG(&gTeamArrowsViewPos[i])) * 0.0015f;
+                if (var_fs0 > 100.0f) {
+                    var_fs0 = 100.0f;
+                } else if (var_fs0 < 1.0f) {
+                    var_fs0 = 1.0f;
+                }
+
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, gTeamArrowsViewPos[i].x, gTeamArrowsViewPos[i].y, gTeamArrowsViewPos[i].z,
+                                 MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, var_fs0 * 0.25f, var_fs0 * 0.25f, 1.0f, MTXF_APPLY);
+
+                if ((i == 0) && (gCurrentLevel == LEVEL_SECTOR_Z)) {
+                    Matrix_Scale(gGfxMatrix, 2.0f, 2.0f, 1.0f, MTXF_APPLY);
+                }
+
+                Matrix_Translate(gGfxMatrix, 0.0f, 150.0f, 0.0f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEAM_ARROW + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+
+                if ((i == 0) && (gCurrentLevel == LEVEL_SECTOR_Z)) {
+                    gSPDisplayList(gMasterDisp++, aSzMissileMark);
+                } else {
+                    gSPDisplayList(gMasterDisp++, sTeammateMarkDLs[i]);
+                }
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+                Matrix_Pop(&gGfxMatrix);
+            }
+            gTeamArrowsViewPos[i].x = gTeamArrowsViewPos[i].y = 0;
+            gTeamArrowsViewPos[i].z = 100.0f;
+        }
+        gDPSetTextureFilter(gMasterDisp++, G_TF_BILERP);
+    }
+}
+
 RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
     f32 sp5C = 70.0f;
     f32 sp58 = -18.0f;
@@ -66,7 +117,7 @@ RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 100);
 
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, PLAYER_TRAIL, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_TRAIL, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
         if (player->arwing.leftWingState == WINGSTATE_INTACT) {
             Matrix_Push(&gGfxMatrix);
@@ -86,7 +137,8 @@ RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, PLAYER_TRAIL + 1, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_TRAIL + 1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
 
         if (player->arwing.rightWingState == WINGSTATE_INTACT) {
             Matrix_Push(&gGfxMatrix);
@@ -101,7 +153,7 @@ RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
             gSPDisplayList(gMasterDisp++, aBallDL);
             Matrix_Pop(&gGfxMatrix);
         }
-        
+
         // @recomp Pop the transform id.
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
