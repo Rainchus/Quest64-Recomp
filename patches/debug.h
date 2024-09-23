@@ -47,6 +47,9 @@
  * Cheats:
  * Max Bombs and Max Laser upgrade
  */
-#define DEBUG_CHEATS 1
+#define DEBUG_CHEATS 0
+#define DEBUG_L_TO_ALL_RANGE 0
+#define DEBUG_SPEED_CONTROL 0
+#define DEBUG_FULL_SAVE 1
 
 #endif

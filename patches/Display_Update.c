@@ -24,7 +24,12 @@ void Display_Reticle(Player* player);
 void Display_LandmasterMuzzleFlash(Player* player);
 void Display_OnFootMuzzleFlash(Player* player);
 void Display_DrawHelpAlert(void);
+#if DEBUG_SPAWNER == 1
 void Spawner(void);
+#endif
+#if DEBUG_BOSS_KILLER == 1
+void KillBoss(void);
+#endif
 
 RECOMP_PATCH void Display_Update(void) {
     s32 i;
@@ -37,7 +42,7 @@ RECOMP_PATCH void Display_Update(void) {
 
     sDrawCockpit = false;
 
-// @recomp remove 511 cap, hated from generations
+// @recomp remove 511 hit count cap, hated by generations
 #if 0
     // 511 hit count cap
     if (gHitCount > 511) {
@@ -264,6 +269,7 @@ RECOMP_PATCH void Display_Update(void) {
     sPlayersVisible[gPlayerNum] = false;
     Matrix_Pop(&gGfxMatrix);
 
+// @recomp DEBUG SECTION:
 #if DEBUG_CHEATS == 1
     if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
         return;
@@ -276,8 +282,10 @@ RECOMP_PATCH void Display_Update(void) {
     Spawner();
 #endif
 
-// @recomp DEBUG SECTION:
-#if 0
+#if DEBUG_BOSS_KILLER == 1
+    KillBoss();
+#endif
+#if DEBUG_L_TO_ALL_RANGE == 1
     {
         Player* player = &gPlayer[0];
         
@@ -286,13 +294,25 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
-#if 0 // baseSpeed control
+#if DEBUG_SPEED_CONTROL == 1 // baseSpeed control
     {
         Player* player = gPlayer;
+        static s32 prevSpeed;
+        static bool debugFreeze = false;
+
         if (gControllerPress[0].button & L_JPAD) {
-            player->baseSpeed-=50;
+            player->baseSpeed -= 50;
         } else if (gControllerPress[0].button & R_JPAD) {
-            player->baseSpeed+=50;
+            player->baseSpeed += 50;
+        }
+
+        if ((!debugFreeze) && (gControllerPress[0].button & D_JPAD)) {
+            prevSpeed = player->baseSpeed;
+            player->baseSpeed = 0;
+            debugFreeze = true;
+        } else if ((debugFreeze) && (gControllerPress[0].button & D_JPAD)) {
+            player->baseSpeed = prevSpeed;
+            debugFreeze = false;
         }
     }
 #endif
