@@ -6,7 +6,9 @@ void ActorAllRange_DrawBarrelRoll(ActorAllRange* this);
 void ActorAllRange_DrawShield(ActorAllRange* this);
 bool Display_ArwingWingsOverrideLimbDraw(s32 limbIndex, Gfx** gfxPtr, Vec3f* pos, Vec3f* rot, void* wingData);
 bool ActorAllRange_MissileOverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
-
+void Zoness_ZoDodora_Draw(Actor* this);
+void func_edisplay_8005D008(Object* obj, s32 drawType);
+void func_edisplay_8005D3CC(Object* obj, f32 xRot, f32 yRot, f32 zRot, s32 drawType);
 u32 create_scenery360_transform_id(void) {
     u32 ret = next_actor_transform;
     next_actor_transform++;
@@ -28,6 +30,98 @@ RECOMP_PATCH void Scenery360_Initialize(Scenery360* scenery360) {
     scenery360IdByte0(scenery360) = (cur_transform_id >>  8) & 0xFF;
 }
 */
+
+RECOMP_PATCH void Meteo_MeLaserCannon2_Update(MeLaserCannon2* this) {
+    Vec3f dest;
+    Vec3f src;
+
+    this->obj.rot.z += 1.0f;
+
+    Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_NEW);
+
+    src.x = 0.0f;
+    src.y = -1100.0f;
+    src.z = 0.0f;
+
+    Matrix_MultVec3fNoTranslate(gCalcMatrix, &src, &dest);
+
+    this->obj.pos.x = this->fwork[0] + dest.x;
+    this->obj.pos.y = this->fwork[1] + dest.y;
+
+    if (this->dmgType != DMG_NONE) {
+        Actor_Despawn(this);
+        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_EXPLOSION_S);
+        Object_Kill(&this->obj, this->sfxSource);
+        func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y + 30.0f, this->obj.pos.z, 5.0f);
+        Effect386_Spawn1(this->obj.pos.x, this->obj.pos.y + 30.0f, this->obj.pos.z, 0.0f, 0.0f, 0.0f, 3.0f, 10);
+    }
+
+    if (this->timer_0BC == 0) {
+        this->timer_0BC = 40;
+        if (this->obj.pos.z < (gPlayer[0].trueZpos - 1000.0f)) {
+            Effect_EnemyLaser(OBJ_EFFECT_ENEMY_LASER_1, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 120.0f);
+        }
+    }
+}
+
+RECOMP_PATCH void Actor_DrawOnRails(Actor* this) {
+    Vec3f sp34 = { 0.0f, 0.0f, 0.0f };
+
+    if (this->info.draw != NULL) {
+        switch (this->obj.id) {
+            case OBJ_ACTOR_ME_MORA:
+                MeMora_Draw(this);
+                return;
+            case OBJ_ACTOR_ZO_DODORA:
+                Zoness_ZoDodora_Draw(this);
+                return;
+        }
+
+        if ((this->obj.id == OBJ_ACTOR_EVENT) && (this->eventType == EVID_200)) {
+            MeMora_Draw(this);
+        } else {
+            if (this->info.unk_19 != 0) {
+                this->obj.pos.y += gCameraShakeY;
+                func_edisplay_8005D008(&this->obj, this->info.drawType);
+                this->obj.pos.y -= gCameraShakeY;
+            } else if ((this->obj.id == OBJ_ACTOR_EVENT) && (this->eventType != EVID_A6_UMBRA_STATION)) {
+                func_edisplay_8005D3CC(&this->obj, this->vwork[29].x, this->vwork[29].y,
+                                       this->vwork[29].z + this->rot_0F4.z, this->info.drawType);
+            } else {
+                func_edisplay_8005D008(&this->obj, this->info.drawType);
+            }
+
+            if (this->info.drawType == 0) {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+
+                gSPDisplayList(gMasterDisp++, this->info.dList);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+                Object_UpdateSfxSource(this->sfxSource);
+            } else {
+                this->info.draw(&this->obj);
+                Object_UpdateSfxSource(this->sfxSource);
+                if (((this->obj.id == OBJ_ACTOR_TEAM_BOSS) ||
+                     ((this->obj.id == OBJ_ACTOR_SX_SLIPPY) && (this->animFrame > 0))) &&
+                    (gReflectY > 0)) {
+                    Matrix_MultVec3f(gGfxMatrix, &sp34, &gTeamArrowsViewPos[this->aiType]);
+                }
+            }
+
+            if ((this->lockOnTimers[TEAM_ID_FOX] != 0) && (gReflectY > 0)) {
+                sp34.y += this->info.targetOffset;
+                Matrix_MultVec3f(gGfxMatrix, &sp34, &gLockOnTargetViewPos[TEAM_ID_FOX]);
+                if (gLockOnTargetViewPos[TEAM_ID_FOX].z > -200.0f) {
+                    this->lockOnTimers[TEAM_ID_FOX] = 0;
+                }
+            }
+        }
+    }
+}
+
 #if 1
 RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
     f32 sp38;
@@ -242,7 +336,7 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */!gBossActive) ||
+    if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */ !gBossActive) ||
          (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
          (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) &&
         (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
@@ -369,8 +463,8 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     }
 
     if (gGameState == GSTATE_PLAY) {
-        Animation_DrawSkeletonArwing(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw, NULL,
-                               arwing, &gIdentityMatrix);
+        Animation_DrawSkeletonArwing(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw,
+                                     NULL, arwing, &gIdentityMatrix);
     } else {
         if (gGameState == GSTATE_MENU) {
             Animation_GetFrameData(&D_arwing_3015AF4, 0, frameTable);
@@ -378,7 +472,7 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
             Animation_GetFrameData(&D_arwing_3015C28, 0, frameTable);
         }
         Animation_DrawSkeletonArwing(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
-                               &gIdentityMatrix);
+                                     &gIdentityMatrix);
     }
 
     D_display_800CA22C = false;
