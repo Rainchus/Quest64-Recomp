@@ -849,7 +849,7 @@ RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
     f32 scale;
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + (u32)this->unk_4C, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     Graphics_SetScaleMtx(this->scale2);
 
@@ -860,14 +860,11 @@ RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
         Matrix_Scale(gGfxMatrix, scale, scale, 1.0f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
         gSPDisplayList(gMasterDisp++, D_800D17A4[this->unk_4C]);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
         return;
     }
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this)+ (u32)this->unk_4C + 21, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 100, this->unk_44);
 
@@ -875,6 +872,9 @@ RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
         Matrix_Scale(gGfxMatrix, 2.5f, 2.5f, 2.5f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
         gSPDisplayList(gMasterDisp++, D_800D18A0[this->unk_4C]);
+        
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
         return;
     }
     gSPDisplayList(gMasterDisp++, D_800D18A0[this->unk_4C]);
