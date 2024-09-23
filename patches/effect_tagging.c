@@ -840,11 +840,6 @@ RECOMP_PATCH void Effect_Effect360_361_362_Draw(Effect* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-/**
- * Causes interpolation problem with Team Tags
- * Steps to reproduce: Play Solar.
- */
-#if 1
 RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
     f32 scale;
 
@@ -872,7 +867,7 @@ RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
         Matrix_Scale(gGfxMatrix, 2.5f, 2.5f, 2.5f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
         gSPDisplayList(gMasterDisp++, D_800D18A0[this->unk_4C]);
-        
+
         // @recomp Pop the transform id.
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
         return;
@@ -882,7 +877,6 @@ RECOMP_PATCH void Effect_FireSmoke_Draw(EffectFireSmoke* this) {
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
-#endif
 
 RECOMP_PATCH void Effect_Effect375_Draw(Effect375* this) {
     // @recomp Tag the transform.
