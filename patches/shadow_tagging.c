@@ -61,7 +61,7 @@ extern f32 sPlayerShadowing;
 extern Gfx aArwingShadowDL[];
 extern Gfx D_landmaster_3008100[];
 extern Gfx D_versus_301E570[];
-extern Gfx aRadarMarkKaSaucererDL[];
+extern Gfx aBallDL[];
 
 RECOMP_PATCH void Display_PlayerShadow_Draw(Player* player) {
     Math_SmoothStepToF(&sPlayerShadowing, player->shadowing, 1.0f, 10.0f, 0.0f);
@@ -117,7 +117,7 @@ RECOMP_PATCH void Display_PlayerShadow_Draw(Player* player) {
             Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-            gSPDisplayList(gMasterDisp++, aRadarMarkKaSaucererDL);
+            gSPDisplayList(gMasterDisp++, aBallDL);
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
             Matrix_Pop(&gGfxMatrix);
             break;

@@ -9,7 +9,7 @@ extern Gfx D_102F5E0[];
 extern Gfx D_arwing_3016B30[];
 extern Gfx D_ZO_6024220[];
 extern Gfx D_BG_SPACE_2006F50[];
-extern Gfx aRadarMarkKaSaucererDL[];
+extern Gfx aBallDL[];
 extern Gfx D_BG_PLANET_200D750[];
 extern Gfx D_blue_marine_3000660[];
 extern Gfx D_BG_PLANET_20112C0[];
@@ -332,7 +332,7 @@ RECOMP_PATCH void Effect_Effect351_Draw(Effect351* this) {
 
     Graphics_SetScaleMtx(this->scale2);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->unk_4A);
-    gSPDisplayList(gMasterDisp++, aRadarMarkKaSaucererDL);
+    gSPDisplayList(gMasterDisp++, aBallDL);
 
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
