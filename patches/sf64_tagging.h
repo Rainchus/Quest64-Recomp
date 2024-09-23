@@ -3,7 +3,6 @@
 
 /* For dynamic actors */
 #define TAG_ADDRESS(ptr) ((u32) (ptr) & 0x0FFFFFFF)
-#define TAG_ADDRESS_SKEL(ptr) ((u32) ((u32)(ptr) << 16) & 0x0FFF0000)
 
 /*
     X    XXX    XX     XX
@@ -20,15 +19,19 @@
 #define TAG_SCENERY_360(scenery360) ((u32) (0x50000000 | (TAG_ADDRESS(scenery360))))
 #define TAG_EFFECT(effect) ((u32) (0x60000000 | (TAG_OBJ(effect))))
 #define TAG_ITEM(item) ((u32) (0x70000000 | (TAG_OBJ(item))))
-#define TAG_LIMB(limb) ((u32) (0x80000000 | (TAG_ADDRESS(limb))))
-// #define TAG_ACTOR_SKEL(limb) ((u32) (0x90000000 | (TAG_ADDRESS_SKEL(limb))))
 
-/* Derivatives */
-#define TAG_ARWING_SKEL(arwing) (0xB0000000 | (((u32)(arwing) << 16) & 0x0FFF0000))
+/* Skeletons */
+#define TAG_LIMB_ADDRESS(ptr, data) ((((u32) (ptr) << 16) & 0xFFFF0000) | ((u32) (data) & 0x0000FFFF))
+#define TAG_LIMB(limb, data) ((u32) (0x80000000 | (TAG_LIMB_ADDRESS(limb, data))))
+
+/* Others */
+#define TAG_ARWING_SKEL(arwing) (0xB0000000 | (((u32) (arwing) << 16) & 0x0FFF0000))
 #define TAG_FACE (0x100)
 #define TAG_CS_GREAT_FOX (0x200)
 #define TAG_PLAYER_TRAIL (0x300)
 #define TAG_TEAM_ARROW (0x400)
+#define TAG_VEHICLE (0x500)
+#define TAG_TEXTURED_LINE (0x600)
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)
@@ -42,7 +45,6 @@
 #define TAG_PATH_PLANET (0xA0002023)
 #define TAG_VENOM_CLOUD_1 (0xA0002025)
 #define TAG_VENOM_CLOUD_2 (0xA0002026)
-#define TAG_TEXTURED_LINE (0xA0002027)
 #define TAG_TEXTURED_LINE (0xA0002027)
 #define TAG_PLANET_CLEARED_MARK (0xA000203F)
 #define TAG_CORNERIA_EXPLOSION (0xA000204E)
@@ -83,8 +85,9 @@ void Animation_DrawSkeletonOriginal(s32 mode, Limb** skeletonSegment, Vec3f* joi
                                     Matrix* transform);
 
 void Animation_DrawLimbArwing(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
-                             OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data);
+                              OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data);
 
-void Animation_DrawSkeletonArwing(s32 mode, Limb** skeletonSegment, Vec3f* jointTable, OverrideLimbDraw overrideLimbDraw,
-                                 PostLimbDraw postLimbDraw, void* data, Matrix* transform);
+void Animation_DrawSkeletonArwing(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+                                  OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                  Matrix* transform);
 #endif
