@@ -1484,3 +1484,66 @@ RECOMP_PATCH void Bolse_Effect397_Draw(Effect397* this) {
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+
+RECOMP_PATCH void TexturedLine_Draw(void) {
+    s32 i;
+
+    if (gCurrentLevel == LEVEL_MACBETH) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_33);
+        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+    } else if ((gCurrentLevel == LEVEL_AQUAS) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_41);
+    } else {
+        RCP_SetupDL_14();
+    }
+
+    for (i = 0; i < ARRAY_COUNT(gTexturedLines); i++) {
+        TexturedLine* texLine = &gTexturedLines[i];
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEXTURED_LINE + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        if (gTexturedLines[i].mode != 0) {
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, texLine->posAA.x, texLine->posAA.y, texLine->posAA.z + gPathProgress,
+                             MTXF_APPLY);
+            Matrix_RotateY(gGfxMatrix, texLine->yRot, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, texLine->xRot, MTXF_APPLY);
+            Matrix_RotateZ(gGfxMatrix, texLine->yRot, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, texLine->xyScale, texLine->xyScale, texLine->zScale, MTXF_APPLY);
+
+            if ((gCurrentLevel == LEVEL_AQUAS) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) {
+                s32 alpha = ((gGameFrameCount % 2) != 0) ? 180 : 50;
+
+                gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, alpha);
+                if (gCurrentLevel == LEVEL_AQUAS) {
+                    Matrix_Scale(gGfxMatrix, 0.01f, 0.3f, 0.0025f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
+                    Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 5.0f * M_DTOR, MTXF_APPLY);
+                    Matrix_SetGfxMtx(&gMasterDisp);
+                    gSPDisplayList(gMasterDisp++, D_AQ_60119A0);
+                } else if (gCurrentLevel == LEVEL_VENOM_ANDROSS) {
+                    Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.0025f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
+                    Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 25.0f * M_DTOR, MTXF_APPLY);
+                    Matrix_SetGfxMtx(&gMasterDisp);
+                    gSPDisplayList(gMasterDisp++, D_ANDROSS_C017440);
+                }
+            } else {
+                Matrix_SetGfxMtx(&gMasterDisp);
+                if (gCurrentLevel == LEVEL_MACBETH) {
+                    gSPDisplayList(gMasterDisp++, D_MA_6012C00);
+                } else {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, texLine->prim.r, texLine->prim.g, texLine->prim.b,
+                                    texLine->prim.a);
+                    gSPDisplayList(gMasterDisp++, D_edisplay_800CFD80);
+                }
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+}
