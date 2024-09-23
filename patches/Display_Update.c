@@ -316,4 +316,7 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
+#if DEBUG_NO_COLLISION == 1
+        gPlayer->mercyTimer = 1000;
+#endif
 }
