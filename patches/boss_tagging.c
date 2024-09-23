@@ -172,3 +172,158 @@ RECOMP_PATCH void Bolse_BoBaseShield_Draw(BoBaseShield* this) {
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 }
+
+RECOMP_PATCH void Meteo_MeCrusher_Draw(MeCrusher* this) {
+    s32 i;
+    f32 var_fs0;
+    f32 var_fs1;
+    s32 pad;
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    gSPDisplayList(gMasterDisp++, aMeCrusherDL);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    RCP_SetupDL_64();
+    gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this) + 10, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    for (i = 0; i < 6; i++) {
+        if ((this->fwork[i + 3] != 0) && (this->fwork[11] == 0.0f)) {
+            var_fs1 = 2.0f * this->fwork[3 + i];
+            Matrix_Push(&gGfxMatrix);
+
+            switch (i) {
+                case 0:
+                    Matrix_Translate(gGfxMatrix, 746.0f, 741.0f, 680.0f, MTXF_APPLY);
+                    break;
+
+                case 1:
+                    Matrix_Translate(gGfxMatrix, -746.0f, 741.0f, 680.0f, MTXF_APPLY);
+                    break;
+
+                case 2:
+                    Matrix_Translate(gGfxMatrix, -746.0f, -741.0f, 680.0f, MTXF_APPLY);
+                    break;
+
+                case 3:
+                    Matrix_Translate(gGfxMatrix, 746.0f, -741.0f, 680.0f, MTXF_APPLY);
+                    break;
+
+                case 4:
+                    Matrix_Translate(gGfxMatrix, 1283.0f, 0.0f, -340.0f, MTXF_APPLY);
+                    break;
+
+                case 5:
+                    Matrix_Translate(gGfxMatrix, -1283.0f, 0.0f, -340.0f, MTXF_APPLY);
+                    break;
+            }
+
+            if (i < 4) {
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 32, 32, 128);
+                Matrix_Scale(gGfxMatrix, var_fs1, var_fs1, var_fs1, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, aBlueSphereDL);
+            } else {
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 128);
+                Matrix_Scale(gGfxMatrix, var_fs1 * 6.0f, var_fs1 * 6.0f, var_fs1 * 6.0f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, aBlueSphereDL);
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+    }
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this) + 20, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    for (i = 0; i < 7; i++) {
+        if (this->swork[2 + i] != 0) {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, this->swork[19], 255);
+
+            if ((this->swork[9 + i] % 2) != 0) {
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 80, 0, 0, 255);
+            }
+
+            Matrix_Push(&gGfxMatrix);
+
+            if (i == 4) {
+                Matrix_Translate(gGfxMatrix, 0.0f, 0, 300.0f, MTXF_APPLY);
+                Matrix_RotateZ(gGfxMatrix, M_PI / 4, MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, this->fwork[21], this->fwork[21], 1.0f, MTXF_APPLY);
+            }
+
+            if (i == 5) {
+                Matrix_Translate(gGfxMatrix, 0.0f, 330.0f, -1022.0f, MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, this->fwork[22] * 3.2f, 2.0f * this->fwork[22], 1.0f, MTXF_APPLY);
+            }
+
+            if (i == 6) {
+                Matrix_Translate(gGfxMatrix, 0.0f, -330.0f, -1022.0f, MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, this->fwork[23] * 3.2f, 2.0f * this->fwork[23], 1.0f, MTXF_APPLY);
+            }
+
+            if (i < 4) {
+                Matrix_RotateZ(gGfxMatrix, M_DTOR * 90.0f * i, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 0.0f, 200.0f, 500.0f, MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, this->fwork[17 + i], this->fwork[17 + i], 1.0f, MTXF_APPLY);
+            }
+
+            Matrix_SetGfxMtx(&gMasterDisp);
+
+            if (i < 4) {
+                gSPDisplayList(gMasterDisp++, D_ME_6024AD0);
+            } else {
+                gSPDisplayList(gMasterDisp++, D_ME_60236F0);
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+    }
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Meteo_MeCrusherShield_Draw(MeCrusherShield* this) {
+    s32 i;
+
+    if ((this->timer_054 % 2) != 0) {
+        RCP_SetupDL_27();
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 255, 0, 255);
+    }
+
+    Matrix_RotateZ(gGfxMatrix, (M_PI / 4), MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    gSPDisplayList(gMasterDisp++, D_ME_60240B0);
+    RCP_SetupDL_64();
+
+    for (i = 1; i < 4; i++) {
+        if (this->swork[0] != 0) {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->swork[0]);
+            Matrix_Push(&gGfxMatrix);
+            Matrix_RotateZ(gGfxMatrix, M_DTOR * 90.0f * i, MTXF_APPLY);
+            Matrix_Translate(gGfxMatrix, 0.0f, 156.0f, 930.0f, MTXF_APPLY);
+
+            if ((gGameFrameCount % 2) != 0) {
+                Matrix_Scale(gGfxMatrix, 6.0f, 9.0f, 5.0f, MTXF_APPLY);
+            } else {
+                Matrix_Scale(gGfxMatrix, 4.0f, 7.0f, 5.0f, MTXF_APPLY);
+            }
+
+            Matrix_RotateZ(gGfxMatrix, 1.5707964f, MTXF_APPLY); // (M_PI / 2) does not match
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, D_ME_60263F0);
+            Matrix_Pop(&gGfxMatrix);
+        }
+    }
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
