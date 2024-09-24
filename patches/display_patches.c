@@ -10,6 +10,9 @@
 
 extern bool sDrawCockpit;
 extern u8 sPlayersVisible[];
+extern f32 sReticleScales[4];
+extern f32 D_i3_801C41B8[30];
+extern s32 D_i3_801C4190[10];
 
 void Display_CsLevelCompleteHandleCamera(Player* player);
 void Display_Player_Update(Player* player, s32 reflectY);
@@ -288,7 +291,7 @@ RECOMP_PATCH void Display_Update(void) {
 #if DEBUG_L_TO_ALL_RANGE == 1
     {
         Player* player = &gPlayer[0];
-        
+
         if (gControllerPress[0].button & L_TRIG) {
             player->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
         }
@@ -317,6 +320,163 @@ RECOMP_PATCH void Display_Update(void) {
     }
 #endif
 #if DEBUG_NO_COLLISION == 1
-        gPlayer->mercyTimer = 1000;
+    gPlayer->mercyTimer = 1000;
 #endif
+}
+
+RECOMP_PATCH void Display_Reticle(Player* player) {
+    Vec3f* translate;
+    s32 i;
+
+    if ((gPlayerNum == player->num) && ((player->form == FORM_ARWING) || (player->form == FORM_LANDMASTER)) &&
+        player->draw &&
+        (((gGameState == GSTATE_PLAY) && (player->state_1C8 == PLAYERSTATE_1C8_ACTIVE)) ||
+         (gGameState == GSTATE_MENU))) {
+        for (i = 0; i < 2; i++) {
+            translate = &D_display_801613E0[i];
+            Matrix_Push(&gGfxMatrix);
+
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_RETICLE + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+            Matrix_Translate(gGfxMatrix, translate->x, translate->y, translate->z, MTXF_APPLY);
+
+            if (gChargeTimers[player->num] >= 20) {
+                RCP_SetupDL(&gMasterDisp, SETUPDL_63);
+                if (i == 1) {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
+                    gDPSetEnvColor(gMasterDisp++, 255, 0, 0, 255);
+                    Math_SmoothStepToF(&sReticleScales[player->num], 2.0f, 1.0f, 0.4f, 0.0f);
+                } else {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 0, 255);
+                    gDPSetEnvColor(gMasterDisp++, 255, 255, 0, 255);
+                }
+            } else {
+                RCP_SetupDL_36();
+            }
+
+            if (i == 1) {
+                Matrix_Scale(gGfxMatrix, sReticleScales[player->num], sReticleScales[player->num], 1.0f, MTXF_APPLY);
+                Math_SmoothStepToF(&sReticleScales[player->num], 1.0f, 1.0f, 0.2f, 0.0f);
+            }
+            Matrix_Scale(gGfxMatrix, 4.0f, 4.0f, 4.0f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, D_1024F60);
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+            Matrix_Pop(&gGfxMatrix);
+        }
+    }
+}
+
+RECOMP_PATCH void Display_LockOnIndicator(void) {
+    s32 i;
+    s32 j;
+    f32 var_fs0;
+
+    for (i = 0; i < gCamCount; i++) {
+        if (gLockOnTargetViewPos[i].z < 0.0f) {
+            var_fs0 = VEC3F_MAG(&gLockOnTargetViewPos[i]);
+            if (var_fs0 < 20000.0f) {
+                var_fs0 *= 0.0015f;
+                if (var_fs0 > 100.0f) {
+                    var_fs0 = 100.0f;
+                }
+                if (var_fs0 < 1.2f) {
+                    var_fs0 = 1.2f;
+                }
+
+                Matrix_Push(&gGfxMatrix);
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_RETICLE + 2 + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+
+                Matrix_Translate(gGfxMatrix, gLockOnTargetViewPos[i].x, gLockOnTargetViewPos[i].y,
+                                 gLockOnTargetViewPos[i].z, MTXF_APPLY);
+                if ((gPlayState != PLAY_PAUSE) && (i == gPlayerNum)) {
+                    Math_SmoothStepToF(&D_display_801615A8[i], 0.0f, 0.5f, 20.0f, 0);
+                    Math_SmoothStepToF(&D_display_801615B8[i], 1.0, 0.5f, 0.2f, 0);
+                }
+                var_fs0 *= D_display_801615B8[i];
+                Matrix_Scale(gGfxMatrix, var_fs0 * 1.5f, var_fs0 * 1.5f, 1.0f, MTXF_APPLY);
+                Matrix_RotateZ(gGfxMatrix, D_display_801615A8[i] * M_DTOR, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+                gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
+                gDPSetEnvColor(gMasterDisp++, 255, 0, 0, 255);
+                gSPDisplayList(gMasterDisp++, D_1024F60);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+                Matrix_Pop(&gGfxMatrix);
+            }
+        }
+    }
+
+    for (j = 0; j < gCamCount; j++) {
+        gLockOnTargetViewPos[j].x = gLockOnTargetViewPos[j].y = 0.f;
+        gLockOnTargetViewPos[j].z = 100.0f;
+    }
+}
+
+// Blue Marine Reticle
+RECOMP_PATCH void Aquas_801AA20C(void) {
+    s32 i;
+    f32 x;
+    f32 y;
+
+    if (gPlayer[0].draw) {
+        Matrix_Push(&gGfxMatrix);
+        Math_SmoothStepToF(&D_i3_801C41B8[5], 3.0f, 1.0f, 4.0f, 0.0001f);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_61);
+
+        if (D_i3_801C4190[3] == 0) {
+            gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
+            x = -10.0f;
+            y = 10.0f;
+
+            if (D_i3_801C4190[0] != 0) {
+                x = y = 0.0f;
+            }
+
+            Matrix_Translate(gGfxMatrix, D_i3_801C41B8[0] + x, D_i3_801C41B8[1] + y,
+                             D_i3_801C41B8[2] + gPlayer[0].zPath, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, D_i3_801C41B8[5], D_i3_801C41B8[5], D_i3_801C41B8[5], MTXF_APPLY);
+
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_RETICLE + 6, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+            for (i = 0; i < 4; i++) {
+                Matrix_RotateZ(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, x, y, 0.0f, MTXF_APPLY);
+                Matrix_Push(&gGfxMatrix);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, D_blue_marine_3000470);
+                Matrix_Pop(&gGfxMatrix);
+            }
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        } else {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_RETICLE + 7, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+            gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
+            Matrix_Translate(gGfxMatrix, D_i3_801C41B8[0], D_i3_801C41B8[1], D_i3_801C41B8[2] + gPlayer[0].zPath,
+                             MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, D_i3_801C41B8[5], D_i3_801C41B8[5], D_i3_801C41B8[5], MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, D_blue_marine_3000130);
+            
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+        }
+
+        Matrix_Pop(&gGfxMatrix);
+    }
 }
