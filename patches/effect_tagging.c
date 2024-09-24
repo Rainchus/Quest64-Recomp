@@ -1148,7 +1148,7 @@ RECOMP_PATCH void Effect_Effect395_Draw(Effect395* this) {
     }
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + this->state, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     switch (this->state) {
         case 0:
