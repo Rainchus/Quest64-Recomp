@@ -1,4 +1,4 @@
-#if 1
+
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #define __sinf __sinf_recomp
 
@@ -10,6 +10,7 @@
 #include "patches.h"
 #include "sf64audio_external.h"
 
+extern u16 D_TR_6005938[1024];
 extern u8 gDrawBackdrop;
 extern Gfx D_versus_302D4D0[];
 extern Gfx D_CO_60059F0[];
@@ -69,13 +70,18 @@ extern Gfx D_ZO_6008830[];
 extern Gfx D_ZO_600B0E0[];
 extern u16 D_CO_6028A60[];
 
-f32 sGroundPositions360x[4] = {
+#if 1 // Global scope
+
+extern f32 sGroundPositions360x[4];
+extern f32 sGroundPositions360z[4];
+
+f32 sGroundPositions360x_FIX[4] = {
     5999.0f,
     -5999.0f,
     5999.0f,
     -5999.0f,
 };
-f32 sGroundPositions360z[4] = {
+f32 sGroundPositions360z_FIX[4] = {
     5999.0f,
     5999.0f,
     -5999.0f,
@@ -888,7 +894,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
 
             if (gLevelMode == LEVELMODE_ON_RAILS) {
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_CO_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
 
                 gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(D_CO_601B6C0));
@@ -958,19 +964,32 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, D_CO_601B640);
+
                 // @recomp Pop the transform id.
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
                 Matrix_Pop(&gGfxMatrix);
             } else {
                 gGroundSurface = SURFACE_GRASS;
                 gBgColor = 0x845; // 8, 8, 32
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
                 for (i = 0; i < ARRAY_COUNT(sGroundPositions360x); i++) {
                     Matrix_Push(&gGfxMatrix);
-                    Matrix_Translate(gGfxMatrix, sGroundPositions360x[i], 0.0f, sGroundPositions360z[i], MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
+                                     MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, D_CO_601EAA0);
                     Matrix_Pop(&gGfxMatrix);
                 }
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
             break;
 
@@ -993,6 +1012,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                                         G_TX_NOLOD);
                     break;
             }
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+
             gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, sp1C4);
             temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f));
             temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
@@ -1049,76 +1072,127 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             gSPDisplayList(gMasterDisp++, sp1C0);
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
             Matrix_Pop(&gGfxMatrix);
             break;
 
         case LEVEL_TRAINING:
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+
+            static Vtx trainingGroundVtx_FIX[] = {
+                { { { 4000, 0, -6000 }, 0, { 20947, -19923 }, { 0, 120, 0, 255 } } },
+                { { { -4000, 0, -6000 }, 0, { 0, -19923 }, { 0, 120, 0, 255 } } },
+                { { { -4000, 0, 0 }, 0, { 0, -9449 }, { 0, 120, 0, 255 } } },
+                { { { 4000, 0, 0 }, 0, { 20947, -9449 }, { 0, 120, 0, 255 } } },
+                { { { -4000, 0, 6000 }, 0, { 0, 1023 }, { 0, 120, 0, 255 } } },
+                { { { 4000, 0, 6000 }, 0, { 20947, 1023 }, { 0, 120, 0, 255 } } },
+            };
+
+            static Gfx trainingGroundDL_FIX[] = {
+                gsSPVertex(trainingGroundVtx_FIX, 6, 0),
+                gsSP2Triangles(1, 2, 3, 0, 1, 3, 0, 0),
+                gsSP2Triangles(4, 5, 3, 0, 4, 3, 2, 0),
+                gsSPEndDisplayList(),
+            };
+
+            sp1C4 = D_TR_6005938;
+            sp1C0 = trainingGroundDL_FIX;
+            gDPLoadTextureBlock(gMasterDisp++, sp1C4, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                                G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
+            RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+
             if (gLevelMode == LEVELMODE_ON_RAILS) {
-                if (gPathTexScroll > 290.0f) {
-                    gPathTexScroll -= 290.0f;
-                }
+                // if (gPathTexScroll > 290.0f) {
+                //     gPathTexScroll -= 290.0f;
+                // }
+                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, sp1C4);
+                temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f)); // 0.64f / 3.0f
+                temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
+                gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
+                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
 
                 // CENTER FAR
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f /* + gPathTexScroll*/, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
                 // LEFT
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -3000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -3000.0f, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
                 // RIGHT
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -3000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -3000.0f /* + gPathTexScroll*/, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
 
                 // CENTER
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -9000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -9000.0f /* + gPathTexScroll*/, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
                 // LEFT
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -9000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -9000.0f /* + gPathTexScroll*/, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
                 // RIGHT
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -9000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -9000.0f /* + gPathTexScroll*/, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
 
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 3000.0f + gPathTexScroll, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 3000.0f /* + gPathTexScroll*/, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
 
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
             } else {
-                for (i = 0; i < ARRAY_COUNT(sGroundPositions360x); i++) {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
+                for (i = 0; i < ARRAY_COUNT(sGroundPositions360x_FIX); i++) {
                     Matrix_Push(&gGfxMatrix);
-                    Matrix_Translate(gGfxMatrix, sGroundPositions360x[i], 0.0f, sGroundPositions360z[i], MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
+                                     MTXF_APPLY);
                     Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, D_TR_6005880);
                     Matrix_Pop(&gGfxMatrix);
                 }
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
             break;
 
@@ -1219,7 +1293,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_AQ_2, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
-                
+
                 Matrix_Translate(gGfxMatrix, 0.0f, D_bg_8015F970, -9000.0f, MTXF_APPLY); // Center
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
