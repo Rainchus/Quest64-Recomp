@@ -19,7 +19,7 @@
 #define TAG_SCENERY_360(scenery360) ((u32) (0x50000000 | (TAG_ADDRESS(scenery360))))
 #define TAG_EFFECT(effect) ((u32) (0x60000000 | (TAG_OBJ(effect))))
 #define TAG_ITEM(item) ((u32) (0x70000000 | (TAG_OBJ(item))))
-
+#define TAG_PLAYER_SHOT(shot) ((u32)(0xC0000000 | (TAG_OBJ(shot))))
 /* Skeletons */
 #define TAG_LIMB_ADDRESS(ptr, data) ((((u32) (ptr) << 16) & 0xFFFF0000) | ((u32) (data) & 0x0000FFFF))
 #define TAG_LIMB(limb, data) ((u32) (0x80000000 | (TAG_LIMB_ADDRESS(limb, data))))
@@ -61,9 +61,10 @@
 
 /* Ground */
 #define TAG_GROUND (0xB0000000)
-#define TAG_GROUND_CO_ON_RAILS (0x1000)
-#define TAG_GROUND_AQ (0x1001)
-#define TAG_GROUND_AQ_2 (0x1002)
+#define TAG_GROUND_ON_RAILS (0x1000)
+#define TAG_GROUND_ALL_RANGE (0x1001)
+#define TAG_GROUND_AQ (0x1010)
+#define TAG_GROUND_AQ_2 (0x1011)
 
 #define ACTOR_TRANSFORM_LIMB_COUNT 256
 #define ACTOR_TRANSFORM_ID_COUNT (ACTOR_TRANSFORM_LIMB_COUNT * 2) // One ID for each limb and another for each post-draw

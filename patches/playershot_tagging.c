@@ -1,7 +1,5 @@
 #include "patches.h"
 
-#define SHOT_ID 0x1000
-
 extern Vec3f sShotViewPos;
 extern f32 D_800C9BD8[10];
 extern u8 D_800C9C00[4];
@@ -44,7 +42,7 @@ RECOMP_PATCH void PlayerShot_DrawShot(PlayerShot* shot) {
         }
     } else {
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, shot->index + SHOT_ID, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_SHOT(shot), G_EX_PUSH, G_MTX_MODELVIEW,
                                        G_EX_EDIT_ALLOW);
         if ((shot->obj.id == PLAYERSHOT_TANK) || (shot->obj.id == PLAYERSHOT_ON_FOOT) ||
             (shot->obj.id == PLAYERSHOT_7)) {
