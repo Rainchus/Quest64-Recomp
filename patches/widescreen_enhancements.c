@@ -554,7 +554,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                     sp128 = 3.5f;
                                 }
                             }
-                            sp128 = sp128;
                             Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
                             Matrix_Scale(gGfxMatrix, sp128 * 0.75, sp128 * 0.75f, 1.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
@@ -723,7 +722,7 @@ RECOMP_PATCH void Play_InitLevel(void) {
         case LEVEL_ZONESS:
             MEM_ARRAY_ALLOCATE(gZoDodoraPosRots, 200);
             ptr = (u8*) gZoDodoraPosRots;
-            for (i = 0; i < 200 * sizeof(*gZoDodoraPosRots); i++, ptr++) {
+            for (i = 0; i < 200 * (s32) sizeof(*gZoDodoraPosRots); i++, ptr++) {
                 *ptr = 0;
             }
             gZoDodoraWaypointCount = 0;
@@ -1138,6 +1137,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
 
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_AQ, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+
                 // CENTER FAR
                 Matrix_Push(&gGfxMatrix);
                 Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f, MTXF_APPLY);
@@ -1180,6 +1183,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, sp1C0);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
                 Matrix_Pop(&gGfxMatrix);
             }
 
@@ -1208,6 +1215,11 @@ RECOMP_PATCH void Background_DrawGround(void) {
 
                 // Render the original object in the middle TEST
                 Matrix_Push(&gGfxMatrix);
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_AQ_2, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+                
                 Matrix_Translate(gGfxMatrix, 0.0f, D_bg_8015F970, -9000.0f, MTXF_APPLY); // Center
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
@@ -1281,6 +1293,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
                 Matrix_Pop(&gGfxMatrix);
             }
             break;
