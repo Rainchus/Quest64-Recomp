@@ -293,7 +293,7 @@ RECOMP_PATCH void Display_Update(void) {
         Player* player = &gPlayer[0];
 
         if (gControllerPress[0].button & L_TRIG) {
-            player->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
+            player->state_1C8 = PLAYERSTATE_1C8_START_360;
         }
     }
 #endif
@@ -472,7 +472,7 @@ RECOMP_PATCH void Aquas_801AA20C(void) {
             Matrix_Scale(gGfxMatrix, D_i3_801C41B8[5], D_i3_801C41B8[5], D_i3_801C41B8[5], MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             gSPDisplayList(gMasterDisp++, D_blue_marine_3000130);
-            
+
             // @recomp Pop the transform id.
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
         }
