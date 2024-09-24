@@ -625,6 +625,12 @@ RECOMP_PATCH void Background_DrawGround(void) {
             break;
 
         case LEVEL_VERSUS:
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
             if (gGroundClipMode != 0) {
                 RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             } else {
@@ -642,6 +648,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 }
                 Matrix_Pop(&gGfxMatrix);
             }
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
             break;
 
         case LEVEL_SOLAR: // WIP
