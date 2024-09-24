@@ -32,7 +32,11 @@
 #define TAG_TEAM_ARROW (0x400)
 #define TAG_VEHICLE (0x500)
 #define TAG_TEXTURED_LINE (0x600)
-#define TAG_ (0x700)
+
+// Display_Reticle takes 0 and 1, DisplayLockOnIndicator 
+// is taking 2 3 4 and 5, Aquas_801AA20C takes 6 and 7
+#define TAG_RETICLE (0x700)
+#define TAG_ (0x720)
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)
@@ -57,7 +61,9 @@
 
 /* Ground */
 #define TAG_GROUND (0xB0000000)
-#define TAG_GROUND_CO_ON_RAILS (TAG_GROUND + 0x100)
+#define TAG_GROUND_CO_ON_RAILS (0x1000)
+#define TAG_GROUND_AQ (0x1001)
+#define TAG_GROUND_AQ_2 (0x1002)
 
 #define ACTOR_TRANSFORM_LIMB_COUNT 256
 #define ACTOR_TRANSFORM_ID_COUNT (ACTOR_TRANSFORM_LIMB_COUNT * 2) // One ID for each limb and another for each post-draw
