@@ -450,7 +450,7 @@ void Animation_DrawLimbArwing(s32 mode, Limb* limb, Limb** skeleton, Vec3f* join
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-#if 0
+#if 1
 
 RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     Vec3f frameTable[30];
@@ -464,7 +464,7 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     }
 
     if (gGameState == GSTATE_PLAY) {
-        Animation_DrawSkeletonArwing(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw,
+        Animation_DrawSkeleton(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw,
                                      NULL, arwing, &gIdentityMatrix);
     } else {
         if (gGameState == GSTATE_MENU) {
@@ -472,7 +472,7 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
         } else {
             Animation_GetFrameData(&D_arwing_3015C28, 0, frameTable);
         }
-        Animation_DrawSkeletonArwing(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
+        Animation_DrawSkeleton(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
                                      &gIdentityMatrix);
     }
 
