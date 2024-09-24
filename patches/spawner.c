@@ -308,7 +308,6 @@ void Spawner_ObjKill(void) {
 void Spawner_Playground(void) {
     Player* player = &gPlayer[0];
 
-    player->mercyTimer = 100;
     gLaserStrength[0] = 2;
     gBombCount[0] = 9;
     gLifeCount[0] = 9;
