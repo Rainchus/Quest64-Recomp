@@ -52,5 +52,6 @@
 #define DEBUG_SPEED_CONTROL 1
 #define DEBUG_FULL_SAVE 1
 #define DEBUG_NO_COLLISION 1
+#define DEBUG_BOSS_KILLER 0
 
 #endif
