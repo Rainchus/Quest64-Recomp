@@ -4,7 +4,7 @@
 
 static s32 transform = 0;
 
-bool Andross_801935B4(s32 limbIndex, Gfx **dList, Vec3f *pos, Vec3f *rot, void *thisx);
+bool Andross_801935B4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
 bool Display_ArwingWingsOverrideLimbDraw(s32 limbIndex, Gfx** gfxPtr, Vec3f* pos, Vec3f* rot, void* wingData);
 RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                          OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
@@ -87,8 +87,6 @@ RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f
         Matrix_Mult(gGfxMatrix, gCalcMatrix, MTXF_APPLY);
     }
 }
-
-
 
 #if 1
 
@@ -173,8 +171,9 @@ RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3
 
 #endif
 
-void Animation_DrawSkeletonOriginal(s32 mode, Limb** skeletonSegment, Vec3f* jointTable, OverrideLimbDraw overrideLimbDraw,
-                            PostLimbDraw postLimbDraw, void* data, Matrix* transform) {
+void Animation_DrawSkeletonOriginal(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+                                    OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                    Matrix* transform) {
     bool override;
     Limb** skeleton;
     Limb* rootLimb;
@@ -200,7 +199,7 @@ void Animation_DrawSkeletonOriginal(s32 mode, Limb** skeletonSegment, Vec3f* joi
         baseTrans.y = jointTable[0].y;
         baseTrans.z = jointTable[0].z;
     }
-    
+
     dList = rootLimb->dList;
     Matrix_Push(&gGfxMatrix);
 
@@ -224,19 +223,19 @@ void Animation_DrawSkeletonOriginal(s32 mode, Limb** skeletonSegment, Vec3f* joi
         postLimbDraw(rootIndex - 1, &baseRot, data);
     }
     Matrix_Pop(&gGfxMatrix);
-    
+
     if (rootLimb->child != NULL) {
         Animation_DrawLimbOriginal(mode, rootLimb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
     Matrix_Pop(&gCalcMatrix);
-    
+
     if (mode >= 2) {
         Matrix_Mult(gGfxMatrix, gCalcMatrix, MTXF_APPLY);
     }
 }
 
-void Animation_DrawLimbOriginal(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable, OverrideLimbDraw overrideLimbDraw,
-                        PostLimbDraw postLimbDraw, void* data) {
+void Animation_DrawLimbOriginal(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
+                                OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data) {
     bool override;
     s32 limbIndex;
     Gfx* dList;
@@ -291,8 +290,9 @@ void Animation_DrawLimbOriginal(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jo
         Animation_DrawLimbOriginal(mode, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
 }
-void Animation_DrawSkeletonArwing(s32 mode, Limb** skeletonSegment, Vec3f* jointTable, OverrideLimbDraw overrideLimbDraw,
-                            PostLimbDraw postLimbDraw, void* data, Matrix* transform) {
+void Animation_DrawSkeletonArwing(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+                                  OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                  Matrix* transform) {
     bool override;
     Limb** skeleton;
     Limb* rootLimb;
@@ -372,8 +372,8 @@ void Animation_DrawSkeletonArwing(s32 mode, Limb** skeletonSegment, Vec3f* joint
     }
 }
 
-void Animation_DrawLimbArwing(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable, OverrideLimbDraw overrideLimbDraw,
-                        PostLimbDraw postLimbDraw, void* data) {
+void Animation_DrawLimbArwing(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
+                              OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data) {
     bool override;
     s32 limbIndex;
     Gfx* dList;
@@ -464,8 +464,8 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     }
 
     if (gGameState == GSTATE_PLAY) {
-        Animation_DrawSkeleton(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw,
-                                     NULL, arwing, &gIdentityMatrix);
+        Animation_DrawSkeleton(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw, NULL,
+                               arwing, &gIdentityMatrix);
     } else {
         if (gGameState == GSTATE_MENU) {
             Animation_GetFrameData(&D_arwing_3015AF4, 0, frameTable);
@@ -473,7 +473,7 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
             Animation_GetFrameData(&D_arwing_3015C28, 0, frameTable);
         }
         Animation_DrawSkeleton(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
-                                     &gIdentityMatrix);
+                               &gIdentityMatrix);
     }
 
     D_display_800CA22C = false;
