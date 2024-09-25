@@ -53,5 +53,6 @@
 #define DEBUG_FULL_SAVE 1
 #define DEBUG_NO_COLLISION 0
 #define DEBUG_BOSS_KILLER 0
+#define DEBUG_ENDING 0
 
 #endif

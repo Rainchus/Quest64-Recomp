@@ -6,6 +6,7 @@ static s32 transform = 0;
 
 bool Andross_801935B4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
 bool Display_ArwingWingsOverrideLimbDraw(s32 limbIndex, Gfx** gfxPtr, Vec3f* pos, Vec3f* rot, void* wingData);
+
 RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                          OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
                                          Matrix* transform) {
@@ -100,8 +101,6 @@ RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3
     Vec3f pos;
     Vec3f origin = { 0.0f, 0.0f, 0.0f };
     Actor* actor = data;
-    s32 childLimbIndex;
-    s32 siblingLimbIndex;
 
     Matrix_Push(&gCalcMatrix);
 
@@ -149,24 +148,12 @@ RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3
     }
     Matrix_Pop(&gGfxMatrix);
     if (limb->child != NULL) {
-        childLimbIndex = Animation_GetLimbIndex(limb->child, skeleton);
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(limb->child, data) + childLimbIndex, G_EX_PUSH,
-                                       G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
         Animation_DrawLimb(mode, limb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     Matrix_Pop(&gCalcMatrix);
     if (limb->sibling != NULL) {
-        siblingLimbIndex = Animation_GetLimbIndex(limb->sibling, skeleton);
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(limb->child, data) + siblingLimbIndex, G_EX_PUSH,
-                                       G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
         Animation_DrawLimb(mode, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 #endif

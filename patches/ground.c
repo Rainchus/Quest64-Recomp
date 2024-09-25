@@ -2,17 +2,11 @@
 
 void Bolse_DrawDynamicGround(void);
 
-static f32 sGroundPositions360x_FIX[4] = {
-    5999.0f,
-    -5999.0f,
-    5999.0f,
-    -5999.0f,
+static f32 sGroundPositions360x_FIX[] = {
+    5999.0f, -5999.0f, 5999.0f, -5999.0f, /* 5999.0f * 2.0f, 5999.0f * 2.0f, -5999.0f * 2.0f, -5999.0f * 2.0f,*/
 };
-static f32 sGroundPositions360z_FIX[4] = {
-    5999.0f,
-    5999.0f,
-    -5999.0f,
-    -5999.0f,
+static f32 sGroundPositions360z_FIX[] = {
+    5999.0f, 5999.0f, -5999.0f, -5999.0f, /* 5999.0f * 2.0f, 5999.0f * 2.0f, -5999.0f * 2.0f, -5999.0f * 2.0f,*/
 };
 
 #if 1
@@ -609,9 +603,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                                          G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
             }
 
-            for (i = 0; i < ARRAY_COUNT(sGroundPositions360x); i++) {
+            for (i = 0; i < ARRAY_COUNT(sGroundPositions360x_FIX); i++) {
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, sGroundPositions360x[i], 0.0f, sGroundPositions360z[i], MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
+                                 MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 if (gCurrentLevel == LEVEL_FORTUNA) {
                     gSPDisplayList(gMasterDisp++, D_FO_6001360);
@@ -664,7 +659,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
             // Render the object at the center (No mirroring)
             Matrix_Push(&gGfxMatrix);
             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -2000.0f, MTXF_APPLY);
@@ -705,7 +701,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                            G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD);
 
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
 
                 // Render the display list based on the current frame
                 gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
@@ -724,7 +721,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
 
             // Center Further (main object)
             Matrix_Push(&gGfxMatrix);

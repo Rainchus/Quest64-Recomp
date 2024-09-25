@@ -339,6 +339,7 @@ extern Gfx D_A6_601BB40[];
 extern Gfx D_FO_600B4B0[];
 extern Gfx D_BO_600D190[];
 extern Gfx D_SY_6001840[];
+extern Gfx aTeamShadowDL[];
 extern Gfx D_edisplay_800CFD80[];
 extern f32 gAndrossUnkBrightness;
 extern f32 gAndrossUnkAlpha;

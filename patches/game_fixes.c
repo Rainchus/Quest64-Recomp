@@ -6,6 +6,7 @@ extern s32 D_BO_801A03DC;
 void Bolse_8018BD60(ActorEvent* this);
 void Bolse_SpawnEnemies(ActorEvent* this, s32 count);
 
+// @recomp: Fix Pigma's voice line being cut out
 RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
     s32 i;
     Player* player = &gPlayer[0];
