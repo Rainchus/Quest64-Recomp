@@ -1,5 +1,6 @@
 
 #include "patches.h"
+#include "sf64audio_external.h"
 
 #if 1 // Global scope
 
@@ -326,7 +327,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                 Matrix_Pop(&gGfxMatrix);
                             }
                             break;
-                            
+
                         case LEVEL_METEO:
                             if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) && (gCsFrameCount > 260)) {
                                 Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f) - 30.0f, -290.0f,
@@ -453,7 +454,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 }
 #endif
 
-#if 0 // Play_InitLevel
+#if 1 // Play_InitLevel
 
 void Macbeth_InitLevel(void);
 void Titania_80188F30(void);
