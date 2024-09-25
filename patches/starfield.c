@@ -156,12 +156,12 @@ RECOMP_PATCH void Play_GenerateStarfield(void) {
     float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
     MEM_ARRAY_ALLOCATE(gStarOffsetsX, 3000);
-    MEM_ARRAY_ALLOCATE(gStarOffsetsY, 2000);
-    MEM_ARRAY_ALLOCATE(gStarFillColors, 2000);
+    MEM_ARRAY_ALLOCATE(gStarOffsetsY, 3000);
+    MEM_ARRAY_ALLOCATE(gStarFillColors, 3000);
 
     Rand_SetSeed(1, 29000, 9876);
 
-    for (i = 0; i < 2000; i++) {
+    for (i = 0; i < 3000; i++) {
         gStarOffsetsX[i] = RAND_FLOAT_SEEDED(starfieldWidth);
         gStarOffsetsY[i] = RAND_FLOAT_SEEDED(starfieldHeight);
         gStarFillColors[i] = FILL_COLOR(gStarColors[i % ARRAY_COUNT(gStarColors)]);

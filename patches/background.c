@@ -310,7 +310,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     Matrix_RotateZ(gGfxMatrix, gStarfieldRoll, MTXF_APPLY);
 
                     switch (levelId) {
-
                         case LEVEL_WARP_ZONE:
                             if ((s32) gWarpZoneBgAlpha != 0) {
                                 RCP_SetupDL_62();
@@ -326,8 +325,8 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                 gSPDisplayList(gMasterDisp++, D_WZ_7001540);
                                 Matrix_Pop(&gGfxMatrix);
                             }
-
                             break;
+                            
                         case LEVEL_METEO:
                             if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) && (gCsFrameCount > 260)) {
                                 Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f) - 30.0f, -290.0f,
