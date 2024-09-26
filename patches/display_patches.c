@@ -322,6 +322,11 @@ RECOMP_PATCH void Display_Update(void) {
 #if DEBUG_NO_COLLISION == 1
     gPlayer->mercyTimer = 1000;
 #endif
+    /*
+    if (gControllerPress[0].button & L_TRIG) {
+        gHitCount += 100;
+    }
+    */
 }
 
 RECOMP_PATCH void Display_Reticle(Player* player) {

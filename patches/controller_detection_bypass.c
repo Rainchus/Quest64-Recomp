@@ -18,7 +18,7 @@ RECOMP_PATCH int Title_CheckControllers(void) {
         gSaveFile.save.data.planet[i].normalMedal = 1;
         gSaveFile.save.data.planet[i].expertMedal = 1;
     }
-    // Save_Write();
+    Save_Write();
     #endif
 
     gControllerPlugged[0] = 1;

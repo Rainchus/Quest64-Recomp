@@ -1,24 +1,25 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
+#define osEepromWrite osEepromWrite_recomp
+#define osEepromRead osEepromRead_recomp
+#define osEepromProbe osEepromProbe_recomp
 
 #include "PR/ultratypes.h"
 #include "PR/os_eeprom.h"
 #include "sf64thread.h"
 #include "sf64save.h"
 #include "macros.h"
+#include "patches.h"
 
-#define osEepromWrite osEepromWrite_recomp
-#define osEepromRead osEepromRead_recomp
 
 // On hold until memcpy and __udivdi3 issues are sorted
 
-#if 0
+#if 0 // Global scope
 
 s32 Save_WriteBlock(s32 arg0, u8* arg1);
 s32 Save_ReadBlock(s32 arg0, u8* arg1);
-s32 osEepromWrite(OSMesgQueue* mq, u8 address, u8* buffer);
-s32 osEepromRead(OSMesgQueue* mq, u8 address, u8* buffer);
 
- RECOMP_PATCH s32 Save_ReadBlock(s32 arg0, u8* arg1) {
+#if 1
+RECOMP_PATCH s32 Save_ReadBlock(s32 arg0, u8* arg1) {
     if (osEepromRead(&gSerialEventQueue, arg0, arg1)) {
         PRINTF("ＥＥＰＲＯＭ インターフェース回路反応なし (ＲＥＡＤ)\n");
         return -1;
@@ -27,24 +28,29 @@ s32 osEepromRead(OSMesgQueue* mq, u8 address, u8* buffer);
         return 0;
     }
 }
+#endif
 
+#if 1
 RECOMP_PATCH s32 Save_WriteBlock(s32 arg0, u8* arg1) {
+    //recomp_printf("osEepromWrite(%x, %d, %x)\n", &gSerialEventQueue, arg0, arg1);
+
     if (osEepromWrite(&gSerialEventQueue, arg0, arg1)) {
         PRINTF("ＥＥＰＲＯＭ インターフェース回路反応なし (ＷＲＩＴＥ)\n");
         return -1;
     } else {
-        Timer_Wait(MSEC_TO_CYCLES(15));
         PRINTF("EEPROM WRITE %02X: %02X %02X %02X %02X %02X %02X %02X %02X\n");
         return 0;
     }
 }
+#endif
 
+#if 1
 RECOMP_PATCH s32 Save_WriteEeprom(SaveFile* arg0) {
     s32 var_a2;
     s32 i;
     s32 j;
 
-    if (osEepromProbe(&gSerialEventQueue) != 2) { // @recomp
+    if (osEepromProbe(&gSerialEventQueue) != 1) { // @recomp
         PRINTF("ＥＥＰＲＯＭ が ありません\n");
         return -1;
     }
@@ -63,11 +69,26 @@ RECOMP_PATCH s32 Save_WriteEeprom(SaveFile* arg0) {
     }
     return 0;
 }
+#endif
 
+void* my_memcpy(void* dest, const void* src, u32 n) {
+    // Cast src and dest to char* to perform byte-wise copy
+    char* d = (char*) dest;
+    const char* s = (const char*) src;
+
+    // Copy n bytes from src to dest
+    while (n--) {
+        *d++ = *s++;
+    }
+
+    return dest;
+}
+
+#if 1
 RECOMP_PATCH s32 Save_ReadEeprom(SaveFile* arg0) {
     s32 i;
 
-    if (osEepromProbe(&gSerialEventQueue) != 2) { // @recomp
+    if (osEepromProbe(&gSerialEventQueue) != 1) {
         PRINTF("ＥＥＰＲＯＭ が ありません\n");
         return -1;
     }
@@ -76,7 +97,10 @@ RECOMP_PATCH s32 Save_ReadEeprom(SaveFile* arg0) {
             return -1;
         }
     }
-    sPrevSaveData = *arg0;
+    //sPrevSaveData = *arg0;
+    my_memcpy((void*) &sPrevSaveData, (const void*) &arg0, sizeof(SaveFile));
     return 0;
 }
+#endif
+
 #endif

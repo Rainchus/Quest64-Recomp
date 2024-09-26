@@ -57,3 +57,4 @@ D_800C9C08 = 0x800C9C08;
 aOrbDL = 0x01024ac0;
 aStarDL = 0x0101c2e0;
 aBallDL = 0x102A8A0;
+osEepromProbe_recomp = 0x8F0000C0;
