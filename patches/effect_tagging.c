@@ -1,70 +1,8 @@
 #include "patches.h"
 
-extern Gfx aOrbDL[];
-extern Gfx D_102A010[];
-extern Gfx D_BG_PLANET_20031B0[];
-extern Gfx D_ME_6023810[];
-extern Gfx D_ME_60263F0[];
-extern Gfx D_102F5E0[];
-extern Gfx D_arwing_3016B30[];
-extern Gfx D_ZO_6024220[];
-extern Gfx D_BG_SPACE_2006F50[];
-extern Gfx aBallDL[];
-extern Gfx D_BG_PLANET_200D750[];
-extern Gfx D_blue_marine_3000660[];
-extern Gfx D_BG_PLANET_20112C0[];
-extern Gfx D_1029780[];
-extern Gfx D_ME_601FF80[];
-extern Gfx aBlueSphereDL[];
-extern Gfx D_101ABD0[];
-extern Gfx aStarDL[];
-extern Gfx D_SX_600F8A0[];
-extern Gfx D_ME_6000A80[];
-extern Gfx D_CO_6033000[];
-extern Gfx D_MA_6022530[];
-extern Gfx D_MA_6022450[];
-extern Gfx D_MA_601A7A0[];
-extern Gfx D_MA_60223C0[];
-extern Gfx D_MA_6020E60[];
-extern Gfx D_MA_6020A30[];
-extern Gfx D_MA_60200E0[];
-extern Gfx D_MA_600F2F0[];
-extern Gfx D_MA_6001A60[];
-extern Gfx D_MA_600F160[];
-extern Gfx D_MA_600F3D0[];
-extern Gfx D_MA_600F9B0[];
-extern Gfx D_10194C0[];
-extern Gfx D_1024290[];
-extern Gfx D_10182C0[];
-extern Gfx D_AQ_600A220[];
-extern Gfx D_CO_6004900[];
-extern Gfx D_ZO_6018AF0[];
-extern Gfx D_1021E20[];
-extern Gfx D_1023750[];
-extern Gfx D_TI_A000000[];
-extern Gfx D_VE1_9013C20[];
-extern Gfx aSyShip4DestroyedDL[];
-extern Gfx D_BG_PLANET_2010A30[];
-extern Gfx D_ENMY_PLANET_4008CE0[];
-extern Gfx D_ENMY_PLANET_4008F70[];
-extern Gfx D_A6_6012550[];
-extern Gfx D_ZO_6016880[];
-extern Gfx aA6SpaceMineDL[];
-extern Gfx D_ZO_601BAD0[];
-extern Animation D_MA_6027320;
-extern Limb* D_MA_602742C[];
-extern u16 D_A6_6012840[];
-extern Gfx* D_800D178C[6];
-extern Gfx* D_800D17A4[21];
-extern s32 D_800D1950[8];
-extern s32 D_800D18F0[24];
-extern Color_RGBA32 D_800D184C[21];
-extern f32 D_800D17F8[21];
-extern s32 D_800D173C[20];
-extern f32 D_800D1534[13][10];
-extern Gfx* D_800D18A0[14];
-
 bool func_effect_800798C4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* data);
+
+#if 1 // Global Scope
 
 RECOMP_PATCH void Katina_LaserEnergyParticlesDraw(Effect358* this) {
     RCP_SetupDL(&gMasterDisp, SETUPDL_67);
@@ -1547,3 +1485,6 @@ RECOMP_PATCH void TexturedLine_Draw(void) {
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 }
+
+#endif
+
