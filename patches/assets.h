@@ -11,6 +11,87 @@ typedef struct UnkStruct_D_i4_801A03E0 {
     s32 unk_18;
 } UnkStruct_D_i4_801A03E0;
 
+typedef enum TitleTeam {
+    /* 0 */ TEAM_FOX,
+    /* 1 */ TEAM_FALCO,
+    /* 2 */ TEAM_PEPPY,
+    /* 3 */ TEAM_SLIPPY
+} TitleTeam;
+
+typedef struct TitleArwingInfo {
+    /* 0x00 */ Vec3f pos;
+    /* 0x0C */ f32 scale;
+    /* 0x10 */ f32 vel; // Assumption
+    /* 0x14 */ char pad14[0x4];
+    /* 0x18 */ f32 xRot;
+    /* 0x1C */ f32 yRot;
+    /* 0x20 */ f32 zRot;
+    /* 0x24 */ f32 cockpitGlassXrot;
+    /* 0x28 */ f32 laserGunsYpos;
+    /* 0x2C */ f32 teamFaceXrot;
+    /* 0x30 */ f32 teamFaceYrot;
+    /* 0x34 */ s32 drawFace;
+    /* 0x38 */ s32 timer;  // Used for closing the cockpit glass and take off
+    /* 0x3C */ s32 unk_3C; // Related to engine glow. Investigate
+    /* 0x40 */ s32 unk_40; // Related to engine glow. Investigate
+    /* 0x44 */ f32 unk_44; // Related to engine glow. Investigate
+    /* 0x48 */ bool drawShadow;
+    /* 0x4C */ bool draw;
+    /* 0x50 */ f32 sfxSource[3];
+} TitleArwingInfo; // size = 0x5C
+
+typedef struct {
+    /* 0x00 */ Vec3f pos;
+    /* 0x0C */ bool draw;
+    /* 0x10 */ f32 scale;
+} TitleCorneria; // size = 0x14
+
+extern s32 sSceneState;
+extern s32 D_menu_801B7BEC;
+extern s32 sTimer1;
+extern CameraPoint* D_menu_801B8294;
+extern CameraPoint D_menu_801B6C60[];
+extern s32 D_menu_801B8298;
+extern f32 D_menu_801B828C;
+extern f32 D_menu_801B8290;
+extern s32 sTimer3;
+extern f32 D_menu_801B86A8;
+extern f32 D_menu_801B86AC;
+extern s32 sTitleCardState;
+extern f32 D_menu_801B86BC;
+extern f32 D_menu_801B86C0;
+extern f32 D_menu_801B86C4;
+extern f32 D_menu_801B86B4;
+extern f32 D_menu_801B86B8;
+extern f32 D_menu_801B86C8;
+extern f32 D_menu_801B86CC;
+extern f32 D_menu_801B82EC;
+extern f32 D_menu_801B82F0;
+extern f32 D_menu_801B82F4;
+extern s32 sCutsceneState;
+extern TitleArwingInfo sTitleArwing[4];
+extern f32 sPassageWayZoffset;
+extern TitleCorneria sTitleCorneria;
+extern f32 D_menu_801B7C20[10];
+extern f32 D_menu_801B7BF8[10];
+extern s32 D_menu_801B7CF0[10];
+extern s32 D_menu_801B7CC8[10];
+extern s32 D_menu_801B7D18[10];
+extern f32 D_menu_801B7C70[10];
+extern s32 sMaxExplosions;
+extern s32 D_menu_801B7CA0[10];
+extern f32 D_menu_801B7C48[10];
+extern s32 D_menu_801B8100;
+extern s32 D_menu_801B8108[40];
+extern f32 D_menu_801B7FC0[40];
+extern f32 D_menu_801B8060[40];
+extern f32 D_menu_801B7D40[40];
+extern f32 D_menu_801B7F20[40];
+extern f32 D_menu_801B7DE0[40];
+extern f32 D_menu_801B7E80[40];
+extern f32 D_menu_801B9050;
+extern TitleArwingInfo sTitleArwing[4];
+extern f32 sTitleDeckLauncherZpos;
 extern f32 D_menu_801B82E0;
 extern f32 D_menu_801B82E4;
 extern f32 D_menu_801B82E8;
@@ -18,6 +99,10 @@ extern f32 D_menu_801B9048;
 extern f32 D_menu_801B904C;
 extern s32 D_menu_801B7BE4;
 extern Gfx aTitleGreatFoxDeckDL[];
+extern Gfx aTitleArwingEngineGlowDL[];
+extern Gfx aTitleGreatFoxDeckPlatformDL[];
+extern Gfx aTitleGreatFoxDeckLauncherDL[];
+extern Gfx aTitleCsPassageWayDL[];
 extern f32 D_i2_80195554[12];
 extern s32 D_i5_801B75E4[3][3];
 extern s32 D_menu_801CEEA0;
@@ -1265,3 +1350,4 @@ extern u16 gMsg_ID_23030[];
 extern u16 gMsg_ID_23031[];
 extern u16 gMsg_ID_23032[];
 extern MsgLookup gMsgLookup[];
+
