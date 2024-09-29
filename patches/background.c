@@ -120,17 +120,14 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                 case LEVEL_VENOM_ANDROSS: // WIP
                     if (gDrawBackdrop != 6) {
-
-                        f32 aspectRatio = 1.777f; // Get screen aspect ratio (width / height)
-
                         if ((gDrawBackdrop == 2) || (gDrawBackdrop == 7)) {
                             Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                            // Adjust Y translation based on aspect ratio
-                            Matrix_Translate(gGfxMatrix, 0.0f, -4000.0f * aspectRatio, -7000.0f, MTXF_APPLY);
+                            Matrix_Translate(gGfxMatrix, 0.0f, -4000.0f, -7000.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_600F670);
                         } else if ((gDrawBackdrop == 3) || (gDrawBackdrop == 4)) {
                             RCP_SetupDL(&gMasterDisp, SETUPDL_62);
+
                             if (gDrawBackdrop == 4) {
                                 if ((gGameFrameCount & 8) == 0) {
                                     Math_SmoothStepToF(&gAndrossUnkBrightness, 0.0f, 1.0f, 30.0f, 0);
@@ -140,34 +137,51 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             } else {
                                 gAndrossUnkBrightness = 255.0f;
                             }
+
                             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, (s32) gAndrossUnkBrightness,
                                             (s32) gAndrossUnkBrightness, (s32) gAndrossUnkAlpha);
 
                             sp134 = (gPlayer[gPlayerNum].camPitch * -6000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.4f);
                             sp13C = Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f,
                                               7280.0f);
+
+                            // Leftmost DL (-2x translation)
                             Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                            // Adjust X and Y translations based on aspect ratio
-                            Matrix_Translate(gGfxMatrix, sp13C * aspectRatio, (-2000.0f + sp134) * aspectRatio,
-                                             -6000.0f, MTXF_APPLY);
-                            Matrix_Translate(gGfxMatrix, 0.0f, -2500.0f * aspectRatio, 0.0f, MTXF_APPLY);
+                            Matrix_Translate(gGfxMatrix, sp13C - 2 * 7280.0f, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
+                            Matrix_Translate(gGfxMatrix, 0.0f, -2500.0f, 0.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
-                            // Adjust X translation based on aspect ratio
-                            Matrix_Translate(gGfxMatrix, 7280.0f * aspectRatio, 0.0f, 0.0f, MTXF_APPLY);
+
+                            // Left DL (-1x translation)
+                            Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                            Matrix_SetGfxMtx(&gMasterDisp);
+                            gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
+
+                            // Middle DL (original)
+                            Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                            Matrix_SetGfxMtx(&gMasterDisp);
+                            gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
+
+                            // Right DL (+1x translation)
+                            Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                            Matrix_SetGfxMtx(&gMasterDisp);
+                            gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
+
+                            // Rightmost DL (+2x translation)
+                            Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
                         } else {
+                        fake_label: // fake
                             RCP_SetupDL(&gMasterDisp, SETUPDL_62);
                             if (gDrawBackdrop == 5) {
                                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 64);
                             } else {
                                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 0, 255, 128, (s32) gAndrossUnkAlpha);
                             }
-                            // Adjust translation and scaling based on aspect ratio
                             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -290.0f, MTXF_APPLY);
                             Matrix_Push(&gGfxMatrix);
-                            Matrix_Scale(gGfxMatrix, 11.0f * aspectRatio, 11.0f, 1.0f, MTXF_APPLY);
+                            Matrix_Scale(gGfxMatrix, 11.0f, 11.0f, 1.0f, MTXF_APPLY);
                             Matrix_RotateZ(gGfxMatrix, (gPlayer[0].camRoll + (gGameFrameCount * 1.5f)) * M_DTOR,
                                            MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
@@ -175,7 +189,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             Matrix_Pop(&gGfxMatrix);
                             if (gDrawBackdrop != 5) {
                                 Matrix_Push(&gGfxMatrix);
-                                Matrix_Scale(gGfxMatrix, 10.0f * aspectRatio, 10.0f, 1.0f, MTXF_APPLY);
+                                Matrix_Scale(gGfxMatrix, 10.0f, 10.0f, 1.0f, MTXF_APPLY);
                                 Matrix_RotateZ(gGfxMatrix, (gPlayer[0].camRoll + (gGameFrameCount * -1.3f)) * M_DTOR,
                                                MTXF_APPLY);
                                 Matrix_SetGfxMtx(&gMasterDisp);
