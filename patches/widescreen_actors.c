@@ -172,7 +172,7 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     sp3C = -1.0f;
 
     // @recomp draw no matter what
-    if (gCurrentLevel != LEVEL_KATINA) { // Excepting Katina because of KaSaucerer's bug
+    if ((gCurrentLevel != LEVEL_KATINA) && (gCurrentLevel != LEVEL_SECTOR_Y)) { // Excepting Katina because of KaSaucerer's bug
         goto render;
     }
 
