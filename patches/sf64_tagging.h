@@ -37,6 +37,7 @@
 // is taking 2 3 4 and 5, Aquas_801AA20C takes 6 and 7
 #define TAG_RETICLE (0x700)
 #define TAG_ (0x720)
+#define TAG_GREATFOXDECK (0x2000)
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)

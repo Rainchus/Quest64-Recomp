@@ -1,5 +1,48 @@
 #include "patches.h"
 
+#if 1
+
+#if 1 // Hangar Widescreen fix
+void Title_GreatFoxDeckPlatform_Draw(void);
+
+s32 offset_value = -800;
+
+RECOMP_PATCH void Title_GreatFoxDeck_Draw(void) {
+    Lights_SetOneLight(&gMasterDisp, D_menu_801B82E0, D_menu_801B82E4, D_menu_801B82E8, 0, 0, 0, gAmbientR, gAmbientG,
+                       gAmbientB);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_23);
+
+    Matrix_Push(&gGfxMatrix);
+    Matrix_Translate(gGfxMatrix, 0.0f, D_menu_801B9048, D_menu_801B904C, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, 0.4f, 0.4f, 0.4f, MTXF_APPLY);
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GREATFOXDECK, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    // Draw original display list
+    gSPDisplayList(gMasterDisp++, aTitleGreatFoxDeckDL);
+
+    // Apply scaling for mirroring
+    Matrix_Push(&gGfxMatrix);                                // Push current matrix state
+    Matrix_Scale(gGfxMatrix, -1.0f, 1.0f, 1.0f, MTXF_APPLY); // Mirror the display list horizontally
+    Matrix_Translate(gGfxMatrix, offset_value, 0.0f, 0.0f, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, aTitleGreatFoxDeckDL); // Draw mirrored display list
+    Matrix_Pop(&gGfxMatrix);                             // Restore original matrix state
+
+    if (D_menu_801B7BE4 != 0) {
+        Title_GreatFoxDeckPlatform_Draw();
+    }
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+    Matrix_Pop(&gGfxMatrix); // Restore original transformation
+}
+#endif
+
 #if 0
 
 RECOMP_PATCH void Title_CorneriaExplosions_Draw(void) {
@@ -71,5 +114,7 @@ RECOMP_PATCH void Title_CorneriaExplosions_Draw(void) {
         Matrix_Pop(&gGfxMatrix);
     }
 }
+
+#endif
 
 #endif

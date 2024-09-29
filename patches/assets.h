@@ -11,6 +11,13 @@ typedef struct UnkStruct_D_i4_801A03E0 {
     s32 unk_18;
 } UnkStruct_D_i4_801A03E0;
 
+extern f32 D_menu_801B82E0;
+extern f32 D_menu_801B82E4;
+extern f32 D_menu_801B82E8;
+extern f32 D_menu_801B9048;
+extern f32 D_menu_801B904C;
+extern s32 D_menu_801B7BE4;
+extern Gfx aTitleGreatFoxDeckDL[];
 extern f32 D_i2_80195554[12];
 extern s32 D_i5_801B75E4[3][3];
 extern s32 D_menu_801CEEA0;
