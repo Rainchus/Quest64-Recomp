@@ -2,15 +2,8 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #define RECOMP_FORCE_PATCH __attribute__((section(".recomp_force_patch")))
 
-#define SCREEN_WIDTH  320
-#define SCREEN_HEIGHT 240
-
+#include "patches.h"
 #include "misc_funcs.h"
-
-typedef union {
-    unsigned short data[SCREEN_HEIGHT * SCREEN_WIDTH];
-    unsigned short array[SCREEN_HEIGHT][SCREEN_WIDTH];
-} FrameBuffer;
 
 typedef struct {
     /* 0x0 */ void* start;
@@ -26,7 +19,6 @@ typedef struct {
 extern DmaEntry gDmaTable[];
 extern unsigned char sFillTimer;
 extern unsigned char gGameStandby;
-extern FrameBuffer gFrameBuffers[];
 
 void Load_RomFile(void* vRomAddress, void* dest, signed long size);
 void Lib_DmaRead(void* src, void* dst, signed long size);
@@ -36,10 +28,12 @@ typedef unsigned long uintptr_t;
 
 #define SEGMENT_SIZE(segment) ((signed long) ((uintptr_t) (segment).end - (uintptr_t) (segment).start))
 
+FrameBuffer gCompressionBuffer[3];
+
 RECOMP_PATCH void Load_RomFile(void* vRomAddress, void* dest, signed long size) {
     long i;
     // @recomp Load the overlay in the recomp runtime.
-    recomp_load_overlays((u32)vRomAddress, dest, size);
+    recomp_load_overlays((u32) vRomAddress, dest, size);
 
     for (i = 0; gDmaTable[i].pRom.end != 0; i++) {
         if (gDmaTable[i].vRomAddress == vRomAddress) {
@@ -49,8 +43,8 @@ RECOMP_PATCH void Load_RomFile(void* vRomAddress, void* dest, signed long size) 
                 Lib_FillScreen(1);
                 sFillTimer = 3;
                 gGameStandby = 1;
-                Lib_DmaRead(gDmaTable[i].pRom.start, gFrameBuffers, SEGMENT_SIZE(gDmaTable[i].pRom));
-                Mio0_Decompress(gFrameBuffers, dest);
+                Lib_DmaRead(gDmaTable[i].pRom.start, gCompressionBuffer, SEGMENT_SIZE(gDmaTable[i].pRom));
+                Mio0_Decompress(gCompressionBuffer, dest);
             }
             break;
         }

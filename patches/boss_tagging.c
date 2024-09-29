@@ -428,6 +428,7 @@ RECOMP_PATCH void Meteo_MeCrusher_Draw(MeCrusher* this) {
         Matrix_Push(&gGfxMatrix);
         Matrix_Translate(gGfxMatrix, 0.0f, 650.0f, 600.0f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
+        
         // @recomp Tag the transform.
         gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this) + 30, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
@@ -443,8 +444,10 @@ RECOMP_PATCH void Meteo_MeCrusher_Draw(MeCrusher* this) {
         Matrix_Push(&gGfxMatrix);
         Matrix_Translate(gGfxMatrix, 0.0f, -650.0f, 600.0f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
+
         // @recomp Tag the transform.
         gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(this) + 31, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
         Meteo_MeCrusherEngineGlow_Draw(this->swork[1] - 1);
 
         // @recomp Pop the transform id.

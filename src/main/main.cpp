@@ -324,7 +324,8 @@ gpr get_entrypoint_address();
 // array of supported GameEntry objects
 std::vector<recomp::GameEntry> supported_games = {
     {
-        .rom_hash = 0xca4cec808f2d5859,
+        //.rom_hash = 0xca4cec808f2d5859, // uncompressed
+        .rom_hash = 0x163fd3fc3813f54e, // retail
         .internal_name = "STARFOX64",
         .game_id = u8"sf64.n64.us.1.1",
         .is_enabled = true,
