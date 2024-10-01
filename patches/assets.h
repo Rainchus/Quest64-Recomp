@@ -170,6 +170,8 @@ extern Gfx D_MAP_6048F80[];
 extern Gfx D_MAP_605C230[];
 extern Gfx aMapArwingDL[];
 extern Gfx aMapCursorDL[];
+extern Gfx D_A6_600F1F0[];
+extern Gfx D_A6_6015EE0[];
 extern Gfx aMapArea6ShipDL[];
 extern Gfx aCoBuilding6DL[];
 extern Gfx aCoBuilding7DL[];
