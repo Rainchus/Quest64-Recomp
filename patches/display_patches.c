@@ -290,10 +290,19 @@ RECOMP_PATCH void Display_Update(void) {
 #endif
 #if DEBUG_L_TO_ALL_RANGE == 1
     {
-        Player* player = &gPlayer[0];
+        Player* pl2 = &gPlayer[0];
 
         if (gControllerPress[0].button & L_TRIG) {
-            player->state_1C8 = PLAYERSTATE_1C8_START_360;
+            pl2->state_1C8 = PLAYERSTATE_1C8_START_360;
+        }
+    }
+#endif
+#if DEBUG_L_TO_LEVEL_COMPLETE == 1
+    {
+        Player* pl = &gPlayer[0];
+
+        if (gControllerPress[0].button & L_TRIG) {
+            pl->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
         }
     }
 #endif
