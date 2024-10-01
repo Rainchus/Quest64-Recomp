@@ -32,6 +32,7 @@
 #define TAG_TEAM_ARROW (0x400)
 #define TAG_VEHICLE (0x500)
 #define TAG_TEXTURED_LINE (0x600)
+#define TAG_BOSS_GORGON(vec) ((0x35000000) | (TAG_ADDRESS(vec) & 0x0000FFFF))
 
 // Display_Reticle takes 0 and 1, DisplayLockOnIndicator 
 // is taking 2 3 4 and 5, Aquas_801AA20C takes 6 and 7
@@ -45,6 +46,7 @@
 #define TAG_ARWING_ENGINE_GLOW_PARTICLES (0x2016)
 #define TAG_CORNERIA_EXPLOSIONS (0x2036)
 #define TAG_TITLE_PASSAGE (0x2046)
+#define TAG_STARFIELD (0xD0000000)
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)
