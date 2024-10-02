@@ -64,6 +64,8 @@ void SectorY_SyRobot_Draw(Actor*);
 void Andross_Gate_Draw(Actor*);
 void Zoness_ZoBird_Draw(ZoBird* this);
 bool ActorEvent_OverrideLimbDraw1(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
+bool SectorY_SyRobot_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
+void SectorY_SyRobot_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx);
 
 RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
     s32 pad2[3];
@@ -556,5 +558,32 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                 }
             }
             break;
+    }
+}
+
+RECOMP_PATCH void SectorY_SyRobot_Draw(SyRobot* this) {
+    f32 scale;
+
+    RCP_SetupDL_30(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+    Animation_DrawSkeleton(2, D_SY_602D140, this->vwork, SectorY_SyRobot_OverrideLimbDraw, SectorY_SyRobot_PostLimbDraw,
+                           this, gCalcMatrix);
+
+    if (this->timer_0C4 != 0) {
+        scale = D_i6_801A6B64[this->timer_0C4];
+        RCP_SetupDL_49();
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
+        gDPSetEnvColor(gMasterDisp++, 255, 48, 0, 255);
+        Matrix_Pop(&gGfxMatrix);
+        Matrix_Push(&gGfxMatrix);
+        Matrix_Translate(gGfxMatrix, this->fwork[16], this->fwork[17], this->fwork[18] + gPathProgress, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, scale, scale, scale, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR_EVENT(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        gSPDisplayList(gMasterDisp++, aOrbDL);
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 }
