@@ -387,7 +387,7 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             break;
 
-        case ACTOR_CS_38:
+        case ACTOR_CS_38: // ACTOR_CS_SY_ROBOT
             animFrameData = Animation_GetFrameData(D_demo_800CA1F4[this->iwork[4]], this->iwork[5], sp144);
             Math_SmoothStepToVec3fArray(sp144, this->vwork, 1, animFrameData, this->fwork[2], 100.0f, .0f);
             RCP_SetupDL_30(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
@@ -395,6 +395,9 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
             Animation_DrawSkeleton(1, D_SY_602D140, this->vwork, 0, 0, this, &gIdentityMatrix);
 
             if (this->fwork[0] != 0.0f) {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
                 RCP_SetupDL_49();
                 gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
                 gDPSetEnvColor(gMasterDisp++, 255, 32, 32, 255);
@@ -416,9 +419,14 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, aOrbDL);
                 Math_SmoothStepToF(&this->fwork[0], 0.0f, 0.1f, 0.2f, 0.05f);
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
 
             if (this->fwork[6] != 0.0f) {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + 1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
                 RCP_SetupDL_49();
                 gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
                 gDPSetEnvColor(gMasterDisp++, 255, 48, 0, 255);
@@ -448,6 +456,8 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, aOrbDL);
                 Math_SmoothStepToF(&this->fwork[6], 0.00f, 0.1f, 0.6f, 0);
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
             break;
 
@@ -555,8 +565,7 @@ RECOMP_PATCH void Cutscene_DrawGreatFox(void) {
     }
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX , G_EX_PUSH, G_MTX_MODELVIEW,
-    G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     if (gGreatFoxIntact) {
         gSPDisplayList(gMasterDisp++, aGreatFoxIntactDL);
