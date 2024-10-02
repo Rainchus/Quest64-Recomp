@@ -11,11 +11,11 @@ void Title_GetCamRot(f32* xRot, f32* yRot);
 void Title_CsTakeOff_Setup(void);
 void Title_GreatFoxDeckPlatform_Draw(void);
 
-int sPaperclip = 0;
+extern s32 F_80177D80;
 
 #if 1 // Hangar Widescreen fix
 RECOMP_PATCH void Title_GreatFoxDeck_Draw(void) {
-    sPaperclip++;
+    F_80177D80++;
 
     // Set up lights and display list
     Lights_SetOneLight(&gMasterDisp, D_menu_801B82E0, D_menu_801B82E4, D_menu_801B82E8, 0, 0, 0, gAmbientR, gAmbientG,
@@ -44,7 +44,7 @@ RECOMP_PATCH void Title_GreatFoxDeck_Draw(void) {
     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK); // Clear normal backface culling
     gSPSetGeometryMode(gMasterDisp++, G_CULL_FRONT);  // Enable front-face culling (inverted culling)
 
-    if (sPaperclip > 50) {
+    if (F_80177D80 > 50) {
         // Draw the mirrored display list
         gSPDisplayList(gMasterDisp++, aTitleGreatFoxDeckDL);
     }
@@ -427,7 +427,7 @@ RECOMP_PATCH void Title_CsTakeOff_Update(void) __attribute__((optnone)) {
         case 0:
             D_menu_801B7BEC = 0;
 
-            sPaperclip = 0;
+            F_80177D80 = 0;
             Title_CsTakeOff_Setup();
             Audio_SetEnvSfxReverb(104);
 
