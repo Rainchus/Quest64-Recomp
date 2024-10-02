@@ -34,6 +34,15 @@ void Spawner(void);
 void KillBoss(void);
 #endif
 
+// for draw distance tests
+#if 0
+f32 segataSanshiro;
+int gXoffsetBounds = 0;
+int gYoffsetBounds = 0;
+int gBackZdist = 0;
+int gFrontZdist = 0;
+#endif
+
 RECOMP_PATCH void Display_Update(void) {
     s32 i;
     Vec3f tempVec;
@@ -331,12 +340,64 @@ RECOMP_PATCH void Display_Update(void) {
 #if DEBUG_NO_COLLISION == 1
     gPlayer->mercyTimer = 1000;
 #endif
-    /*
-    if (gControllerPress[0].button & L_TRIG) {
-        gHitCount += 100;
+// background testing
+#if 0
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "XOFFSET:");
+    Graphics_DisplaySmallNumber(80, 220, (int) ABS(segataSanshiro));
+#endif
+// for draw distance tests
+#if 0
+    {
+
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "XOFFSET:");
+        Graphics_DisplaySmallNumber(80, 220, ABS(gXoffsetBounds));
+        Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "YOFFSET:");
+        Graphics_DisplaySmallNumber(80, 210, ABS(gYoffsetBounds));
+        Graphics_DisplaySmallText(10, 200, 1.0f, 1.0f, "BACK:");
+        Graphics_DisplaySmallNumber(80, 200, ABS(gBackZdist));
+        Graphics_DisplaySmallText(10, 190, 1.0f, 1.0f, "FRONT:");
+        Graphics_DisplaySmallNumber(80, 190, ABS(gFrontZdist));
+
+        if (gControllerPress[0].button & L_JPAD) {
+            gXoffsetBounds -= 1000;
+        } else if (gControllerPress[0].button & R_JPAD) {
+            gXoffsetBounds += 1000;
+        } else if (gControllerPress[0].button & U_JPAD) {
+            gYoffsetBounds += 1000;
+        } else if (gControllerPress[0].button & D_JPAD) {
+            gYoffsetBounds -= 1000;
+        } else if (gControllerPress[0].button & Z_TRIG) {
+            gFrontZdist -= 1000;
+        } else if (gControllerPress[0].button & R_TRIG) {
+            gFrontZdist += 1000;
+        }
+        
+        Player* player = gPlayer;
+        static s32 prevSpeed;
+        static bool debugFreeze = false;
+
+        if ((!debugFreeze) && (gControllerPress[0].button & L_TRIG)) {
+            prevSpeed = player->baseSpeed;
+            player->baseSpeed = 0;
+            debugFreeze = true;
+        } else if ((debugFreeze) && (gControllerPress[0].button & L_TRIG)) {
+            player->baseSpeed = prevSpeed;
+            debugFreeze = false;
+        }
     }
-    */
+#endif
 }
+
+// for draw distance tests
+#if 0
+RECOMP_PATCH void SectorZ_Missile_Update(ActorAllRange* this) {
+    return;
+}
+#endif
 
 RECOMP_PATCH void Display_Reticle(Player* player) {
     Vec3f* translate;
@@ -434,6 +495,157 @@ RECOMP_PATCH void Display_LockOnIndicator(void) {
     for (j = 0; j < gCamCount; j++) {
         gLockOnTargetViewPos[j].x = gLockOnTargetViewPos[j].y = 0.f;
         gLockOnTargetViewPos[j].z = 100.0f;
+    }
+}
+
+RECOMP_PATCH void Display_LandmasterEngineGlow_Draw(Player* player) {
+    RCP_SetupDL_64();
+    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 100);
+    Matrix_Push(&gGfxMatrix);
+    Matrix_RotateZ(gGfxMatrix, player->bankAngle * M_DTOR, MTXF_APPLY);
+
+    if (player->form == FORM_LANDMASTER) {
+        if (player->unk_194 <= 0.0f) {
+            Matrix_Pop(&gGfxMatrix);
+            return;
+        }
+        Matrix_Scale(gGfxMatrix, player->unk_194, player->unk_194, 1.0f, MTXF_APPLY);
+    } else {
+        Matrix_Scale(gGfxMatrix, player->unk_194, player->unk_194, 1.0f, MTXF_APPLY);
+    }
+
+    if ((gGameFrameCount % 2) != 0) {
+        Matrix_Scale(gGfxMatrix, 0.9f, 0.63f, 1.0f, MTXF_APPLY);
+    } else {
+        Matrix_Scale(gGfxMatrix, 0.9f * 0.9f, 0.9f * 0.63f, 1.0f, MTXF_APPLY);
+    }
+    Matrix_SetGfxMtx(&gMasterDisp);
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ADDRESS(player) | 0x50, G_EX_PUSH, G_MTX_MODELVIEW,
+                                   G_EX_EDIT_ALLOW);
+    Display_DrawEngineGlow(gLevelType);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+    Matrix_Pop(&gGfxMatrix);
+}
+
+RECOMP_PATCH void Actor_DrawEngineAndContrails(Actor* this) {
+    f32 sp5C;
+    f32 temp1;
+    f32 sp54;
+    s32 pad[5];
+
+    if ((this->iwork[11] != 0) && (this->obj.status == OBJ_ACTIVE)) {
+        temp1 = 652.5f * 0.001f; // 0.65250003f;
+        if (this->iwork[11] >= 2) {
+            temp1 = 1.3050001f;
+        }
+
+        Math_SmoothStepToF(&this->fwork[29], temp1, 0.3f, 5.0f, 0.0f);
+
+        sp5C = this->fwork[29];
+        if ((gGameFrameCount % 2) != 0) {
+            sp5C *= 1.111f;
+        }
+        Matrix_Push(&gGfxMatrix);
+        Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -60.0f, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, sp5C, sp5C * 0.7f, sp5C, MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, -this->obj.rot.z * M_DTOR, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, -this->obj.rot.x * M_DTOR, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, -this->obj.rot.y * M_DTOR, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, -gPlayer[gPlayerNum].camYaw, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, gPlayer[gPlayerNum].camPitch, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) | 0x50, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        Display_DrawEngineGlow(gLevelType);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        Matrix_Pop(&gGfxMatrix);
+    }
+
+    sp5C = this->fwork[21];
+    if ((sp5C != 0.0f) && (gLevelType == LEVELTYPE_PLANET)) {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, (TAG_ACTOR(this) | 0x50) + 1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+        sp54 = 0.0f;
+        if ((gGameFrameCount % 2) != 0) {
+            sp54 = 180.0f;
+        }
+        RCP_SetupDL_64_2();
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 100);
+        Matrix_Push(&gGfxMatrix);
+        Matrix_Translate(gGfxMatrix, 70.0f, -10.0f, -100.0f, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, sp5C, 1.0f, 50.0f, MTXF_APPLY);
+        Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -17.5f, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, M_DTOR * sp54, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, aBallDL);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        Matrix_Pop(&gGfxMatrix);
+
+        Matrix_Push(&gGfxMatrix);
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, (TAG_ACTOR(this) | 0x50) + 2, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        Matrix_Translate(gGfxMatrix, -70.0f, -10.0f, -100.0f, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, sp5C, 1.0f, 50.0f, MTXF_APPLY);
+        Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -17.5f, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, M_DTOR * sp54, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, aBallDL);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        Matrix_Pop(&gGfxMatrix);
+    }
+}
+
+RECOMP_PATCH void Actor_DrawEngineGlow(Actor* actor, EngineGlowColor color) {
+    f32 scale;
+
+    if ((actor->iwork[11] != 0) && (actor->obj.status == OBJ_ACTIVE)) {
+        scale = 0.63f;
+        if (actor->iwork[11] >= 2) {
+            scale = D_edisplay_800CFCA0[actor->iwork[11] - 2] * 0.45f;
+        }
+        if ((gGameFrameCount % 2) != 0) {
+            scale *= 1.2f;
+        }
+        Matrix_Push(&gGfxMatrix);
+        Matrix_Scale(gGfxMatrix, scale, scale, scale, MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, -actor->obj.rot.z * M_DTOR, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, -actor->obj.rot.x * M_DTOR, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, -actor->obj.rot.y * M_DTOR, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, -gPlayer[gPlayerNum].camYaw, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(actor) | 0x50, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        Display_DrawEngineGlow(color);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        Matrix_Pop(&gGfxMatrix);
     }
 }
 

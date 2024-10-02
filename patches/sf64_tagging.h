@@ -19,7 +19,7 @@
 #define TAG_SCENERY_360(scenery360) ((u32) (0x50000000 | (TAG_ADDRESS(scenery360))))
 #define TAG_EFFECT(effect) ((u32) (0x60000000 | (TAG_OBJ(effect))))
 #define TAG_ITEM(item) ((u32) (0x70000000 | (TAG_OBJ(item))))
-#define TAG_PLAYER_SHOT(shot) ((u32)(0xC0000000 | (TAG_OBJ(shot))))
+#define TAG_PLAYER_SHOT(shot) ((u32) (0xC0000000 | (TAG_OBJ(shot))))
 /* Skeletons */
 #define TAG_LIMB_ADDRESS(ptr, data) ((((u32) (ptr) << 16) & 0xFFFF0000) | ((u32) (data) & 0x0000FFFF))
 #define TAG_LIMB(limb, data) ((u32) (0x80000000 | (TAG_LIMB_ADDRESS(limb, data))))
@@ -34,7 +34,7 @@
 #define TAG_TEXTURED_LINE (0x600)
 #define TAG_BOSS_GORGON(vec) ((0x35000000) | (TAG_ADDRESS(vec) & 0x0000FFFF))
 
-// Display_Reticle takes 0 and 1, DisplayLockOnIndicator 
+// Display_Reticle takes 0 and 1, DisplayLockOnIndicator
 // is taking 2 3 4 and 5, Aquas_801AA20C takes 6 and 7
 #define TAG_RETICLE (0x700)
 #define TAG_ (0x720)
@@ -46,7 +46,10 @@
 #define TAG_ARWING_ENGINE_GLOW_PARTICLES (0x2016)
 #define TAG_CORNERIA_EXPLOSIONS (0x2036)
 #define TAG_TITLE_PASSAGE (0x2046)
+
+/* Background */
 #define TAG_STARFIELD (0xD0000000)
+#define TAG_BACKGROUND ((0xD1000000) | (gCurrentLevel << 16))
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)
@@ -108,3 +111,19 @@ void Animation_DrawSkeletonArwing(s32 mode, Limb** skeletonSegment, Vec3f* joint
                                   OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
                                   Matrix* transform);
 #endif
+
+/*
+
+// @recomp Tag the transform.
+gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+// @recomp Tag the transform.
+gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
+                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
+// @recomp Pop the transform id.
+gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+*/
