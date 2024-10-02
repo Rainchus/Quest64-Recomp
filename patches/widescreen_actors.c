@@ -15,6 +15,14 @@ void func_edisplay_8005D1F0(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32 arg0);
 void func_edisplay_8005D008(Object* obj, s32 drawType);
 
+// for draw distance tests
+#if 0
+extern int gXoffsetBounds;
+extern int gYoffsetBounds;
+extern int gBackZdist;
+extern int gFrontZdist;
+#endif
+
 #if 1
 RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
     s32 playerNum;
