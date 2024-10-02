@@ -252,3 +252,61 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
         }
     }
 }
+
+#if 0
+extern f32 D_i1_80199AE4[3];
+extern f32 D_i1_80199AF0[3];
+extern f32 D_i1_80199AFC[3];
+extern f32 D_i1_80199B08[3];
+extern f32 D_i1_80199B14[3];
+extern f32 D_i1_80199B20[3];
+extern f32 D_i1_80199B2C[3];
+
+RECOMP_PATCH void Corneria_CsLevelComplete1_TeamSetup(ActorCutscene* this, s32 index) {
+    Vec3f sp5C;
+    Vec3f sp50;
+    Vec3f sp44;
+    Vec3f sp38;
+    Player* player = &gPlayer[0];
+
+    Matrix_RotateY(gCalcMatrix, player->rot.y * M_DTOR, MTXF_NEW);
+    sp5C.x = D_i1_80199AE4[index];
+    sp5C.y = D_i1_80199AF0[index];
+    sp5C.z = D_i1_80199AFC[index];
+
+    sp44.x = D_i1_80199B08[index];
+    sp44.y = D_i1_80199B14[index];
+    sp44.z = D_i1_80199B20[index];
+
+    Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp5C, &sp50);
+    Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp44, &sp38);
+
+    Actor_Initialize(this);
+
+    this->obj.pos.x = player->pos.x + sp50.x;
+    this->obj.pos.y = player->pos.y + sp50.y;
+    this->obj.pos.z = player->pos.z + sp50.z;
+
+    this->fwork[0] = sp38.x;
+    this->fwork[1] = sp38.y;
+    this->fwork[2] = sp38.z;
+
+    this->fwork[7] = RAND_FLOAT(360.0f);
+    this->fwork[8] = RAND_FLOAT(360.0f);
+
+    this->vel.x = player->vel.x;
+    this->vel.y = player->vel.y;
+    this->vel.z = player->vel.z;
+
+    this->obj.status = OBJ_INIT;
+    this->obj.id = OBJ_ACTOR_CUTSCENE;
+    this->obj.rot.z = D_i1_80199B2C[index];
+
+
+    Object_SetInfo(&this->info, this->obj.id);
+
+    this->iwork[11] = 1;
+    AUDIO_PLAY_SFX(NA_SE_ARWING_ENGINE_FG, this->sfxSource, 4);
+    this->iwork[14] = 3;
+}
+#endif
