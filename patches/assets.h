@@ -210,6 +210,7 @@ extern Gfx aMaRailroadSwitch8DL[];
 
 extern Limb* D_arwing_3016610[19];
 extern Limb* aVe2AndrossGateSkel[];
+extern Limb* D_SY_602D140[];
 extern Animation D_arwing_3015AF4;
 extern Animation D_arwing_3015C28;
 extern Animation aVe2AndrossGateAnim;
@@ -217,7 +218,7 @@ extern Animation D_MA_602EA0C;
 extern Animation D_MA_6027320;
 extern Animation D_MA_601EAB0;
 extern s16 D_i5_801BE310;
-;
+extern f32 D_i6_801A6B64[5];
 extern s32 D_display_800CA22C;
 extern Gfx* sExpertFaceDL[4];
 extern Gfx* sFaceDL[4];
