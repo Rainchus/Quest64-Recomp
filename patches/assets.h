@@ -46,6 +46,14 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern Matrix D_menu_801CE5A0[15];
+extern Gfx aMapMedalDL[];
+extern s32 D_menu_801CD98C;
+extern s32 D_menu_801CD990;
+extern s32 D_menu_801CD9C8;
+extern s32 D_menu_801CD998;
+extern s32 D_menu_801CD994;
+extern f32 D_menu_801CD99C;
 extern s32 sSceneState;
 extern s32 D_menu_801B7BEC;
 extern s32 sTimer1;
