@@ -257,8 +257,11 @@ RECOMP_PATCH void Map_Planet_Draw(PlanetId planetId) __attribute__((optnone)) {
 
         if (planetStatus == PLANET_MEDAL) {
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_MEDAL + planetId, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposed(gMasterDisp++, (TAG_MEDAL + planetId), G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
             Map_PlanetMedal_Draw(planetId);
             // @recomp Pop the transform id.
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -266,6 +269,164 @@ RECOMP_PATCH void Map_Planet_Draw(PlanetId planetId) __attribute__((optnone)) {
     }
     Matrix_Pop(&gGfxMatrix);
 }
+
+#if 0
+RECOMP_PATCH void Map_PlanetMedal_Draw(PlanetId planetId) {
+    static f32 D_menu_801B6A78 = 0.0f;
+    s32 i;
+    s32 alpha;
+    f32 scale;
+
+    if (D_menu_801CD98C != 1) {
+        alpha = D_menu_801CD900[planetId];
+    } else {
+        alpha = D_menu_801CD984;
+        D_menu_801CD900[planetId] = 255;
+    }
+
+    if (alpha == 0) {
+        return;
+    }
+
+    if (D_menu_801CD98C == 1) {
+        switch (D_menu_801CD990) {
+            case 0:
+                RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, alpha);
+                gDPSetEnvColor(gMasterDisp++, 80, 80, 0, 0);
+
+                Matrix_Push(&gGfxMatrix);
+
+                Matrix_Copy(gGfxMatrix, &D_menu_801CE1E0[planetId]);
+                Matrix_Translate(gGfxMatrix, 0.0f, -30.0f, 0.0f, MTXF_APPLY);
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, (TAG_MEDAL + planetId) | 0x00100000, G_EX_PUSH,
+                                               G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+                Matrix_SetGfxMtx(&gMasterDisp);
+
+                gSPDisplayList(gMasterDisp++, D_MAP_604D680);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+                Matrix_Pop(&gGfxMatrix);
+
+                D_menu_801CEAB8[planetId] += 45.0f;
+                if (alpha == 255) {
+                    D_menu_801CD9C8 = 15;
+                    D_menu_801CD998 = 0;
+                    D_menu_801CD994 = 255;
+                    D_menu_801CD99C = 0.0f;
+                    D_menu_801CD990++;
+                }
+                break;
+
+            case 1:
+                scale = 5.0f + RAND_FLOAT(4.0f);
+
+                Math_SmoothStepToF(&D_menu_801CD99C, 150.0f, 0.09f, 100.0f, 0.1f);
+
+                RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, D_menu_801CD994);
+                gDPSetEnvColor(gMasterDisp++, 80, 80, 0, 0);
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, (TAG_MEDAL + planetId) | 0x00200000, G_EX_PUSH,
+                                                G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                for (i = 0; i < 8; i++) {
+                    Matrix_Push(&gGfxMatrix);
+
+                    Matrix_Copy(gGfxMatrix, &D_menu_801CE5A0[planetId]);
+                    Matrix_Translate(gGfxMatrix, 0.0f, -30.0f, 0.0f, MTXF_APPLY);
+                    Matrix_RotateZ(gGfxMatrix, M_DTOR * (i * -45.0f), MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, 0.0f, D_menu_801CD99C, 0.0f, MTXF_APPLY);
+                    Matrix_RotateZ(gGfxMatrix, M_DTOR * (D_menu_801B6A78), MTXF_APPLY);
+                    Matrix_Scale(gGfxMatrix, scale, scale, scale, MTXF_APPLY);
+
+                    Matrix_SetGfxMtx(&gMasterDisp);
+
+                    gSPDisplayList(gMasterDisp++, D_MAP_604D680);
+                    Matrix_Pop(&gGfxMatrix);
+                }
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+                D_menu_801B6A78 += 45.0f;
+                D_menu_801CD994 -= 16;
+
+                if (D_menu_801CD994 <= 0) {
+                    D_menu_801CD994 = 0;
+                }
+
+                RCP_SetupDL(&gMasterDisp, SETUPDL_64);
+
+                gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, D_menu_801CD998);
+
+                Matrix_Push(&gGfxMatrix);
+
+                Matrix_Copy(gGfxMatrix, &D_menu_801CE5A0[planetId]);
+                Matrix_Translate(gGfxMatrix, 0.0f, -30.0f, 0.0f, MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, 3.0f, 3.0f, 3.0f, MTXF_APPLY);
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, (TAG_MEDAL + planetId) | 0x00300000, G_EX_PUSH,
+                                               G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                Matrix_SetGfxMtx(&gMasterDisp);
+
+                gSPDisplayList(gMasterDisp++, aMapMedalDL);
+
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+                Matrix_Pop(&gGfxMatrix);
+
+                D_menu_801CEAF8[planetId] = -90.0f;
+
+                D_menu_801CD998 += 8;
+
+                if (D_menu_801CD998 == 8) {
+                    AUDIO_PLAY_SFX(NA_SE_GET_EMBLEM, gDefaultSfxSource, 4);
+                }
+
+                if (D_menu_801CD998 >= 255) {
+                    D_menu_801CD998 = 255;
+                }
+                if (D_menu_801CD998 == 255) {
+                    if (!D_menu_801CD9C8) {
+                        D_menu_801CD98C = 0;
+                    } else {
+                        D_menu_801CD9C8--;
+                    }
+                }
+                break;
+        }
+    } else {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_64);
+        gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, alpha);
+
+        Matrix_Push(&gGfxMatrix);
+
+        Matrix_Copy(gGfxMatrix, &D_menu_801CE5A0[planetId]);
+        Matrix_Translate(gGfxMatrix, 0.0f, -30.0f, 0.0f, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, 3.0f, 3.0f, 3.0f, MTXF_APPLY);
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, (TAG_MEDAL + planetId) | 0x00400000, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        gSPDisplayList(gMasterDisp++, aMapMedalDL);
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+        Matrix_Pop(&gGfxMatrix);
+
+        D_menu_801CEAF8[planetId] = -90.0f;
+    }
+}
+#endif
 
 extern ObjPosition sMapMeteors[42];
 extern Gfx* sMapPlanets[15];
@@ -996,7 +1157,7 @@ RECOMP_PATCH void Map_Path_Draw(s32 index) {
     if (sPaths[index].unk_14 == 5) {
         // @recomp Tag the transform.
         gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_WARP + index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-        
+
         Map_PathLine_Draw(sPaths[index].type);
 
         // @recomp Pop the transform id.
