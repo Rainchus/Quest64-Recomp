@@ -73,7 +73,7 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
     f32 x;
 
     switch (this->animFrame) {
-        case ACTOR_CS_1000:
+        case ACTOR_CS_JAMES_ARWING:
             RCP_SetupDL(&gMasterDisp, SETUPDL_45);
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->work_046);
             // @recomp Tag the transform.
@@ -387,7 +387,7 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             break;
 
-        case ACTOR_CS_38: // ACTOR_CS_SY_ROBOT
+        case ACTOR_CS_SY_ROBOT:
             animFrameData = Animation_GetFrameData(D_demo_800CA1F4[this->iwork[4]], this->iwork[5], sp144);
             Math_SmoothStepToVec3fArray(sp144, this->vwork, 1, animFrameData, this->fwork[2], 100.0f, .0f);
             RCP_SetupDL_30(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
