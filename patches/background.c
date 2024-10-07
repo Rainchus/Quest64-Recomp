@@ -4,6 +4,10 @@
 
 #if 1 // Global scope
 
+#if 0
+extern f32 segataSanshiro;
+#endif
+
 #if 1 // Background_DrawBackdrop
 RECOMP_PATCH void Background_DrawBackdrop(void) {
     f32 sp13C;
@@ -60,6 +64,13 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                     // Render the textures across the screen (left to right)
                     for (int i = 0; i < 6; i++) {
+                        // @recomp Tag the transform.
+                        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                 G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                 G_EX_EDIT_ALLOW);
+
                         switch (gCurrentLevel) {
                             case LEVEL_VERSUS:
                                 if (gVersusStage == VS_STAGE_CORNERIA) {
@@ -84,6 +95,9 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         // Translate to the next position (move right by 7280.0f each time)
                         Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
                         Matrix_SetGfxMtx(&gMasterDisp);
+
+                        // @recomp Pop the transform id.
+                        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     }
                     break;
 
@@ -101,6 +115,13 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                     // Render the textures across a wider range to cover the screen
                     for (int i = 0; i < 10; i++) {
+                        // @recomp Tag the transform.
+                        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                 G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                 G_EX_EDIT_ALLOW);
+
                         switch ((s32) gCurrentLevel) {
                             case LEVEL_CORNERIA:
                                 gSPDisplayList(gMasterDisp++, D_CO_60059F0);
@@ -113,6 +134,9 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         // Translate to the next position (move right by 7280.0f each time)
                         Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
                         Matrix_SetGfxMtx(&gMasterDisp);
+
+                        // @recomp Pop the transform id.
+                        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     }
 
                     break;
@@ -120,6 +144,12 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                 case LEVEL_VENOM_ANDROSS: // WIP
                     if (gDrawBackdrop != 6) {
+                        // @recomp Tag the transform.
+                        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                 G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                 G_EX_EDIT_ALLOW);
                         if ((gDrawBackdrop == 2) || (gDrawBackdrop == 7)) {
                             Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
                             Matrix_Translate(gGfxMatrix, 0.0f, -4000.0f, -7000.0f, MTXF_APPLY);
@@ -172,7 +202,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_VE2_60038E0);
                         } else {
-                        fake_label: // fake
                             RCP_SetupDL(&gMasterDisp, SETUPDL_62);
                             if (gDrawBackdrop == 5) {
                                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 64);
@@ -197,6 +226,8 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                 Matrix_Pop(&gGfxMatrix);
                             }
                         }
+                        // @recomp Pop the transform id.
+                        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     }
                     break;
 
@@ -215,6 +246,13 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                         // Render the textures across the screen (left to right)
                         for (int i = 0; i < 5; i++) {
+                            // @recomp Tag the transform.
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                     G_EX_EDIT_ALLOW);
+
                             if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) {
                                 gSPDisplayList(gMasterDisp++, D_AQ_601AFF0);
                             } else {
@@ -224,6 +262,9 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             // Translate to the next position (move right by 7280.0f each time)
                             Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
+
+                            // @recomp Pop the transform id.
+                            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                         }
                         Matrix_Pop(&gGfxMatrix);
                     }
@@ -253,6 +294,13 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
                     Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
 
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                             G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                             G_EX_EDIT_ALLOW);
+
                     if ((gCurrentLevel == LEVEL_TITANIA) || (gCurrentLevel == LEVEL_ZONESS)) {
                         Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -3000.0f + sp134, -7000.0f, MTXF_APPLY);
                     } else if (gCurrentLevel == LEVEL_SOLAR) {
@@ -264,6 +312,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                     // Render the textures across a wider range to cover the screen
                     for (int i = 0; i < 5; i++) {
+
                         if (gCurrentLevel == LEVEL_TITANIA) {
                             gSPDisplayList(gMasterDisp++, D_TI_6000A80);
                         } else if (gCurrentLevel == LEVEL_MACBETH) {
@@ -276,6 +325,9 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                         // Move the matrix to the right by 7280.0f each time to draw the next texture
                         Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+
+                        // @recomp Pop the transform id.
+                        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                         Matrix_SetGfxMtx(&gMasterDisp);
                     }
                     break;
@@ -294,6 +346,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     if (((gCurrentLevel == LEVEL_SECTOR_X) || (gCurrentLevel == LEVEL_METEO)) && (gLevelPhase == 1)) {
                         levelId = LEVEL_WARP_ZONE;
                     }
+
                     if (levelId == LEVEL_SECTOR_X) {
                         sp138 = Math_ModF(sp138 + 60.0f, 480.0f);
                         sp134 = Math_ModF(sp134 + 360.0f - 40.0f, 360.0f);
