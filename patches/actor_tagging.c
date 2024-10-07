@@ -951,7 +951,6 @@ extern s16 D_800CFF94[16];
 void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot, u8 partIdx,
                       f32 scale, bool colorFlicker);
 
-// @recomp: Memora interpolation is skipped for now
 RECOMP_PATCH void MeMora_Draw(MeMora* this) {
     s16 i;
     s16 j;
