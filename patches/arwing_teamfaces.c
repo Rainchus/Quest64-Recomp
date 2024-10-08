@@ -619,3 +619,29 @@ RECOMP_PATCH void SectorY_801A06A4(ActorCutscene* this, s32 teamIdx) {
         AUDIO_PLAY_SFX(NA_SE_ARWING_BOOST, this->sfxSource, 0);
     }
 }
+
+// Warp zone level complete team setup
+RECOMP_PATCH void func_demo_80048CC4(ActorCutscene* this, s32 index) {
+    Actor_Initialize(this);
+    this->obj.status = OBJ_INIT;
+    this->obj.id = OBJ_ACTOR_CUTSCENE;
+
+    this->obj.pos.x = D_demo_800C9F60[index].x + gPlayer[0].pos.x;
+    this->obj.pos.y = D_demo_800C9F60[index].y + gPlayer[0].pos.y;
+    this->obj.pos.z = D_demo_800C9F60[index].z + gPlayer[0].trueZpos;
+
+    this->rot_0F4.y = 0.0f;
+    this->rot_0F4.z = D_demo_800C9F90[index];
+
+    Object_SetInfo(&this->info, this->obj.id);
+
+    if (index == 3) {
+        AUDIO_PLAY_SFX(NA_SE_GREATFOX_ENGINE, this->sfxSource, 0);
+        AUDIO_PLAY_SFX(NA_SE_GREATFOX_BURNER, this->sfxSource, 0);
+        this->animFrame = ACTOR_CS_GREAT_FOX;
+    } else {
+        this->iwork[11] = 1;
+        this->iwork[14] = index + 2;
+        AUDIO_PLAY_SFX(NA_SE_ARWING_ENGINE_FG, this->sfxSource, 4);
+    }
+}
