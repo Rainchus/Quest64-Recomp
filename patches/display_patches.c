@@ -54,6 +54,9 @@ RECOMP_PATCH void Display_Update(void) {
 
     sDrawCockpit = false;
 
+    // @recomp: Display player's face at all times.
+    gPlayer[0].arwing.drawFace = true;
+
 // @recomp remove 511 hit count cap, hated by generations
 #if 0
     // 511 hit count cap
