@@ -46,6 +46,12 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern f32 D_i6_801A7F40;
+extern f32 D_i6_801A7F44;
+extern f32 D_i6_801A7F48;
+extern f32 D_i6_801A7F4C;
+extern f32 D_i6_801A7F50;
+extern f32 D_i6_801A7F54;
 extern f32 sCsTeamXpos[4];
 extern f32 sCsTeamYpos[4];
 extern f32 sCsTeamZpos[4];
