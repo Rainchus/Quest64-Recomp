@@ -9,7 +9,7 @@ extern PlanetId sPlanetList[15];
 extern PlanetId sCurrentPlanetId;
 extern OSContPad gControllerPress[4];
 extern s32 gBombCount[4];
-extern s32 sLevelStartState;
+extern bool sLevelStartState;
 extern s32 D_menu_801CD968;
 extern s32 sMapState;
 extern s32 sMapSubState;

@@ -18,6 +18,50 @@ typedef enum TitleTeam {
     /* 3 */ TEAM_SLIPPY
 } TitleTeam;
 
+typedef struct {
+    /* 0x00 */ s32 type;
+    /* 0x04 */ s32 unk_04; // Always set to 0 and never used
+    /* 0x08 */ void* texture;
+    /* 0x0C */ u16* palette;
+    /* 0x10 */ s32 width;
+    /* 0x14 */ s32 height;
+    /* 0x18 */ f32 xPos;
+    /* 0x1C */ f32 yPos;
+    /* 0x20 */ f32 xScale;
+    /* 0x24 */ f32 yScale;
+    /* 0x28 */ s32 red;
+    /* 0x2C */ s32 green;
+    /* 0x30 */ s32 blue;
+    /* 0x34 */ s32 alpha;
+} OptionCardTexture; // size = 0x38
+
+typedef struct {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+    /* 0x08 */ f32 z;
+    /* 0x0C */ f32 xScale;
+    /* 0x10 */ f32 yScale;
+} OptionCardFrame; // size = 0x14
+
+typedef struct {
+    /* 0x0 */ f32 x;
+    /* 0x4 */ f32 y;
+    /* 0x8 */ f32 range;
+} ArwingCursorPos; // size = 0xC
+
+typedef struct {
+    /* 0x00 */ OptionCardTexture tex;
+    /* 0x38 */ OptionCardFrame frame;
+    /* 0x4C */ ArwingCursorPos pos;
+    /* 0x58 */ bool drawTex;
+    /* 0x5C */ bool drawFrame;
+} OptionEntry; // size = 0x60
+
+typedef struct {
+    s32 unk_0;
+    s32 unk_4;
+} StickInputOption;
+
 typedef struct TitleArwingInfo {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ f32 scale;
@@ -46,6 +90,39 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern StickInputOption D_menu_801B9180;
+extern StickInputOption D_menu_801B9190;
+extern StickInputOption D_menu_801B9198;
+extern u8 aMainGameCardTex[];
+extern bool sExpertModesEnabled;
+extern u8 aSoundCardTex[];
+extern u8 aExpertCardTex[];
+extern bool sDrawCursor;
+extern f32 sLightningYpos;
+extern s32 D_menu_801B917C;
+extern s32 D_menu_801B9178;
+extern s32 D_menu_801B9214;
+extern bool sLevelStartState;
+extern bool gGoToTitle;
+extern s32 sWipeHeight;
+extern s32 sMenuEntryState;
+extern OptionEntry sOptionCardList[6];
+extern s32 sMainMenuCursor;
+extern s32 sExpertSoundCursor;
+extern s32 sExpertModeCursor;
+extern f32 sOptionCardPosY[];
+extern f32 sOptionCardTextPosX[];
+extern f32 sOptionCardTextPosY[];
+extern f32 sOptionCardCurTextPosX[];
+extern f32 sOptionCardCurTextPosY[];
+extern f32 D_menu_801AE5E8[];
+extern f32 D_menu_801AE5F0[];
+extern f32 D_menu_801AE5F8[];
+extern f32 D_menu_801AE600[];
+extern f32 D_menu_801AE608[];
+extern f32 D_menu_801AE620[];
+extern bool sMainMenuFromCancel;
+extern s32 sMainMenuState;
 extern f32 D_i6_801A7F40;
 extern f32 D_i6_801A7F44;
 extern f32 D_i6_801A7F48;
