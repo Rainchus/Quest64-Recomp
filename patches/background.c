@@ -502,13 +502,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                 zRot = 0.0f;
                 for (i = 0; i < 300 * 3; i++, xStar++, yStar++) {
-                    // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposed(gMasterDisp++, (TAG_STARFIELD | 0x01000000) + i, G_EX_PUSH,
-                                             G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                             G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
-                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
-
                     *xStar = RAND_FLOAT_SEEDED(480.0f * 3.0f) - 80.0f;
                     *yStar = RAND_FLOAT_SEEDED(360.0f * 3.0f) - 60.0f;
                     Matrix_Push(&gGfxMatrix);
@@ -520,9 +513,6 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     gSPDisplayList(gMasterDisp++, D_edisplay_800CFD80);
                     Matrix_Pop(&gGfxMatrix);
                     zRot += M_PI / 4;
-                    
-                    // Pop the transform id
-                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
             }
             break;
