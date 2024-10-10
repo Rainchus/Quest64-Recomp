@@ -501,18 +501,28 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 128, 128, 255, 255);
 
                 zRot = 0.0f;
-                for (i = 0; i < 300; i++, xStar++, yStar++) {
-                    *xStar = RAND_FLOAT_SEEDED(480.0f) - 80.0f;
-                    *yStar = RAND_FLOAT_SEEDED(360.0f) - 60.0f;
+                for (i = 0; i < 300 * 3; i++, xStar++, yStar++) {
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposed(gMasterDisp++, (TAG_STARFIELD | 0x01000000) + i, G_EX_PUSH,
+                                             G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                             G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
+                    *xStar = RAND_FLOAT_SEEDED(480.0f * 3.0f) - 80.0f;
+                    *yStar = RAND_FLOAT_SEEDED(360.0f * 3.0f) - 60.0f;
                     Matrix_Push(&gGfxMatrix);
-                    Matrix_Translate(gGfxMatrix, (*xStar - 160.0f) * 10.0f, (*yStar - 120.0f) * 10.0f, -5000.0f,
-                                     MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, (*xStar - 160.0f - 480.0f) * 10.0f, (*yStar - 120.0f - 20.0f) * 10.0f,
+                                     -5000.0f, MTXF_APPLY);
                     Matrix_RotateZ(gGfxMatrix, zRot, MTXF_APPLY);
                     Matrix_Scale(gGfxMatrix, 10.0f, 1.0f, -gStarWarpDistortion, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, D_edisplay_800CFD80);
                     Matrix_Pop(&gGfxMatrix);
                     zRot += M_PI / 4;
+                    
+                    // Pop the transform id
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
             }
             break;
