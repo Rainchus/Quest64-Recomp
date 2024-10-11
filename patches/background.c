@@ -8,14 +8,21 @@
 extern f32 segataSanshiro;
 #endif
 
+// for background tests
+#if 0
+extern int xTemp;
+extern int yTemp;
+extern int xTest;
+#endif
+
 #if 1 // Background_DrawBackdrop
 RECOMP_PATCH void Background_DrawBackdrop(void) {
     f32 sp13C;
     f32 sp138;
     f32 sp134;
     f32 sp130;
-    f32 sp12C;
-    f32 sp128;
+    f32 camYawDeg;
+    f32 scale;
     s32 i;
     u8 levelType;
     s32 levelId;
@@ -274,9 +281,9 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                 case LEVEL_ZONESS:
                 case LEVEL_MACBETH:
                 case LEVEL_TITANIA:
-                    sp12C = Math_RadToDeg(gPlayer[gPlayerNum].camYaw) - gPlayer[gPlayerNum].yRot_114;
+                    camYawDeg = Math_RadToDeg(gPlayer[gPlayerNum].camYaw) - gPlayer[gPlayerNum].yRot_114;
                     sp134 = (gPlayer[gPlayerNum].camPitch * -7000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.6f);
-                    sp13C = sp12C * -40.44444f * 2.0f; // close to 7280.0f / 180.0f
+                    sp13C = camYawDeg * -40.44444f * 2.0f; // close to 7280.0f / 180.0f
 
                     if ((gCurrentLevel == LEVEL_TITANIA) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) &&
                         (gPlayer[0].csState < 3)) {
@@ -337,39 +344,45 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
         case LEVELTYPE_SPACE: // WIP Needed (space levels have textures that wrap around the screen)
             if (gPlayer[0].state_1C8 != PLAYERSTATE_1C8_ENTER_WARP_ZONE) {
                 Matrix_Push(&gGfxMatrix);
-                sp12C = Math_RadToDeg(gPlayer[0].camYaw);
+                camYawDeg = Math_RadToDeg(gPlayer[0].camYaw);
                 sp130 = Math_RadToDeg(gPlayer[0].camPitch);
-                if (((sp12C < 45.0f) || (sp12C > 315.0f)) && ((sp130 < 40.0f) || (sp130 > 325.0f))) {
+                if (((camYawDeg < 110.0f) || (camYawDeg > 260.0f)) && ((sp130 < 40.0f) || (sp130 > 325.0f))) {
                     RCP_SetupDL_36();
-                    sp138 = gStarfieldX;
+                    sp138 = gStarfieldX; /* @recomp. Range: 0.0f - 960.0f */
                     sp134 = gStarfieldY;
+
                     if (((gCurrentLevel == LEVEL_SECTOR_X) || (gCurrentLevel == LEVEL_METEO)) && (gLevelPhase == 1)) {
                         levelId = LEVEL_WARP_ZONE;
                     }
 
                     if (levelId == LEVEL_SECTOR_X) {
-                        sp138 = Math_ModF(sp138 + 60.0f, 480.0f);
+                        // @recomp. Accomodate for expanded aspect ratio
+                        sp138 = Math_ModF(sp138 + 60.0f, (320.0f * 3.0f) + 120.0f);
                         sp134 = Math_ModF(sp134 + 360.0f - 40.0f, 360.0f);
                     } else if (levelId == LEVEL_TRAINING) {
-                        sp138 = Math_ModF(sp138 - 30.0f, 480.0f);
+                        // @recomp. Accomodate for expanded aspect ratio
+                        sp138 = Math_ModF(sp138 - 30.0f, (320.0f * 3.0f) + 120.0f);
                         sp134 = Math_ModF(sp134 + 360.0f - 40.0f, 360.0f);
                     } else if ((levelId == LEVEL_SECTOR_Y) && (gLevelMode == LEVELMODE_ON_RAILS)) {
-                        sp138 = Math_ModF(sp138 + 480.0f - 60.0f, 480.0f);
+                        // @recomp. Accomodate for expanded aspect ratio
+                        sp138 = Math_ModF(sp138 + (320.0f * 3.0f) + 120.0f /* - 60.0f*/, (320.0f * 3.0f) + 120.0f);
                         sp134 = Math_ModF(sp134, 360.0f);
                     } else if (levelId == LEVEL_FORTUNA) {
-                        sp138 = Math_ModF(sp138 - 34.5f, 480.0f);
+                        // @recomp. Accomodate for expanded aspect ratio
+                        sp138 = Math_ModF(sp138 - 34.5f, (320.0f * 3.0f) + 120.0f);
                         sp134 = Math_ModF(sp134 + 19.0f, 360.0f);
                     } else if (levelId == LEVEL_BOLSE) {
                         if ((gPlayer[0].state_1C8 != PLAYERSTATE_1C8_LEVEL_COMPLETE) || (gPlayer[0].csState < 10)) {
                             sp134 = Math_ModF(sp134 + 360.0f - 100.0f, 360.0f);
                         }
                     } else {
-                        sp138 = Math_ModF(sp138, 480.0f);
+                        sp138 = Math_ModF(sp138, (320.0f * 3.0f) + 120.0f);
                         sp134 = Math_ModF(sp134, 360.0f);
                     }
 
-                    if ((sp12C < 180.0f) && (sp138 > 380.0f)) {
-                        sp138 = -(480.0f - sp138);
+                    if ((camYawDeg < 180.0f) && (sp138 > 380.0f)) {
+                        // @recomp. Accomodate for expanded aspect ratio
+                        sp138 = -((320.0f * 3.0f) - sp138);
                     }
                     if ((sp130 > 180.0f) && (sp134 > 280.0f)) {
                         sp134 = -(360.0f - sp134);
@@ -378,6 +391,14 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     Matrix_RotateZ(gGfxMatrix, gStarfieldRoll, MTXF_APPLY);
 
                     switch (levelId) {
+                        case LEVEL_SECTOR_Z:
+                            Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
+                            Matrix_Scale(gGfxMatrix, 0.5f, 0.5f, 0.5f, MTXF_APPLY);
+                            Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+                            Matrix_SetGfxMtx(&gMasterDisp);
+                            gSPDisplayList(gMasterDisp++, aSzBackgroundDL);
+                            break;
+
                         case LEVEL_WARP_ZONE:
                             if ((s32) gWarpZoneBgAlpha != 0) {
                                 RCP_SetupDL_62();
@@ -433,50 +454,47 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                         case LEVEL_AREA_6:
                         case LEVEL_UNK_4:
-                            sp128 = (gPathProgress * 0.00004f) + 0.5f;
-                            if (sp128 > 3.5f) {
-                                sp128 = 3.5f;
+                            scale = (gPathProgress * 0.00004f) + 0.5f;
+                            if (scale > 3.5f) {
+                                scale = 3.5f;
                             }
                             if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
-                                sp128 = D_bg_8015F984;
-                                if (sp128 > 3.5f) {
-                                    sp128 = 3.5f;
+                                scale = D_bg_8015F984;
+                                if (scale > 3.5f) {
+                                    scale = 3.5f;
                                 }
                             }
                             Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
-                            Matrix_Scale(gGfxMatrix, sp128 * 0.75, sp128 * 0.75f, 1.0f, MTXF_APPLY);
+                            Matrix_Scale(gGfxMatrix, scale * 0.75, scale * 0.75f, 1.0f, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_A6_601BB40);
                             break;
 
                         case LEVEL_FORTUNA:
-                            sp128 = 1.5f;
-                            if ((gCsFrameCount > 400) && (gMissionStatus == MISSION_COMPLETE)) {
-                                sp128 = 0.75f;
+                            scale = 1.5f;
+                            /**
+                             * @recomp: Bg planet Fortuna shrinks after 400 frames in the original game
+                             * after the first camera go around to give the impression of travel.
+                             * Adjusting the shrink 100 frames later hides this event from wide screens.
+                             */
+                            if ((gCsFrameCount > 500 /*400*/) && (gMissionStatus == MISSION_COMPLETE)) {
+                                scale = 0.75f;
                             }
                             Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
-                            Matrix_Scale(gGfxMatrix, sp128, sp128, sp128, MTXF_APPLY);
+                            Matrix_Scale(gGfxMatrix, scale, scale, scale, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_FO_600B4B0);
                             break;
 
                         case LEVEL_BOLSE:
-                            sp128 = 1.0f;
+                            scale = 1.0f;
                             if ((gCsFrameCount > 500) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) {
-                                sp128 = 1.3f;
+                                scale = 1.3f;
                             }
                             Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
-                            Matrix_Scale(gGfxMatrix, sp128, sp128, sp128, MTXF_APPLY);
+                            Matrix_Scale(gGfxMatrix, scale, scale, scale, MTXF_APPLY);
                             Matrix_SetGfxMtx(&gMasterDisp);
                             gSPDisplayList(gMasterDisp++, D_BO_600D190);
-                            break;
-
-                        case LEVEL_SECTOR_Z:
-                            Matrix_Translate(gGfxMatrix, sp138 - 120.0f, -(sp134 - 120.0f), -290.0f, MTXF_APPLY);
-                            Matrix_Scale(gGfxMatrix, 0.5f, 0.5f, 0.5f, MTXF_APPLY);
-                            Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
-                            Matrix_SetGfxMtx(&gMasterDisp);
-                            gSPDisplayList(gMasterDisp++, aSzBackgroundDL);
                             break;
 
                         case LEVEL_SECTOR_Y:

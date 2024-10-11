@@ -43,6 +43,13 @@ int gBackZdist = 0;
 int gFrontZdist = 0;
 #endif
 
+// for background tests
+#if 0
+int xTemp;
+int yTemp;
+int xTest = 0;
+#endif
+
 RECOMP_PATCH void Display_Update(void) {
     s32 i;
     Vec3f tempVec;
@@ -318,6 +325,27 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
+#if DEBUG_L_TO_WARP_ZONE == 1
+    {
+        if (gControllerPress[0].button & L_TRIG) {
+            if (gCurrentLevel == LEVEL_SECTOR_X) {
+                gRingPassCount++;
+                gPlayer[0].state_1C8 = PLAYERSTATE_1C8_ENTER_WARP_ZONE;
+                gPlayer[0].csState = 0;
+                gSceneSetup = 1;
+                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+                gMissionStatus = MISSION_WARP;
+                gLeveLClearStatus[gCurrentLevel] = 1;
+            } else {
+                gPlayer[0].state_1C8 = PLAYERSTATE_1C8_ENTER_WARP_ZONE;
+                gPlayer[0].csState = 0;
+                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+                gMissionStatus = MISSION_WARP;
+                gLeveLClearStatus[gCurrentLevel] = 1;
+            }
+        }
+    }
+#endif
 #if DEBUG_SPEED_CONTROL == 1 // baseSpeed control
     {
         Player* player = gPlayer;
@@ -356,10 +384,31 @@ RECOMP_PATCH void Display_Update(void) {
 
         RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "XOFFSET:");
-        Graphics_DisplaySmallNumber(80, 220, ABS(gXoffsetBounds));
-        Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "YOFFSET:");
-        Graphics_DisplaySmallNumber(80, 210, ABS(gYoffsetBounds));
+
+        if (xTemp >= 0) {
+            Graphics_DisplaySmallText(10, 190, 1.0f, 1.0f, "XTEMP:");
+        } else {
+            Graphics_DisplaySmallText(10, 190, 1.0f, 1.0f, "XTEMP:");
+        }
+        Graphics_DisplaySmallNumber(80, 190, ABS(xTemp));
+
+        if (yTemp >= 0) {
+            Graphics_DisplaySmallText(10, 200, 1.0f, 1.0f, "YTEMP:");
+        } else {
+            Graphics_DisplaySmallText(10, 200, 1.0f, 1.0f, "YTEMP:");
+        }
+        Graphics_DisplaySmallNumber(80, 200, ABS(yTemp));
+
+        Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "XTEST:");
+        Graphics_DisplaySmallNumber(80, 210, ABS(xTest));
+        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "CSFRAME:");
+        Graphics_DisplaySmallNumber(80, 220, ABS(gCsFrameCount));
+        if (gControllerPress[0].button & Z_TRIG) {
+            xTest -= 10;
+        } else if (gControllerPress[0].button & R_TRIG) {
+            xTest += 10;
+        }
+        /*
         Graphics_DisplaySmallText(10, 200, 1.0f, 1.0f, "BACK:");
         Graphics_DisplaySmallNumber(80, 200, ABS(gBackZdist));
         Graphics_DisplaySmallText(10, 190, 1.0f, 1.0f, "FRONT:");
@@ -378,7 +427,8 @@ RECOMP_PATCH void Display_Update(void) {
         } else if (gControllerPress[0].button & R_TRIG) {
             gFrontZdist += 1000;
         }
-        
+
+
         Player* player = gPlayer;
         static s32 prevSpeed;
         static bool debugFreeze = false;
@@ -391,6 +441,7 @@ RECOMP_PATCH void Display_Update(void) {
             player->baseSpeed = prevSpeed;
             debugFreeze = false;
         }
+        */
     }
 #endif
 }

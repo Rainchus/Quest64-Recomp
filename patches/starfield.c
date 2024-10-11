@@ -209,6 +209,7 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
     gDPSetColorDither(gMasterDisp++, G_CD_MAGICSQ);
 }
 
+#if 1
 RECOMP_PATCH void Play_GenerateStarfield(void) {
     u32 i;
     float currentScreenWidth = GetCurrentScreenWidth();
@@ -228,6 +229,7 @@ RECOMP_PATCH void Play_GenerateStarfield(void) {
         gStarFillColors[i] = FILL_COLOR(gStarColors[i % ARRAY_COUNT(gStarColors)]);
     }
 }
+#endif
 
 RECOMP_PATCH void Camera_SetStarfieldPos(f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt) {
     f32 sp34;
