@@ -90,6 +90,8 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern s32 D_ending_80196D00;
+extern u32 D_ending_80196F8C;
 extern u32 D_ending_80192E70;
 extern Limb* aFoxSkel[23];
 extern Limb* aFalcoSkel[23];

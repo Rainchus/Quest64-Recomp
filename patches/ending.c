@@ -43,7 +43,11 @@ void Ending_80191700(u32 arg0, AssetInfo* asset);
 void Ending_80191710(u32 arg0, AssetInfo* asset);
 void Ending_80191C58(u32 arg0, AssetInfo* asset);
 void Ending_80191C7C(u32 arg0, AssetInfo* asset);
-
+bool Ending_8018BCB0(void);
+void Ending_8018A570(void);
+void Ending_8018A8FC(void);
+void Ending_8018B3D8(void);
+void Ending_8018ABE8(void);
 void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                    OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
                                    Matrix* transform);
@@ -259,35 +263,3 @@ RECOMP_PATCH void Ending_8018EDB8(u32 arg0, AssetInfo* asset) {
 }
 #endif
 
-// @recomp: Print ending timer & borders
-RECOMP_PATCH void Ending_80192164(u32 arg0) {
-    s32 i;
-
-    for (i = 0; i < 94; i++) {
-        if ((D_ending_801934B4[i].unk_0C <= arg0) &&
-            ((D_ending_801934B4[i].unk_0C + D_ending_801934B4[i].unk_10) > arg0)) {
-            Matrix_Push(&gGfxMatrix);
-            if ((D_ending_801934B4[i].unk_00 == NULL) && (D_ending_801934B4[i].unk_04 == NULL)) {
-                Ending_80191700(arg0, &D_ending_801934B4[i]);
-            } else if ((D_ending_801934B4[i].unk_00 != NULL) && (D_ending_801934B4[i].unk_04 == NULL)) {
-                Ending_80191710(arg0, &D_ending_801934B4[i]);
-            } else if ((D_ending_801934B4[i].unk_00 == NULL) && (D_ending_801934B4[i].unk_04 != NULL)) {
-                Ending_80191C58(arg0, &D_ending_801934B4[i]);
-            } else if ((D_ending_801934B4[i].unk_00 != NULL) && (D_ending_801934B4[i].unk_04 != NULL)) {
-                Ending_80191C7C(arg0, &D_ending_801934B4[i]);
-            }
-            Matrix_Pop(&gGfxMatrix);
-        }
-    }
-    
-#if ENDING_BORDERS == 1
-    DrawBorders();
-#endif
-
-#if DEBUG_ENDING == 1
-    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TIMER");
-    Graphics_DisplaySmallNumber(80, 220, D_ending_80192E70);
-#endif
-}
