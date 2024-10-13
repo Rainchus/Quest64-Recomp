@@ -37,6 +37,62 @@ typedef struct {
 
 extern UnkStruct_196D08 D_ending_80196D08[10];
 extern Vec3f D_ending_80198600[300];
+extern AssetInfo D_ending_801934B4[94];
+
+void Ending_80191700(u32 arg0, AssetInfo* asset);
+void Ending_80191710(u32 arg0, AssetInfo* asset);
+void Ending_80191C58(u32 arg0, AssetInfo* asset);
+void Ending_80191C7C(u32 arg0, AssetInfo* asset);
+
+void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+                                   OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                   Matrix* transform);
+
+void DrawBorders(void) {
+#if ENDING_SKIP_INTERPOLATION == 1
+    static int frame = 0;
+    int max_frame = 1800; // Duration of the animation in frames
+    int margin = 20;
+    int extraOffset = SCREEN_WIDTH * 2; // Increase this value to push rectangles further out
+    float t;
+
+    if (gGameState == GSTATE_ENDING) {
+        if (frame > max_frame) {
+            frame = max_frame;
+        }
+
+        t = (float) frame / max_frame;
+
+        // Set up rendering state for opaque red rectangles
+        RCP_SetupDL_12();
+        gDPSetRenderMode(gMasterDisp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+        gDPSetCombineMode(gMasterDisp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 0, 0, 255); // Set color to black
+
+        // Left rectangle slides in from further off-screen to its final position
+        int left_end_x = (-SCREEN_WIDTH + margin + 1) * 2;
+        int left_start_x = left_end_x - extraOffset * 2;
+        int current_left_x = left_start_x + (int) (t * (left_end_x - left_start_x));
+
+        gEXTextureRectangle(gMasterDisp++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_CENTER, current_left_x, 0, current_left_x,
+                            SCREEN_HEIGHT * 4, 0, 0, 0, 0, 0);
+
+        // Right rectangle slides in from further off-screen to its final position
+        int right_end_x = (SCREEN_WIDTH - margin) * 2;
+        int right_start_x = right_end_x + extraOffset * 2;
+        int current_right_x = right_start_x - (int) (t * (right_start_x - right_end_x));
+
+        gEXTextureRectangle(gMasterDisp++, G_EX_ORIGIN_CENTER, G_EX_ORIGIN_RIGHT, current_right_x, 0, current_right_x,
+                            SCREEN_HEIGHT * 4, 0, 0, 0, 0, 0);
+
+        gDPSetScissor(gMasterDisp++, 3, (SCREEN_WIDTH - 320) / 2, 0, (SCREEN_WIDTH + 320) / 2, 240);
+
+        frame++; // Increment frame count for animation
+    } else {
+        frame = 0; // Reset frame when not in ending state
+    }
+#endif
+}
 
 // Team shadows in the ending
 RECOMP_PATCH void Ending_801876A4(void) {
@@ -106,6 +162,8 @@ RECOMP_PATCH void Title_NextState_OptionMenu(void) {
 }
 #endif
 
+// Characters running in the ending
+#if ENDING_SKIP_INTERPOLATION == 1
 RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
     f32 temp;
 
@@ -139,5 +197,97 @@ RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
     Animation_GetFrameData(asset->unk_00,
                            (u32) ((arg0 + asset->unk_70) * asset->unk_14) % Animation_GetFrameCount(asset->unk_00),
                            D_ending_80198600);
-    Animation_DrawSkeleton(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
+
+    if ((asset->unk_04 == aFoxSkel) || (asset->unk_04 == aFalcoSkel) || (asset->unk_04 == aPeppySkel) ||
+        (asset->unk_04 == aSlippySkel)) {
+        // @recomp: Skip interpolation in the ending running sequence of the ending.
+        Animation_DrawSkeleton_Ending(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
+    } else {
+        // @recomp: Normal for everything else.
+        Animation_DrawSkeleton(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
+    }
+}
+#endif
+
+#if ENDING_SKIP_INTERPOLATION == 1
+// @recomp Skip interpolation on the floor.
+RECOMP_PATCH void Ending_8018EDB8(u32 arg0, AssetInfo* asset) {
+    f32 temp;
+
+    gStarCount = 0;
+
+    RCP_SetupDL(&gMasterDisp, asset->unk_08);
+
+    gSPFogPosition(gMasterDisp++, asset->fogNear, asset->fogFar);
+    gDPSetFogColor(gMasterDisp++, asset->fog.r, asset->fog.g, asset->fog.b, 0);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, asset->prim.r, asset->prim.g, asset->prim.b, asset->prim.a);
+
+    Matrix_Translate(gGfxMatrix, asset->unk_18.x + (arg0 - asset->unk_0C) * asset->unk_3C.x,
+                     asset->unk_18.y + (arg0 - asset->unk_0C) * asset->unk_3C.y,
+                     asset->unk_18.z + (arg0 - asset->unk_0C) * asset->unk_3C.z, MTXF_APPLY);
+
+    Matrix_Scale(gGfxMatrix, asset->unk_30.x, asset->unk_30.y, asset->unk_30.z, MTXF_APPLY);
+
+    temp = __sinf(arg0 * 0.1f + asset->unk_70);
+
+    Matrix_RotateY(gGfxMatrix,
+                   M_DTOR * (asset->unk_24.y + temp * asset->unk_54.y + (arg0 - asset->unk_0C) * asset->unk_48.y),
+                   MTXF_APPLY);
+    Matrix_RotateX(gGfxMatrix,
+                   M_DTOR * (asset->unk_24.x + temp * asset->unk_54.x + (arg0 - asset->unk_0C) * asset->unk_48.x),
+                   MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix,
+                   M_DTOR * (asset->unk_24.z + temp * asset->unk_54.z + (arg0 - asset->unk_0C) * asset->unk_48.z),
+                   MTXF_APPLY);
+
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    // @recomp Skip interpolation on the floor.
+    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ADDRESS(D_END_700E9E0), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_SKIP,
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+
+    gDPLoadTextureBlock(gMasterDisp++, D_END_700EA38, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_WRAP | G_TX_NOMIRROR,
+                        G_TX_WRAP | G_TX_NOMIRROR, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
+    gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, arg0 * 14, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                 G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
+
+    gSPDisplayList(gMasterDisp++, D_END_700E9E0);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+#endif
+
+// @recomp: Print ending timer & borders
+RECOMP_PATCH void Ending_80192164(u32 arg0) {
+    s32 i;
+
+    for (i = 0; i < 94; i++) {
+        if ((D_ending_801934B4[i].unk_0C <= arg0) &&
+            ((D_ending_801934B4[i].unk_0C + D_ending_801934B4[i].unk_10) > arg0)) {
+            Matrix_Push(&gGfxMatrix);
+            if ((D_ending_801934B4[i].unk_00 == NULL) && (D_ending_801934B4[i].unk_04 == NULL)) {
+                Ending_80191700(arg0, &D_ending_801934B4[i]);
+            } else if ((D_ending_801934B4[i].unk_00 != NULL) && (D_ending_801934B4[i].unk_04 == NULL)) {
+                Ending_80191710(arg0, &D_ending_801934B4[i]);
+            } else if ((D_ending_801934B4[i].unk_00 == NULL) && (D_ending_801934B4[i].unk_04 != NULL)) {
+                Ending_80191C58(arg0, &D_ending_801934B4[i]);
+            } else if ((D_ending_801934B4[i].unk_00 != NULL) && (D_ending_801934B4[i].unk_04 != NULL)) {
+                Ending_80191C7C(arg0, &D_ending_801934B4[i]);
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+    }
+    
+#if ENDING_BORDERS == 1
+    DrawBorders();
+#endif
+
+#if DEBUG_ENDING == 1
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TIMER");
+    Graphics_DisplaySmallNumber(80, 220, D_ending_80192E70);
+#endif
 }

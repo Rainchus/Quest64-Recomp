@@ -564,8 +564,22 @@ RECOMP_PATCH void Cutscene_DrawGreatFox(void) {
         RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, 1005);
     }
 
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // @recomp: skip interpolation in the running part of the ending
+    if (gGameState == GSTATE_ENDING) {
+        #if ENDING_SKIP_INTERPOLATION == 1
+        if ((D_ending_80192E70 >= 3099) && (D_ending_80192E70 <= 4800)) {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_ALLOW);
+        }
+        #else
+        goto ending_gf_tag;
+        #endif
+    } else {
+        ending_gf_tag:
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    }
 
     if (gGreatFoxIntact) {
         gSPDisplayList(gMasterDisp++, aGreatFoxIntactDL);

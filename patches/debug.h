@@ -59,4 +59,7 @@
 #define DEBUG_ENDING 0
 #define DEBUG_VERSUS 0
 
+// Settings
+#define ENDING_SKIP_INTERPOLATION 1
+#define ENDING_BORDERS 1
 #endif

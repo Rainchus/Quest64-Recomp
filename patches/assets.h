@@ -90,6 +90,13 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern u32 D_ending_80192E70;
+extern Limb* aFoxSkel[23];
+extern Limb* aFalcoSkel[23];
+extern Limb* aPeppySkel[23];
+extern Limb* aSlippySkel[21];
+extern u16 D_END_700EA38[];
+extern Gfx D_END_700E9E0[];
 extern f32 D_demo_800C9F90[4];
 extern Vec3f D_demo_800C9F60[4];
 extern StickInputOption D_menu_801B9180;
@@ -1499,4 +1506,3 @@ extern u16 gMsg_ID_23030[];
 extern u16 gMsg_ID_23031[];
 extern u16 gMsg_ID_23032[];
 extern MsgLookup gMsgLookup[];
-

@@ -376,6 +376,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                             sp134 = Math_ModF(sp134 + 360.0f - 100.0f, 360.0f);
                         }
                     } else {
+                        // @recomp. Accomodate for expanded aspect ratio
                         sp138 = Math_ModF(sp138, (320.0f * 3.0f) + 120.0f);
                         sp134 = Math_ModF(sp134, 360.0f);
                     }
