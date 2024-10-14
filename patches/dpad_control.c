@@ -2,7 +2,7 @@
 #define __sinf __sinf_recomp
 #define __cosf __cosf_recomp
 
-#if 1
+#if 1 // Global scope
 
 #include "patches.h"
 
@@ -303,4 +303,55 @@ RECOMP_PATCH bool Option_Input_Sound_X(f32* arg0, f32 arg1, f32 arg2, StickInput
     return var_a2;
 }
 
-#endif
+// Input for horizontal selection in DataSelect
+RECOMP_PATCH s32 Option_Input_DataSelect_X(s32* arg0) {
+    s32 ret = 0;
+    s32 temp = *arg0;
+    s32 x = +gControllerPress[gMainController].stick_x;
+    s32 y = -gControllerPress[gMainController].stick_y;
+
+    if ((y > 40) || (y < -40)) {
+        return ret;
+    }
+
+    if ((x < 30) && (x > -30)) {
+        x = 0;
+    }
+
+    if (D_menu_801B91A0 == 0) {
+        // @recomp: D_PAD control
+        if (gControllerPress[0].button & R_JPAD) {
+            *arg0 = 0;
+            ret = 1;
+            D_menu_801B91A0 = 6;
+        } else if (gControllerPress[0].button & L_JPAD) {
+            *arg0 = 1;
+            ret = -1;
+            D_menu_801B91A0 = 6;
+        }
+
+        if (x != 0) {
+            if (x > 0) {
+                *arg0 = 0;
+                ret = 1;
+            }
+            if (x < 0) {
+                *arg0 = 1;
+                ret = -1;
+            }
+            D_menu_801B91A0 = 6;
+        }
+    }
+
+    if (D_menu_801B91A0 > 0) {
+        D_menu_801B91A0--;
+    }
+
+    if (temp == *arg0) {
+        ret = 0;
+    }
+
+    return ret;
+}
+
+#endif // Global scope
