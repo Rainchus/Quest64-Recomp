@@ -48,6 +48,10 @@ void Ending_8018A570(void);
 void Ending_8018A8FC(void);
 void Ending_8018B3D8(void);
 void Ending_8018ABE8(void);
+void Ending_8018A828(void);
+void Ending_801926D4(void);
+void Ending_8018C21C(void);
+void Ending_8018CE20(s32);
 void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                    OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
                                    Matrix* transform);
@@ -261,5 +265,69 @@ RECOMP_PATCH void Ending_8018EDB8(u32 arg0, AssetInfo* asset) {
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+
+// @recomp: Hide Venom under 1700 frames
+RECOMP_PATCH void Ending_80190648(s32 arg0, AssetInfo* asset) {
+    RCP_SetupDL(&gMasterDisp, asset->unk_08);
+
+    Matrix_RotateY(gGfxMatrix, M_DTOR * D_ending_801985F0.y, MTXF_NEW);
+    Matrix_RotateX(gGfxMatrix, M_DTOR * D_ending_801985F0.x, MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix, M_DTOR * D_ending_801985F0.z, MTXF_APPLY);
+
+    Matrix_Translate(gGfxMatrix, asset->unk_18.x, asset->unk_18.y, asset->unk_18.z, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, asset->unk_30.x, asset->unk_30.y, asset->unk_30.z, MTXF_APPLY);
+
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    if (D_ending_80192E70 < 1700) {
+        gSPDisplayList(gMasterDisp++, D_END_7002120);
+    }
+}
+
+// @recomp: Borders & ending timer printing
+RECOMP_PATCH void Ending_Draw(void) {
+    Matrix_Push(&gGfxMatrix);
+    Matrix_LookAt(gGfxMatrix, gCsCamEyeX, gCsCamEyeY, gCsCamEyeZ, gCsCamAtX, gCsCamAtY, gCsCamAtZ, 0.0f, 100.0f, 0.0f,
+                  MTXF_NEW);
+
+    switch (D_ending_80196D00) {
+        case 1:
+            Ending_801926D4();
+            break;
+
+        case 3:
+            Ending_8018C21C();
+            break;
+
+        case 6:
+            Ending_8018A828();
+            break;
+
+        case 7:
+            Ending_801926D4();
+            break;
+    }
+
+    Ending_8018CE20(D_ending_80196D04);
+    D_ending_80196D04++;
+    Radio_Draw();
+
+#if ENDING_BORDERS == 1
+    if (gGameState == GSTATE_ENDING) {
+        DrawBorders();
+    }
 #endif
 
+#if DEBUG_ENDING == 1
+        // @recomp: Ending timer.
+        if ((D_ending_80192E70 >= 0) && (D_ending_80192E70 < 10000)) {
+            RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+            Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TIMER");
+            Graphics_DisplaySmallNumber(80, 220, D_ending_80192E70);
+        }
+#endif
+
+    Matrix_Pop(&gGfxMatrix);
+}
+#endif

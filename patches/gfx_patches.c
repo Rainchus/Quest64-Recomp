@@ -125,20 +125,6 @@ RECOMP_PATCH void Graphics_ThreadEntry(void* arg0) {
             validVIsPerFrame = MAX(visPerFrame, gGfxVImesgQueue.validCount + 1); // @recomp
             gEXSetRefreshRate(gMasterDisp++, 60 / validVIsPerFrame);             // @recomp
 
-#if ENDING_BORDERS == 1
-            if (gGameState == GSTATE_ENDING) {
-                DrawBorders();
-#if DEBUG_ENDING == 1
-                if ((D_ending_80192E70 >= 0) && (D_ending_80192E70 < 10000)) {
-                    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
-                    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-                    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TIMER");
-                    Graphics_DisplaySmallNumber(80, 220, D_ending_80192E70);
-                }
-#endif
-            }
-#endif
-
 #if 1
             // Noise
             // gDPSetAlphaDither(gMasterDisp++, G_AD_NOISE);
