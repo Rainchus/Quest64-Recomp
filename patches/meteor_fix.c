@@ -123,10 +123,6 @@ void Meteo_SpawnMeteorsGroup1(MeMeteor2* this, ActorCutscene* actorCs, s32 index
     this->obj.status = OBJ_INIT;
     this->obj.id = OBJ_ACTOR_ME_METEOR_2;
 
-    this->obj.pos.x = RAND_FLOAT_CENTERED_SEEDED(2000.0f) + actorCs->obj.pos.x;
-    this->obj.pos.y = RAND_FLOAT_CENTERED_SEEDED(2000.0f) + actorCs->obj.pos.y;
-    this->obj.pos.z = RAND_FLOAT_CENTERED_SEEDED(500.0f) + actorCs->obj.pos.z - 9000.0f;
-
     this->obj.pos.x = sMeteorGroup1[index - 5].pos.x;
     this->obj.pos.y = sMeteorGroup1[index - 5].pos.y;
     this->obj.pos.z = sMeteorGroup1[index - 5].pos.z;
@@ -158,10 +154,6 @@ void Meteo_SpawnMeteorsGroup2(MeMeteor2* this, ActorCutscene* actorCs, s32 index
     Actor_Initialize(this);
     this->obj.status = OBJ_INIT;
     this->obj.id = OBJ_ACTOR_ME_METEOR_2;
-
-    this->obj.pos.x = RAND_FLOAT_CENTERED_SEEDED(2000.0f) + actorCs->obj.pos.x;
-    this->obj.pos.y = RAND_FLOAT_CENTERED_SEEDED(2000.0f) + actorCs->obj.pos.y;
-    this->obj.pos.z = RAND_FLOAT_CENTERED_SEEDED(500.0f) + actorCs->obj.pos.z - 9000.0f;
 
     this->obj.pos.x = sMeteorGroup2[index - 4].pos.x;
     this->obj.pos.y = sMeteorGroup2[index - 4].pos.y;
