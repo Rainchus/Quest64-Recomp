@@ -90,6 +90,7 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern f32 gTestVarF;
 extern s32 D_menu_801B91A0;
 extern Vec3f D_menu_801AF100[];
 extern Vec3f D_menu_801AF118[];
@@ -369,6 +370,9 @@ extern Gfx aMaRailroadSwitch5DL[];
 extern Gfx aMaRailroadSwitch6DL[];
 extern Gfx aMaRailroadSwitch7DL[];
 extern Gfx aMaRailroadSwitch8DL[];
+
+extern u16 D_SO_6005710[1024];
+extern u16 D_ZO_600D990[];
 
 extern Limb* D_arwing_3016610[19];
 extern Limb* aVe2AndrossGateSkel[];

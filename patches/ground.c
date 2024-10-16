@@ -1,4 +1,28 @@
 #include "patches.h"
+#include "water_effect.inc"
+
+void* memcpy2(void* s1, const void* s2, size_t n) {
+    unsigned char* su1 = (unsigned char*) s1;
+    const unsigned char* su2 = (const unsigned char*) s2;
+
+    while (n > 0) {
+        *su1 = *su2;
+        su1++;
+        su2++;
+        n--;
+    }
+
+    return s1;
+}
+
+extern Gfx* dynaFloor1;
+extern Gfx* dynaFloor2;
+extern Vtx* dynaFloor1Vtx;
+extern Vtx* dynaFloor2Vtx;
+
+#if 0
+f32 gTestVarF = 0.0f;
+#endif
 
 void Bolse_DrawDynamicGround(void);
 
@@ -703,9 +727,16 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
+               
+                /*
+                memcpy2(dynaFloor1, SEGMENTED_TO_VIRTUAL(D_SO_6002E60), 724 * sizeof(Gfx));
+                memcpy2(dynaFloor2, SEGMENTED_TO_VIRTUAL(D_SO_60005B0), 724 * sizeof(Gfx));
+                memcpy2(dynaFloor1Vtx, SEGMENTED_TO_VIRTUAL(D_SO_6001C50), 17 * 17 * sizeof(Vtx));
+                memcpy2(dynaFloor2Vtx, SEGMENTED_TO_VIRTUAL(D_SO_6004500), 17 * 17 * sizeof(Vtx));
+                */
 
                 // Render the display list based on the current frame
-                gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
+                gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0_copy : D_SO_6002E60_copy);
 
                 // @recomp Pop the transform id.
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -1045,9 +1076,55 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
 
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &spC4, &spB8);
 
-        // spB4[*spB0].n.n[0] = spB8.x; // Disable to fix mirror
+        if (gCurrentLevel == LEVEL_SOLAR) {
+            spB4[*spB0].n.n[0] = spB8.x;
+        }
         spB4[*spB0].n.n[1] = spB8.y;
         spB4[*spB0].n.n[2] = spB8.z;
+    }
+
+    Vtx* spB4_copy;
+
+    switch (gCurrentLevel) {
+        case LEVEL_SOLAR:
+            if ((gGameFrameCount % 2) != 0) {
+                spB4 = SEGMENTED_TO_VIRTUAL(D_SO_6001C50);
+                spB4_copy = D_SO_6001C50_copy;
+            } else {
+                spB4 = SEGMENTED_TO_VIRTUAL(D_SO_6004500);
+                spB4_copy = D_SO_6004500_copy;
+            }
+            spB0 = SEGMENTED_TO_VIRTUAL(D_SO_6022760);
+
+            memcpy2(spB4_copy, spB4, 17 * 17 * sizeof(Vtx));
+
+            for (i = 0; (i < 17 * 17); i++, spB0++) {
+                spB4_copy[*spB0].n.n[0] *= -1.0f;
+                // spB4_copy[*spB0].n.n[1] *= -1.0f;
+                // spB4_copy[*spB0].n.n[2] *= -1.0f;
+            }
+            break;
+            /*
+            case LEVEL_ZONESS:
+                if ((gGameFrameCount % 2) != 0) {
+                    spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_6009ED0);
+                    spB4_copy = D_ZO_6009ED0_copy;
+                } else {
+                    spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_600C780);
+                    spB4_copy = D_ZO_600C780_copy;
+                }
+                spB0 = SEGMENTED_TO_VIRTUAL(D_ZO_602AC50);
+
+                memcpy2(spB4_copy, spB4, 17 * 17 * sizeof(Vtx));
+
+                for (i = 0; (i < 17 * 17); i++, spB0++) {
+                    // spB4_copy[*spB0] = spB4[*spB0];
+                    spB4_copy[*spB0].n.n[0] *= -1.0f; // Disable to fix mirror
+                    // spB4_copy[*spB0].n.n[1] *= -1.0f;
+                    // spB4_copy[*spB0].n.n[2] *= -1.0f;
+                }
+                break;
+                */
     }
 }
 #endif

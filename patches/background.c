@@ -15,6 +15,8 @@ extern int yTemp;
 extern int xTest;
 #endif
 
+void* memcpy2(void* s1, const void* s2, size_t n);
+
 #if 1 // Background_DrawBackdrop
 RECOMP_PATCH void Background_DrawBackdrop(void) {
     f32 sp13C;
@@ -548,6 +550,13 @@ void Aquas_InitLevel(void);
 
 #define MEM_ARRAY_ALLOCATE(arr, count) ((arr) = Memory_Allocate((count) * sizeof(*(arr))))
 
+#if 0
+Gfx dynaFloor1[724];
+Gfx dynaFloor2[724];
+Vtx dynaFloor1Vtx[17 * 17];
+Vtx dynaFloor2Vtx[17 * 17];
+#endif
+
 RECOMP_PATCH void Play_InitLevel(void) {
     Vtx* mesh;
     u8* ptr;
@@ -618,6 +627,17 @@ RECOMP_PATCH void Play_InitLevel(void) {
             break;
 
         case LEVEL_ZONESS:
+            /*
+            Gfx** dynaFloor1;
+            Gfx** dynaFloor2;
+            Vtx** dynaFloor1Vtx;
+            Vtx** dynaFloor2Vtx;
+            */
+            // MEM_ARRAY_ALLOCATE(dynaFloor1, 724 * sizeof(Gfx));
+            // MEM_ARRAY_ALLOCATE(dynaFloor2, 724 * sizeof(Gfx));
+            // MEM_ARRAY_ALLOCATE(dynaFloor1Vtx, 17 * 17 * sizeof(Vtx));
+            // MEM_ARRAY_ALLOCATE(dynaFloor2Vtx, 17 * 17 * sizeof(Vtx));
+
             MEM_ARRAY_ALLOCATE(gZoDodoraPosRots, 200);
             ptr = (u8*) gZoDodoraPosRots;
             for (i = 0; i < 200 * (s32) sizeof(*gZoDodoraPosRots); i++, ptr++) {
@@ -626,6 +646,18 @@ RECOMP_PATCH void Play_InitLevel(void) {
             gZoDodoraWaypointCount = 0;
             /* fallthrough */
         case LEVEL_SOLAR:
+            /*
+                for (i = 0; i < 724; i++) {
+                    if (dynaFloor1[i].dma.cmd == G_VTX) {
+                        dynaFloor1[i].dma.addr =
+                            (uintptr_t) dynaFloor1[i].dma.addr - (uintptr_t) D_SO_6001C50 + (uintptr_t) dynaFloor1Vtx;
+                    }
+                    if (dynaFloor2[i].dma.cmd == G_VTX) {
+                        dynaFloor2[i].dma.addr =
+                            (uintptr_t) dynaFloor2[i].dma.addr - (uintptr_t) D_SO_6004500 + (uintptr_t) dynaFloor2Vtx;
+                    }
+                }
+    */
             gUseDynaFloor = true;
             gGroundHeight = -20000.0f;
             fptr = MEM_ARRAY_ALLOCATE(D_ctx_801782CC, 17 * 17);
