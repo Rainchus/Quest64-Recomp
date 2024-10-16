@@ -861,8 +861,10 @@ extern Gfx aArrowDL[];
 RECOMP_PATCH void HUD_EdgeArrows_Draw(s32 idx, bool arg1) {
     static const f32 D_800D1EF8[] = { 0.0f, 0.0f, -9.0f, 9.0f, 10.0f, 10.0f, 10.0f, 10.0f, 0.0f, 0.0f, -8.0f, 8.0f };
     static const f32 D_800D1F28[] = { -7.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 8.0f, -8.0f, 0.0f, 0.0f };
-    static const f32 D_800D1F58[] = { -22.0f, -22.0f, -22.0f, -22.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f };
-    static const f32 D_800D1FB8[] = { 180.0f, 0.0f, 270.0f, 90.0f, 270.0f, 270.0f, 270.0f, 270.0f, 0.0f, 180.0f, 90.0f, 270.0f };
+    static const f32 D_800D1F58[] = { -22.0f, -22.0f, -22.0f, -22.0f, -28.0f, -28.0f,
+                                      -28.0f, -28.0f, -28.0f, -28.0f, -28.0f, -28.0f };
+    static const f32 D_800D1FB8[] = { 180.0f, 0.0f,   270.0f, 90.0f,  270.0f, 270.0f,
+                                      270.0f, 270.0f, 0.0f,   180.0f, 90.0f,  270.0f };
     static const f32 D_800D1FE8[] = { 0.0f, 0.0f, 2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, 0.0f, 0.0f, 2.0f, -2.0f };
     static const f32 D_800D2018[] = { 2.0f, -2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -2.0f, 2.0f, 0.0f, 0.0f };
 
@@ -880,7 +882,7 @@ RECOMP_PATCH void HUD_EdgeArrows_Draw(s32 idx, bool arg1) {
 
     // Simplified viewport alignment based on X position
     f32 xPos = D_800D1EF8[idx];
-    
+
     if (xPos < 0.0f) {
         // Align viewport to the left if X is negative
         gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
@@ -1094,10 +1096,14 @@ RECOMP_PATCH void Radio_Draw(void) {
     RadioCharacterId radioCharId;
     u32 ret;
     s32 fakeTemp;
+    
+
     Game_InitFullViewport();
-    gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_LEFT, 0, 0, 0, 0);
-    gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
-    gSPViewport(gMasterDisp++, gViewport);
+    if (gGameState != GSTATE_ENDING) {
+        gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_LEFT, 0, 0, 0, 0);
+        gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
+        gSPViewport(gMasterDisp++, gViewport);
+    }
 
     if ((gPlayState == PLAY_PAUSE) && (gGameState != GSTATE_ENDING)) {
         return;
