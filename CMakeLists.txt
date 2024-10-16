@@ -199,9 +199,11 @@ target_include_directories(Starfox64Recompiled PRIVATE
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     target_compile_options(Starfox64Recompiled PRIVATE
-        -march=nehalem
+        #-march=nehalem
+        -march=core2
         -fno-strict-aliasing
         -fms-extensions
+        -msse4.1 # added for core2
     )
 else()
     target_compile_options(Starfox64Recompiled PRIVATE
