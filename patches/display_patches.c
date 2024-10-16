@@ -325,6 +325,43 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
+#if DEBUG_Z_R_START_TO_RESET == 1
+    {
+        Player* pl = &gPlayer[0];
+        static int resetTimer = 0;
+
+        if ((gControllerHold[0].button & Z_TRIG) && (gControllerHold[0].button & R_TRIG) &&
+            (gControllerPress[0].button & START_BUTTON)) {
+            resetTimer = 40;
+            // pl->state_1C8 = PLAYERSTATE_1C8_NEXT;
+            pl->csTimer = 0;
+            gFadeoutType = 4;
+        }
+        if (resetTimer == 10) {
+            gGameState = GSTATE_BOOT;
+        }
+
+        if (resetTimer > 0) {
+            resetTimer--;
+        }
+    }
+#endif
+#if DEBUG_Z_R_START_TO_MAP == 1
+    {
+        Player* pl = &gPlayer[0];
+
+        if ((gControllerHold[0].button & Z_TRIG) && (gControllerHold[0].button & R_TRIG) &&
+            (gControllerPress[0].button & START_BUTTON)) {
+            gFillScreenAlphaTarget = 255;
+            gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 0;
+            gFillScreenAlphaStep = 8;
+            gShowLevelClearStatusScreen = false;
+            pl->state_1C8 = PLAYERSTATE_1C8_NEXT;
+            pl->csTimer = 0;
+            gFadeoutType = 4;
+        }
+    }
+#endif
 #if DEBUG_L_TO_WARP_ZONE == 1
     {
         if (gControllerPress[0].button & L_TRIG) {
@@ -375,8 +412,19 @@ RECOMP_PATCH void Display_Update(void) {
 #if 0
     RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "XOFFSET:");
-    Graphics_DisplaySmallNumber(80, 220, (int) ABS(segataSanshiro));
+    if (gTestVarF > 0) {
+        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TEST:");
+    } else {
+        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TESTNEG:");
+    }
+    Graphics_DisplaySmallNumber(80, 220, (int) ABS(gTestVarF));
+
+    if (gControllerPress[0].button & Z_TRIG) {
+        gTestVarF -= 10;
+    } else if (gControllerPress[0].button & R_TRIG) {
+        gTestVarF += 10;
+    }
+
 #endif
 // for draw distance tests
 #if 0
