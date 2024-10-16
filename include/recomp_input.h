@@ -20,14 +20,14 @@ namespace recomp {
     #define DEFINE_N64_BUTTON_INPUTS() \
         DEFINE_INPUT(A, 0x8000, "Laser") \
         DEFINE_INPUT(B, 0x4000, "Smart Bomb") \
-        DEFINE_INPUT(Z, 0x2000, "Target") \
+        DEFINE_INPUT(Z, 0x2000, "Tilt Left") \
         DEFINE_INPUT(START, 0x1000, "Pause") \
-        DEFINE_INPUT(L, 0x0020, "Tilt Left") \
+        DEFINE_INPUT(L, 0x0020, "Crosshair") \
         DEFINE_INPUT(R, 0x0010, "Tilt Right") \
         DEFINE_INPUT(C_UP, 0x0008, "Camera") \
         DEFINE_INPUT(C_LEFT, 0x0002, "Turbo") \
         DEFINE_INPUT(C_DOWN, 0x0004, "Brake") \
-        DEFINE_INPUT(C_RIGHT, 0x0001, "ROB Mesg") \
+        DEFINE_INPUT(C_RIGHT, 0x0001, "ROB Message") \
         DEFINE_INPUT(DPAD_UP, 0x0800, "Menu Up") \
         DEFINE_INPUT(DPAD_RIGHT, 0x0100, "Menu Right") \
         DEFINE_INPUT(DPAD_DOWN, 0x0400, "Menu Down") \
