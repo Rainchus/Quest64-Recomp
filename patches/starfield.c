@@ -9,24 +9,12 @@
 #define STARFIELD_HEIGHT_MULTIPLIER 1.0f
 
 // Declare global variables for screen dimensions
-float gCurrentScreenWidth = 320.0f * 3;  // Default width
-float gCurrentScreenHeight = 240.0f * 3; // Default height
+float gCurrentScreenWidth = (float)SCREEN_WIDTH * 3;  // Default width
+float gCurrentScreenHeight = (float)SCREEN_HEIGHT * 3; // Default height
 
-// Function to set the current screen dimensions
-void SetCurrentScreenDimensions(float width, float height) {
-    gCurrentScreenWidth = width;
-    gCurrentScreenHeight = height;
-}
-
-// Function to get the current screen width
-float GetCurrentScreenWidth() {
-    return gCurrentScreenWidth;
-}
-
-// Function to get the current screen height
-float GetCurrentScreenHeight() {
-    return gCurrentScreenHeight;
-}
+// New global variables for storing the previoous positions
+f32 gStarPrevX[3000];
+f32 gStarPrevY[3000];
 
 // Custom floating-point modulo function (replaces fmodf)
 float FloatMod(float a, float b) {
@@ -44,20 +32,6 @@ static Vtx starVerts[4] = {
     VTX(0, 1, 0, 0, 0, 255, 255, 255, 255), // Top-left
     VTX(1, 0, 0, 0, 0, 255, 255, 255, 255), // Bottom-right
     VTX(1, 1, 0, 0, 0, 255, 255, 255, 255), // Top-right
-};
-
-// Display list to render the two triangles forming the star quad
-static Gfx starDL[] = {
-    gsSPVertex(starVerts, ARRAY_COUNT(starVerts), 0),
-    gsSP2Triangles(0, 1, 2, 0, 1, 2, 3, 0),
-    gsSPEndDisplayList(),
-};
-
-// Display list to render the two triangles forming the partial star quad
-static Gfx starDLPartial[] = {
-    gsSPVertex(starVerts, ARRAY_COUNT(starVerts), 0),
-    gsSP2Triangles(0, 1, 2, 0, 1, 2, 3, 0),
-    gsSPEndDisplayList(),
 };
 
 // @recomp: Starfield drawn with triangles, re-engineered by @Tharo & @TheBoy181
@@ -87,10 +61,10 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
     // Setup render state for stars
     static Gfx starSetupDL[] = {
         gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF), // Disable texturing
-        gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_BACK |
+        gsSPClearGeometryMode(G_ZBUFFER | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_BACK |
                               G_SHADING_SMOOTH),
         gsDPPipeSync(),
-        gsDPSetCombineMode(G_CC_PRIMITIVE, G_CC_PRIMITIVE), // Use primitive color
+        gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE), // Use shade color
         gsDPSetOtherMode(G_AD_NOTPATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE |
                              G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                          G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2),
@@ -99,8 +73,8 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
     gSPDisplayList(gMasterDisp++, starSetupDL);
 
     // Get current screen dimensions
-    currentScreenWidth = GetCurrentScreenWidth();
-    currentScreenHeight = GetCurrentScreenHeight();
+    currentScreenWidth = gCurrentScreenWidth;
+    currentScreenHeight = gCurrentScreenHeight;
     starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
     starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
@@ -169,10 +143,15 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
             if ((vx >= STAR_MARGIN) && (vx < currentScreenWidth - STAR_MARGIN) && (vy >= STAR_MARGIN) &&
                 (vy < currentScreenHeight - STAR_MARGIN)) {
                 // @recomp Tag the transform.
+                u8 skipInterpolation = (fabsf(vx - gStarPrevX[i]) > starfieldWidth / 2.0f) ||
+                                       (fabsf(vy - gStarPrevY[i]) > starfieldHeight / 2.0f);
+
+                u8 interpolateComponent = skipInterpolation ? G_EX_COMPONENT_SKIP : G_EX_COMPONENT_INTERPOLATE;
                 gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+                                         interpolateComponent, interpolateComponent, interpolateComponent,
+                                         interpolateComponent, interpolateComponent, G_EX_COMPONENT_SKIP,
+                                         interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+
 
                 // Translate to (vx, vy) in ortho coordinates
                 Matrix_Push(&gGfxMatrix);
@@ -182,21 +161,24 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
                 Matrix_Pop(&gGfxMatrix);
 
                 // Convert color from fill color (assuming RGB5A1) to RGBA8
-                u8 r = ((*color >> 11) & 0x1F);
+                u32 r = ((*color >> 11) & 0x1F);
                 r = (r << 3) | (r >> 2); // Convert 5-bit to 8-bit
-                u8 g = ((*color >> 6) & 0x1F);
+                u32 g = ((*color >> 6) & 0x1F);
                 g = (g << 3) | (g >> 2); // Convert 5-bit to 8-bit
-                u8 b = ((*color >> 1) & 0x1F);
+                u32 b = ((*color >> 1) & 0x1F);
                 b = (b << 3) | (b >> 2); // Convert 5-bit to 8-bit
-                u8 a = 255;              // Fully opaque
+                u32 a = 255;             // Fully opaque
+                u32 colorRGBA32 = a | (b << 8) | (g << 16) | (r << 24);
 
-                gDPSetPrimColor(gMasterDisp++, 0, 0, r, g, b, a);
-
-                // Draw the star using the predefined display list
-                gSPDisplayList(gMasterDisp++, starDL);
+                gSPVertex(gMasterDisp++, starVerts, ARRAY_COUNT(starVerts), 0);
+                gSPModifyVertex(gMasterDisp++, 1, G_MWO_POINT_RGBA, colorRGBA32);
+                gSP2Triangles(gMasterDisp++, 1, 2, 0, 0, 1, 2, 3, 0);
 
                 // Pop the transform id
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+                gStarPrevX[i] = vx;
+                gStarPrevY[i] = vy;
             }
         }
     }
@@ -212,14 +194,16 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
 #if 1
 RECOMP_PATCH void Play_GenerateStarfield(void) {
     u32 i;
-    float currentScreenWidth = GetCurrentScreenWidth();
-    float currentScreenHeight = GetCurrentScreenHeight();
+    float currentScreenWidth = gCurrentScreenWidth;
+    float currentScreenHeight = gCurrentScreenHeight;
     float starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
     float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
     MEM_ARRAY_ALLOCATE(gStarOffsetsX, 3000);
     MEM_ARRAY_ALLOCATE(gStarOffsetsY, 3000);
     MEM_ARRAY_ALLOCATE(gStarFillColors, 3000);
+    // MEM_ARRAY_ALLOCATE(gStarPrevX, 3000);
+    // MEM_ARRAY_ALLOCATE(gStarPrevY, 3000);
 
     Rand_SetSeed(1, 29000, 9876);
 
@@ -227,6 +211,8 @@ RECOMP_PATCH void Play_GenerateStarfield(void) {
         gStarOffsetsX[i] = RAND_FLOAT_SEEDED(starfieldWidth);
         gStarOffsetsY[i] = RAND_FLOAT_SEEDED(starfieldHeight);
         gStarFillColors[i] = FILL_COLOR(gStarColors[i % ARRAY_COUNT(gStarColors)]);
+        gStarPrevX[i] = 0.0f;
+        gStarPrevY[i] = 0.0f;
     }
 }
 #endif
@@ -240,8 +226,8 @@ RECOMP_PATCH void Camera_SetStarfieldPos(f32 xEye, f32 yEye, f32 zEye, f32 xAt, 
     f32 sp20;
 
     // Get current screen dimensions
-    float currentScreenWidth = GetCurrentScreenWidth();
-    float currentScreenHeight = GetCurrentScreenHeight();
+    float currentScreenWidth = gCurrentScreenWidth;
+    float currentScreenHeight = gCurrentScreenHeight;
     float starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
     float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
@@ -285,8 +271,8 @@ RECOMP_PATCH void Camera_SetStarfieldPos(f32 xEye, f32 yEye, f32 zEye, f32 xAt, 
 
 RECOMP_PATCH void Play_SetupStarfield(void) {
     // Get current screen dimensions
-    float currentScreenWidth = GetCurrentScreenWidth();
-    float currentScreenHeight = GetCurrentScreenHeight();
+    float currentScreenWidth = gCurrentScreenWidth;
+    float currentScreenHeight = gCurrentScreenHeight;
     float baseAspectRatio = 4.0f / 3.0f; // Original aspect ratio
     float baseScreenWidth = gCurrentScreenHeight * baseAspectRatio;
     float baseArea = baseScreenWidth * gCurrentScreenHeight;
@@ -367,8 +353,8 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
     u32* sp58;
 
     // Get current screen dimensions
-    float currentScreenWidth = GetCurrentScreenWidth();
-    float currentScreenHeight = GetCurrentScreenHeight();
+    float currentScreenWidth = gCurrentScreenWidth;
+    float currentScreenHeight = gCurrentScreenHeight;
     float starfieldWidth = STARFIELD_WIDTH_MULTIPLIER * currentScreenWidth;
     float starfieldHeight = STARFIELD_HEIGHT_MULTIPLIER * currentScreenHeight;
 
@@ -421,10 +407,15 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
         if ((vx >= 0) && (vx < currentScreenWidth) && (yMin < vy) && (vy < yMax)) {
             // Tag the transform. Assuming TAG_STARFIELD is a defined base tag value
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
-                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
-                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                                     G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+            u8 skipInterpolation = (fabsf(vx - gStarPrevX[i]) > starfieldWidth / 2.0f) ||
+                                   (fabsf(vy - gStarPrevY[i]) > starfieldHeight / 2.0f);
+
+            u8 interpolateComponent = skipInterpolation ? G_EX_COMPONENT_SKIP : G_EX_COMPONENT_INTERPOLATE;
+            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW, interpolateComponent,
+                                     interpolateComponent, interpolateComponent, interpolateComponent,
+                                     interpolateComponent, G_EX_COMPONENT_SKIP, interpolateComponent, G_EX_ORDER_LINEAR,
+                                     G_EX_EDIT_ALLOW);
+
             // Translate to (vx, vy) in ortho coordinates
             Matrix_Push(&gGfxMatrix);
             Matrix_Translate(gGfxMatrix, vx - (currentScreenWidth / 2.0f), -(vy - (currentScreenHeight / 2.0f)), 0.0f,
@@ -440,14 +431,17 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
             u8 b = ((*sp58 >> 1) & 0x1F);
             b = (b << 3) | (b >> 2); // Convert 5-bit to 8-bit
             u8 a = 255;              // Fully opaque
+            u32 colorRGBA32 = a | (b << 8) | (g << 16) | (r << 24);
 
-            gDPSetPrimColor(gMasterDisp++, 0, 0, r, g, b, a);
-
-            // Draw the star using the predefined display list
-            gSPDisplayList(gMasterDisp++, starDLPartial);
+            gSPVertex(gMasterDisp++, starVerts, ARRAY_COUNT(starVerts), 0);
+            gSPModifyVertex(gMasterDisp++, 1, G_MWO_POINT_RGBA, colorRGBA32);
+            gSP2Triangles(gMasterDisp++, 1, 2, 0, 0, 1, 2, 3, 0);
 
             // Pop the transform id
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+            gStarPrevX[i] = vx;
+            gStarPrevY[i] = vy;
         }
     }
     gDPPipeSync(gMasterDisp++);
