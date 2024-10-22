@@ -579,6 +579,7 @@ extern u16 D_TR_6005938[1024];
 extern u8 gDrawBackdrop;
 extern Gfx D_versus_302D4D0[];
 extern Gfx D_CO_60059F0[];
+extern Gfx D_VE2_6010700[];
 extern Gfx D_versus_30146B0[];
 extern Gfx D_versus_3011E40[];
 extern Gfx D_FO_600D9F0[];
