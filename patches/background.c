@@ -116,20 +116,50 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     f32 sp134 = (gPlayer[gPlayerNum].camPitch * -6000.0f) - (gPlayer[gPlayerNum].cam.eye.y * 0.6f);
                     f32 sp13C =
                         Math_ModF(Math_RadToDeg(gPlayer[gPlayerNum].camYaw) * (-7280.0f / 360.0f) * 5.0f, 7280.0f);
+                    f32 CO_VE1_CamYawDeg = Math_RadToDeg(gPlayer[0].camYaw);
+
+                    if (gLevelMode == LEVELMODE_ON_RAILS) {
+                        if (CO_VE1_CamYawDeg < 180.0f) {
+                            sp13C = -(7280.0f - sp13C);
+                        }
+                    }
+
+                    // static f32 bgPrevPosX = 0.0f;
+                    // u8 skipInterpolation = (fabsf(sp13C - bgPrevPosX) > 7280.0f / 2.0f);
+                    // u8 interpolateComponent = skipInterpolation ? G_EX_COMPONENT_SKIP : G_EX_COMPONENT_AUTO;
+                    //
+                    // gTestVarF = interpolateComponent;
 
                     // Apply camera roll and translate matrix to the starting position (far left)
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                    Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -2000.0f + sp134, -6000.0f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, sp13C - (7280.0f * 2.0f), -2000.0f + sp134, -6000.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
+                    // if ((gLevelMode == LEVELMODE_ALL_RANGE) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO)
+                    // ||
+                    //     (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) ||
+                    //     (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_START_360)) {
+                    //     interpolateComponent = G_EX_COMPONENT_AUTO;
+                    // } else {
+                    //     interpolateComponent = G_EX_COMPONENT_INTERPOLATE;
+                    // }
+
                     // Render the textures across a wider range to cover the screen
-                    for (int i = 0; i < 10; i++) {
+                    for (int i = 0; i < 6; i++) {
                         // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                 G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                 G_EX_EDIT_ALLOW);
+                        if (gLevelMode == LEVELMODE_ON_RAILS) {
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+                        } else {
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                     G_EX_EDIT_ALLOW);
+                        }
 
                         switch ((s32) gCurrentLevel) {
                             case LEVEL_CORNERIA:
@@ -147,6 +177,8 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         // @recomp Pop the transform id.
                         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     }
+
+                    // bgPrevPosX = sp13C;
 
                     break;
                 }
@@ -299,16 +331,16 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     }
 
                     sp13C = Math_ModF(sp13C, 7280.0f);
+
+                    f32 solarCamYawDeg = Math_RadToDeg(gPlayer[0].camYaw);
+
+                    if (solarCamYawDeg < 180.0f) {
+                        sp13C = -(7280.0f - sp13C);
+                    }
+
                     RCP_SetupDL_17();
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
                     Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
-
-                    // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                             G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                             G_EX_EDIT_ALLOW);
 
                     if ((gCurrentLevel == LEVEL_TITANIA) || (gCurrentLevel == LEVEL_ZONESS)) {
                         Matrix_Translate(gGfxMatrix, sp13C - 14560.0f, -3000.0f + sp134, -7000.0f, MTXF_APPLY);
@@ -320,7 +352,23 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     Matrix_SetGfxMtx(&gMasterDisp);
 
                     // Render the textures across a wider range to cover the screen
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 6; i++) {
+                        // @recomp Tag the transform.
+                        if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) ||
+                            (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) {
+                            // G_EX_COMPONENT_AUTO makes the warping less apparent.
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                     G_EX_EDIT_ALLOW);
+                        } else {
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+                        }
 
                         if (gCurrentLevel == LEVEL_TITANIA) {
                             gSPDisplayList(gMasterDisp++, D_TI_6000A80);
@@ -334,10 +382,10 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                         // Move the matrix to the right by 7280.0f each time to draw the next texture
                         Matrix_Translate(gGfxMatrix, 7280.0f, 0.0f, 0.0f, MTXF_APPLY);
+                        Matrix_SetGfxMtx(&gMasterDisp);
 
                         // @recomp Pop the transform id.
                         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-                        Matrix_SetGfxMtx(&gMasterDisp);
                     }
                     break;
             }
