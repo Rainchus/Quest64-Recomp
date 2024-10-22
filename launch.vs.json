@@ -6,7 +6,7 @@
       "type": "default",
       "project": "CMakeLists.txt",
       "projectTarget": "Starfox64Recompiled.exe",
-      "name": "Starfox 64: Recompiled",
+      "name": "Starfox64Recompiled.exe",
       "currentDir": "${workspaceRoot}"
     }
   ]
