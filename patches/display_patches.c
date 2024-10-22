@@ -296,8 +296,8 @@ RECOMP_PATCH void Display_Update(void) {
     if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
         return;
     }
-    gLaserStrength[0] = 2;
     gBombCount[0] = 9;
+    gLaserStrength[0] = 2;
 #endif
 
 #if DEBUG_SPAWNER == 1
@@ -363,23 +363,27 @@ RECOMP_PATCH void Display_Update(void) {
     }
 #endif
 #if DEBUG_L_TO_WARP_ZONE == 1
-    {
-        if (gControllerPress[0].button & L_TRIG) {
-            if (gCurrentLevel == LEVEL_SECTOR_X) {
-                gRingPassCount++;
-                gPlayer[0].state_1C8 = PLAYERSTATE_1C8_ENTER_WARP_ZONE;
-                gPlayer[0].csState = 0;
-                gSceneSetup = 1;
-                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
-                gMissionStatus = MISSION_WARP;
-                gLeveLClearStatus[gCurrentLevel] = 1;
-            } else {
-                gPlayer[0].state_1C8 = PLAYERSTATE_1C8_ENTER_WARP_ZONE;
-                gPlayer[0].csState = 0;
-                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
-                gMissionStatus = MISSION_WARP;
-                gLeveLClearStatus[gCurrentLevel] = 1;
-            }
+    if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
+        return;
+    }
+    if (gControllerPress[0].button & L_TRIG) {
+        if ((gCurrentLevel != LEVEL_SECTOR_X) && (gCurrentLevel != LEVEL_METEO)) {
+            return;
+        }
+        if (gCurrentLevel == LEVEL_SECTOR_X) {
+            gRingPassCount++;
+            gPlayer[0].state_1C8 = PLAYERSTATE_1C8_ENTER_WARP_ZONE;
+            gPlayer[0].csState = 0;
+            gSceneSetup = 1;
+            AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+            gMissionStatus = MISSION_WARP;
+            gLeveLClearStatus[gCurrentLevel] = 1;
+        } else {
+            gPlayer[0].state_1C8 = PLAYERSTATE_1C8_ENTER_WARP_ZONE;
+            gPlayer[0].csState = 0;
+            AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+            gMissionStatus = MISSION_WARP;
+            gLeveLClearStatus[gCurrentLevel] = 1;
         }
     }
 #endif
@@ -413,10 +417,11 @@ RECOMP_PATCH void Display_Update(void) {
     RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
     if (gTestVarF > 0) {
-        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TEST:");
+       // Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TEST:");
     } else {
         Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TESTNEG:");
     }
+    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TEST:");
     Graphics_DisplaySmallNumber(80, 220, (int) ABS(gTestVarF));
 
     if (gControllerPress[0].button & Z_TRIG) {
