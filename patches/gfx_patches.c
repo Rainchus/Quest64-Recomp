@@ -1,7 +1,10 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
-
 #define END_OF_ARRAY(array) (&(array)[0] + ARRAY_COUNT(array))
-
+#define gEXSetRDRAMExtended(cmd, isExtended) \
+    G_EX_COMMAND1(cmd, \
+        PARAM(RT64_EXTENDED_OPCODE, 8, 24) | PARAM(G_EX_SETRDRAMEXTENDED_V1, 24, 0), \
+        PARAM(isExtended, 1, 0) \
+    )
 #define SCREEN_MARGIN_RECOMP 0
 
 #define osSendMesg osSendMesg_recomp
@@ -188,8 +191,24 @@ RECOMP_PATCH void Graphics_InitializeTask(u32 frameCount) {
     D_80178710 = &D_80178580[0];
 }
 
+#define BOOTSTRAP_COMMAND_COUNT 3
+
+typedef struct {
+    Gfx data[2][BOOTSTRAP_COMMAND_COUNT];
+} BootstrapDLs;
+
 // @recomp use gExGfxPool instead of the original GfxPool
 RECOMP_PATCH void Graphics_SetTask(void) {
+    // Unused memory between the recomp variables and the patch memory
+    BootstrapDLs* bootstrapDLs = (BootstrapDLs*)(0x80800800);
+    Gfx* bootstrapDL = bootstrapDLs->data[gSysFrameCount % 2];
+    Gfx* bootstrapDLHead = bootstrapDL;
+
+    // Initialize the bootstrap DL to enable the extended gbi and extended rdram
+    gEXEnable(bootstrapDLHead++);
+    gEXSetRDRAMExtended(bootstrapDLHead++, 1);
+    gSPBranchList(bootstrapDLHead++, gExGfxPool->masterDL);
+
     gGfxTask->mesgQueue = &gGfxTaskMesgQueue;
     gGfxTask->msg = (OSMesg) TASK_MESG_2;
     gGfxTask->task.t.type = M_GFXTASK;
@@ -204,12 +223,13 @@ RECOMP_PATCH void Graphics_SetTask(void) {
     gGfxTask->task.t.dram_stack_size = SP_DRAM_STACK_SIZE8;
     gGfxTask->task.t.output_buff = (u64*) gTaskOutputBuffer;
     gGfxTask->task.t.output_buff_size = (u64*) gAudioHeap;
-    gGfxTask->task.t.data_ptr = (u64*) gExGfxPool->masterDL;                         // @recomp
+    // gGfxTask->task.t.data_ptr = (u64*) gExGfxPool->masterDL;                         // @recomp
+    gGfxTask->task.t.data_ptr = (u64*)bootstrapDL; // @recomp
     gGfxTask->task.t.data_size = (gMasterDisp - gExGfxPool->masterDL) * sizeof(Gfx); // @recomp
     gGfxTask->task.t.yield_data_ptr = (u64*) &gOSYieldData;
     gGfxTask->task.t.yield_data_size = OS_YIELD_DATA_SIZE;
     osWritebackDCacheAll();
-    osSendMesg(&gTaskMesgQueue, gGfxTask, OS_MESG_NOBLOCK);
+    osSendMesg(&gTaskMesgQueue, gGfxTask, OS_MESG_NOBLOCK);    
 }
 
 // @recomp Remove screen margin & gEXSetScissor
