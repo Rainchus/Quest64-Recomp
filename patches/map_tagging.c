@@ -724,9 +724,13 @@ RECOMP_PATCH void Map_Arwing_Draw(s32 index) {
     dirZ = dest.z;
 
     Lights_SetOneLight(&gMasterDisp, dirX, dirY, dirZ, 50, 50, 40, 0, 0, 0);
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_ARWING, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    if (sPaths[index].unk_14 == 2) {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_ARWING, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    } else {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ARWING, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    }
 
     gSPDisplayList(gMasterDisp++, aMapArwingDL);
 
@@ -1073,6 +1077,7 @@ RECOMP_PATCH void Map_PlanetCleared_Draw(PlanetId planetId) {
     }
 }
 
+#if 0
 RECOMP_PATCH void Map_Path_Draw(s32 index) {
     Vec3f v;
     f32 r;
@@ -1155,16 +1160,18 @@ RECOMP_PATCH void Map_Path_Draw(s32 index) {
     }
 
     if (sPaths[index].unk_14 == 5) {
+
         // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_WARP + index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+        //gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_WARP + index, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
         Map_PathLine_Draw(sPaths[index].type);
 
         // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+       // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     } else {
         Map_Arwing_Draw(index);
     }
 }
+#endif
 
 #endif
