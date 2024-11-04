@@ -147,7 +147,10 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     // Render the textures across a wider range to cover the screen
                     for (int i = 0; i < 6; i++) {
                         // @recomp Tag the transform.
-                        if (gLevelMode == LEVELMODE_ON_RAILS) {
+                        if ((gLevelMode == LEVELMODE_ON_RAILS) &&
+                            (gPlayer[0].state_1C8 != PLAYERSTATE_1C8_LEVEL_COMPLETE) &&
+                            (gPlayer[0].state_1C8 != PLAYERSTATE_1C8_START_360) &&
+                            (gPlayer[0].state_1C8 != PLAYERSTATE_1C8_LEVEL_INTRO)) {
                             gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
                                                      G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                      G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
