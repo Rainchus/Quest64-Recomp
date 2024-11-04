@@ -47,9 +47,10 @@
  * Cheats:
  * Max Bombs and Max Laser upgrade
  */
-#define DEBUG_CHEATS 1
+#define DEBUG_CHEATS 0
 
-#define DEBUG_L_TO_ALL_RANGE 1
+#define DEBUG_SKIP_BRIEFING 1
+#define DEBUG_L_TO_ALL_RANGE 0
 #define DEBUG_L_TO_LEVEL_COMPLETE 0
 #define DEBUG_Z_R_START_TO_RESET 0
 #define DEBUG_Z_R_START_TO_MAP 1
@@ -60,7 +61,12 @@
 #define DEBUG_BOSS_KILLER 0
 #define DEBUG_ENDING 0
 #define DEBUG_VERSUS 0
+
+// AUDIO
+#define DEBUG_AUDIO_LOCALIZATION 0
+#define DEBUG_US_AUDIO 0
 #define DEBUG_JP_AUDIO 0
+#define DEBUG_EU_AUDIO 0
 
 // Settings
 #define ENDING_SKIP_INTERPOLATION 1

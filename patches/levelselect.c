@@ -107,21 +107,23 @@ void Map_LevelSelect(void) {
         startOption ^= 1;
     }
 
+    int y = 225;
+
     /* Draw */
     if ((sCurrentPlanetId >= 0) && (sCurrentPlanetId < PLANET_MAX)) {
         RCP_SetupDL(&gMasterDisp, SETUPDL_83);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
 
-        Graphics_DisplaySmallText(20, 200, 1.0f, 1.0f, "PLANET:");
-        Graphics_DisplaySmallText(80, 200, 1.0f, 1.0f, sLevelSelectPlanetNames[sPlanetArray[mission][difficulty]]);
+        Graphics_DisplaySmallText(20, y, 1.0f, 1.0f, "PLANET:");
+        Graphics_DisplaySmallText(80, y, 1.0f, 1.0f, sLevelSelectPlanetNames[sPlanetArray[mission][difficulty]]);
 
         if (startOption) {
             if ((sCurrentPlanetId == PLANET_SECTOR_X) || (sCurrentPlanetId == PLANET_METEO)) {
-                Graphics_DisplaySmallText(80, 210, 1.0f, 1.0f, "WARP ZONE");
+                Graphics_DisplaySmallText(80 + 60 + 10, y, 1.0f, 1.0f, "WARP ZONE");
             } else if (sCurrentPlanetId == PLANET_VENOM) {
-                Graphics_DisplaySmallText(80, 210, 1.0f, 1.0f, "ANDROSS");
+                Graphics_DisplaySmallText(80 + 60 + 3, y, 1.0f, 1.0f, "ANDROSS");
             } else if (sCurrentPlanetId == PLANET_AREA_6) {
-                Graphics_DisplaySmallText(80, 210, 1.0f, 1.0f, "BETA SB");
+                Graphics_DisplaySmallText(80 + 60 - 3, y, 1.0f, 1.0f, "BETA SB");
             }
         }
     }
@@ -132,6 +134,7 @@ void Map_LevelSelect(void) {
     }
 
     // Bypass briefing
+    #if DEBUG_SKIP_BRIEFING
     if ((timer == 0) && (startLevel == 1)) {
         if ((sMapState == 2) && (sMapSubState > 0)) {
             if (sCurrentPlanetId == PLANET_VENOM) {
@@ -153,6 +156,7 @@ void Map_LevelSelect(void) {
             }
         }
     }
+    #endif
 }
 
 RECOMP_PATCH void Map_Update(void) {
@@ -209,6 +213,8 @@ RECOMP_PATCH void Map_Update(void) {
     gGameFrameCount++;
 
 #if DEBUG_LEVEL_SELECT == 1
-    Map_LevelSelect();
+    if ((sMapState == MAP_IDLE) || (sMapState == MAP_ZOOM_PLANET)) {
+        Map_LevelSelect();
+    }
 #endif
 }
