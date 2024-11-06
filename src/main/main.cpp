@@ -629,7 +629,6 @@ int main(int argc, char** argv) {
     };
 
     recomp::start(
-        64 * 1024 * 1024, // 64MB to have plenty of room for loading mods
         project_version,
         {},
         rsp_callbacks,
