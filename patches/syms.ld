@@ -60,3 +60,5 @@ aBallDL = 0x102A8A0;
 osEepromProbe_recomp = 0x8F0000C0;
 osCartRomInit_recomp = 0x8F0000C4;
 osEPiStartDma_recomp = 0x8F0000C8;
+osAiSetFrequency_recomp = 0x8F0000CC;
+osWritebackDCacheAll_recomp = 0x8F0000D0;
