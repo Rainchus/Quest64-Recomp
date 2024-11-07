@@ -10,10 +10,6 @@ void Audio_SetSequenceFade(u8 seqPlayId, u8 fadeModId, u8 fadeMod, u8 fadeTime);
 s32 Audio_SeqCmdValueNotQueued(s32 cmdVal, s32 cmdMask);
 void Audio_ProcessSeqCmd(u32 seqCmd);
 
-bool is_bgm_player(u8 player_index) {
-    return player_index == SEQ_PLAYER_BGM || player_index == SEQ_PLAYER_SFX;
-}
-
 RECOMP_PATCH void Audio_UpdateActiveSequences(void) {
     u8 seqPlayId;
     u8 i;
@@ -65,10 +61,18 @@ RECOMP_PATCH void Audio_UpdateActiveSequences(void) {
             }
         }
 
-        // @recomp Send a volume scale command regardless of whether volTimer is active and scale it for background music players.
+        // @recomp Send a volume scale command regardless of whether volTimer is active and scale it for players.
         f32 cur_volume = sActiveSequences[seqPlayId].mainVolume.mod;
-        if (is_bgm_player(seqPlayId)) {
-            cur_volume *= recomp_get_bgm_volume();
+        switch (seqPlayId) {
+            case SEQ_PLAYER_BGM:
+                cur_volume *= recomp_get_bgm_volume();
+                break;
+            case SEQ_PLAYER_SFX:
+                cur_volume *= recomp_get_sfx_volume();
+                break;
+            case SEQ_PLAYER_VOICE:
+                cur_volume *= recomp_get_voice_volume();
+                break;
         }
         AUDIOCMD_SEQPLAYER_FADE_VOLUME_SCALE((u32) seqPlayId, cur_volume);
 

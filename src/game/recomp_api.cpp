@@ -96,6 +96,14 @@ extern "C" void recomp_get_bgm_volume(uint8_t* rdram, recomp_context* ctx) {
     _return(ctx, zelda64::get_bgm_volume() / 100.0f);
 }
 
+extern "C" void recomp_get_sfx_volume(uint8_t* rdram, recomp_context* ctx) {
+    _return(ctx, zelda64::get_sfx_volume() / 100.0f);
+}
+
+extern "C" void recomp_get_voice_volume(uint8_t* rdram, recomp_context* ctx) {
+    _return(ctx, zelda64::get_voice_volume() / 100.0f);
+}
+
 extern "C" void recomp_get_low_health_beeps_enabled(uint8_t* rdram, recomp_context* ctx) {
     _return(ctx, static_cast<u32>(zelda64::get_low_health_beeps_enabled()));
 }
