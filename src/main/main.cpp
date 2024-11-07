@@ -330,6 +330,7 @@ std::vector<recomp::GameEntry> supported_games = {
         .rom_hash = 0x163fd3fc3813f54e, // retail
         .internal_name = "STARFOX64",
         .game_id = u8"sf64.n64.us.1.1",
+        .save_type = recomp::SaveType::Eep4k,
         .is_enabled = true,
         .entrypoint_address = get_entrypoint_address(),
         .entrypoint = recomp_entrypoint,
