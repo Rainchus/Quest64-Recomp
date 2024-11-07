@@ -228,7 +228,7 @@ bool save_general_config(const std::filesystem::path& path) {
 void set_general_settings_from_json(const nlohmann::json& config_json) {
     zelda64::set_targeting_mode(from_or_default(config_json, "targeting_mode", zelda64::TargetingMode::Switch));
     recomp::set_background_input_mode(from_or_default(config_json, "background_input_mode", recomp::BackgroundInputMode::On));
-    recomp::set_rumble_strength(from_or_default(config_json, "rumble_strength", 25));
+    recomp::set_rumble_strength(from_or_default(config_json, "rumble_strength", 50));
     recomp::set_gyro_sensitivity(from_or_default(config_json, "gyro_sensitivity", 50));
     recomp::set_mouse_sensitivity(from_or_default(config_json, "mouse_sensitivity", is_steam_deck ? 50 : 0));
     recomp::set_joystick_deadzone(from_or_default(config_json, "joystick_deadzone", 5));
