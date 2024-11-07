@@ -65,6 +65,7 @@ RECOMP_PATCH void Audio_UpdateActiveSequences(void) {
         f32 cur_volume = sActiveSequences[seqPlayId].mainVolume.mod;
         switch (seqPlayId) {
             case SEQ_PLAYER_BGM:
+            case SEQ_PLAYER_FANFARE:
                 cur_volume *= recomp_get_bgm_volume();
                 break;
             case SEQ_PLAYER_SFX:
