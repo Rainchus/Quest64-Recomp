@@ -60,8 +60,6 @@ void Map_LevelSelect(void) {
     static s32 timer = 30;
     static s32 startLevel = 0;
 
-    timer--;
-
     // static f32 zStart = 0.0f;
     // f32 zInc;
     s32 nextPlanetId;
@@ -131,6 +129,10 @@ void Map_LevelSelect(void) {
     if (gControllerPress[0].button & A_BUTTON) {
         timer = 15;
         startLevel = 1;
+    }
+
+    if (timer > 0) {
+        timer--;
     }
 
     // Bypass briefing
