@@ -81,7 +81,7 @@
 						Controls the main volume of the game.
 					</p>
                     <p data-if="cur_config_index == 1">
-                        Controls the overall volume of background music.
+                        Controls the overall volume of music.
                     </p>
                     <p data-if="cur_config_index == 2">
                         Controls the overall volume of voices.
