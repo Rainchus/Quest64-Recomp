@@ -97,6 +97,7 @@ extern Vec3f D_menu_801AF118[];
 extern Gfx D_menu_801AEF30[];
 extern Vec3f D_ending_801985F0;
 extern Gfx D_END_7002120[];
+extern u16 aWindshieldClouldReflextionTex[];
 extern s32 D_ending_80196D04;
 extern s32 D_ending_80196D00;
 extern u32 D_ending_80196F8C;

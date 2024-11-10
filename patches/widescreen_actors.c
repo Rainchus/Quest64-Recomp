@@ -4,6 +4,9 @@
 
 #if 1 // full scope
 
+#define TEAM_HEAD_XROT (19)
+#define TEAM_HEAD_YROT (20)
+
 extern Vec3f sViewPos;
 extern bool sDrewActor;
 extern Vec3f gLockOnTargetViewPos[];
@@ -14,6 +17,8 @@ extern Gfx D_VE2_6007650[];
 void func_edisplay_8005D1F0(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32 arg0);
 void func_edisplay_8005D008(Object* obj, s32 drawType);
+void Corneria_SpawnClouds(void);
+void Corneria_CsTeamSetup(ActorCutscene* this, s32 teamIdx);
 
 // for draw distance tests
 #if 0
@@ -180,7 +185,8 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     sp3C = -1.0f;
 
     // @recomp draw no matter what
-    if ((gCurrentLevel != LEVEL_KATINA) && (gCurrentLevel != LEVEL_SECTOR_Y)) { // Excepting Katina because of KaSaucerer's bug
+    if ((gCurrentLevel != LEVEL_KATINA) &&
+        (gCurrentLevel != LEVEL_SECTOR_Y)) { // Excepting Katina because of KaSaucerer's bug
         goto render;
     }
 
@@ -494,6 +500,532 @@ RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
     if (!drawn && (this->obj.id != OBJ_EFFECT_CLOUDS) && (this->obj.id != OBJ_EFFECT_TIMED_SFX) && (!gVersusMode)) {
         Object_Kill(&this->obj, this->sfxSource);
     }
+}
+#endif
+
+#if 1
+// @recomp: Fix Falco's positioning to account for widescreen.
+RECOMP_PATCH void Corneria_LevelStart(Player* player) {
+    s32 i;
+    ActorCutscene* falco = &gActors[0];
+    ActorCutscene* slippy = &gActors[1];
+    ActorCutscene* peppy = &gActors[2];
+    f32 sp44;
+    f32 sp40;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 sp30;
+    f32 sp2C;
+
+    // Corneria_SpawnTerrainBumps(); // This function call was probably around here.
+
+    PRINTF("Enms[1].obj.mode %d\n", gActors[1].obj.status);
+
+    if (gCsFrameCount < 815) {
+        x = player->pos.x;
+        y = player->pos.y + 15.0f;
+        z = player->trueZpos - 20.0f;
+    } else {
+        if (gCsFrameCount < 1009) {
+            x = falco->obj.pos.x;
+            y = falco->obj.pos.y + 15.0f;
+            z = falco->obj.pos.z - 20.0f;
+        } else if (gCsFrameCount < 1198) {
+            x = peppy->obj.pos.x;
+            y = peppy->obj.pos.y + 15.0f;
+            z = peppy->obj.pos.z - 20.0f;
+        } else {
+            x = slippy->obj.pos.x;
+            y = slippy->obj.pos.y + 15.0f;
+            z = slippy->obj.pos.z - 20.0f;
+        }
+    }
+
+    sp2C = -Math_Atan2F(player->cam.eye.x - x, player->cam.eye.z - z);
+    sp30 = -Math_Atan2F(player->cam.eye.y - y, sqrtf(SQ(player->cam.eye.z - z) + SQ(player->cam.eye.x - x)));
+
+    sp44 = Math_RadToDeg(sp2C) - D_ctx_80177A48[4];
+    sp40 = Math_RadToDeg(sp30) - D_ctx_80177A48[5];
+
+    if (sp44 > 180.0f) {
+        sp44 -= 360.0f;
+    }
+    if (sp44 < -180.0f) {
+        sp44 += 360.0f;
+    }
+    if (sp40 > 180.0f) {
+        sp40 -= 360.0f;
+    }
+    if (sp40 < -180.0f) {
+        sp40 += 360.0f;
+    }
+
+    D_ctx_80177A48[6] += fabsf(sp44);
+    D_ctx_80177A48[7] += fabsf(sp40);
+
+    // Cloud reflexions on Arwing windshields
+    if (sp2C >= 0.0f) {
+        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 2);
+        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 2);
+    } else {
+        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 3);
+        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 3);
+    }
+
+    for (i = 0; (i < 40) && (D_ctx_80177A48[6] >= 0.2f); i++, D_ctx_80177A48[6] -= 0.2f) {
+        if (sp44 >= 0) {
+            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 2);
+        } else {
+            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 3);
+        }
+    }
+
+    for (i = 0; (i < 40) && (D_ctx_80177A48[7] >= 0.3f); i++, D_ctx_80177A48[7] -= 0.3f) {
+        if (sp40 >= 0) {
+            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 0);
+        } else {
+            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 1);
+        }
+    }
+
+    D_ctx_80177A48[4] = Math_RadToDeg(sp2C);
+    D_ctx_80177A48[5] = Math_RadToDeg(sp30);
+
+    player->flags_228 = 0;
+
+    D_ctx_80177950 = -1.0f;
+    if ((Math_RadToDeg(gPlayer[0].camYaw) < 90.0f) || (Math_RadToDeg(gPlayer[0].camYaw) > 270.0f)) {
+        D_ctx_80177950 = 1.0f;
+    }
+
+    player->vel.z = 0.0f;
+    player->pos.z = player->pos.z;
+    player->trueZpos = player->pos.z + player->camDist;
+    player->bobPhase += 10.0f;
+    player->yBob = -SIN_DEG(player->bobPhase) * 0.5f;
+    player->rockPhase += 3.0f;
+    player->rockAngle = SIN_DEG(player->rockPhase) * 1.5f;
+
+    Corneria_SpawnClouds();
+
+    player->arwing.teamFaceXrot = 0;
+
+    switch (player->csState) {
+        case 0: // LevelStart initialization
+            gCsFrameCount = 0;
+            player->csState = 1;
+            player->csTimer = 600;
+            player->pos.y = 6000.0f;
+            player->pos.x = 0.1f;
+
+            Corneria_CsTeamSetup(falco, 0);
+            Corneria_CsTeamSetup(slippy, 1);
+            Corneria_CsTeamSetup(peppy, 2);
+
+            falco->iwork[14] = 2;
+            slippy->iwork[14] = 3;
+            peppy->iwork[14] = 4;
+
+            player->cam.eye.x = gCsCamEyeX = player->pos.x - 400.0f;
+            gPlayer[0].cam.eye.y = gCsCamEyeY = player->pos.y + 600.0f;
+            player->cam.eye.z = gCsCamEyeZ = player->trueZpos + 2000.0f;
+
+            player->cam.at.x = gCsCamAtX = player->pos.x;
+            player->cam.at.y = gCsCamAtY = player->pos.y;
+            player->cam.at.z = gCsCamAtZ = player->trueZpos + 300.0f;
+
+            D_ctx_80177A48[0] = 0;
+            D_ctx_80177A48[1] = D_ctx_80177A48[2] = 0;
+
+            gFillScreenAlphaTarget = 255;
+            gFillScreenAlpha = 255;
+            gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 255;
+            break;
+
+        case 1: // cs phase: camera focus on fox (open the wings!)
+            if (player->csTimer < 550) {
+                gFillScreenAlphaTarget = 0;
+                gFillScreenAlphaStep = 3;
+                Math_SmoothStepToF(&D_ctx_80177A48[0], 0.01f, 1.0f, 0.0005f, 0.0f);
+            }
+
+            gCsCamEyeX = player->pos.x - 150.0f;
+            gCsCamEyeY = player->pos.y - 70.0f;
+            gCsCamEyeZ = player->trueZpos + 150.0f;
+
+            gCsCamAtX = player->pos.x;
+            gCsCamAtY = player->pos.y;
+            gCsCamAtZ = player->trueZpos;
+
+            if (player->csTimer == 0) {
+                player->csState = 2;
+                player->csTimer = 130;
+                D_ctx_80177A48[0] = 0.0f;
+            }
+
+            if (player->csTimer == 315) {
+                player->pos.x = 0.0f;
+            }
+
+            if (player->csTimer == 270) {
+                gHideRadio = false;
+                Radio_PlayMessage(gMsg_ID_2005, RCID_FOX);
+            }
+
+            if (player->csTimer == 180) {
+                AUDIO_PLAY_SFX(NA_SE_WING_OPEN, player->sfxSource, 0);
+            }
+
+            if (player->csTimer == 120) {
+                AUDIO_PLAY_SFX(NA_SE_WING_OPEN_END, player->sfxSource, 0);
+            }
+
+            if ((player->csTimer < 190) && (player->csTimer > 150)) {
+                Math_SmoothStepToF(&player->arwing.wingsZrot, 2.0f, 0.2f, 0.5f, 0.0f);
+            }
+
+            if (player->csTimer < 150) {
+                player->wingPosition = 0;
+            }
+
+            if ((player->csTimer < 120) && ((player->csTimer % 16) == 0)) {
+                D_ctx_80177A48[1] = RAND_FLOAT_CENTERED(60.0f);
+                D_ctx_80177A48[2] = RAND_FLOAT_CENTERED(60.0f);
+            }
+
+            if (player->csTimer == 0) {
+                D_ctx_80177A48[1] = 0.0f;
+                D_ctx_80177A48[2] = D_ctx_80177A48[1];
+            }
+            break;
+
+        case 2: // camera goes to the side of Fox.
+            Math_SmoothStepToF(&D_ctx_80177A48[0], 0.1f, 1.0f, 0.001f, 0.0f);
+
+            gCsCamEyeX = player->pos.x - 50.0f;
+            gCsCamEyeY = player->pos.y + 10.0f;
+            gCsCamEyeZ = player->trueZpos - 10.0f;
+
+            gCsCamAtX = player->pos.x;
+            gCsCamAtY = player->pos.y + 10.0f;
+            gCsCamAtZ = player->trueZpos + 10.0f;
+
+            if (player->csTimer == 20) {
+                Radio_PlayMessage(gMsg_ID_2010, RCID_FOX);
+            }
+
+            if (player->csTimer == 0) {
+                player->csState = 3;
+                player->csTimer = 180;
+                player->unk_004 = 0.0f;
+                falco->state = 0;
+                peppy->state = 0;
+                slippy->state = 0;
+                falco->obj.pos.y = player->pos.y + 80.0f;
+                // @recomp: adjust Falco's position so he appears from further right
+                falco->obj.pos.z += 3.0f * 100.0f;
+            }
+
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                player->arwing.teamFaceXrot = 5.0f;
+            }
+            break;
+
+        case 3: // Falco appears on scene from behind
+            
+            // @recomp: adjust Falco's maxStep so he flies faster in compensation for the previous change
+            if (fabsf(Math_SmoothStepToF(&falco->obj.pos.z, player->pos.z + 100.0f, 0.05f, 3.0f * 5.0f, 0.0f)) < 1.0f) {
+                player->csState = 4;
+                D_ctx_80177A48[0] = 0.0f;
+                player->csTimer = 190;
+            }
+
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                player->arwing.teamFaceXrot = 5.0f;
+            }
+
+            gCsCamEyeY = player->pos.y + 10.0f;
+            gCsCamAtY = player->pos.y + 10.0f;
+            break;
+
+        case 4:
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                player->arwing.teamFaceXrot = 5.0f;
+            }
+
+            Math_SmoothStepToF(&D_ctx_80177A48[0], 0.1f, 1.0f, 0.001f, 0.0f);
+
+            // Focus camera on Falco.
+            gCsCamEyeX = falco->obj.pos.x - 50.0f;
+            gCsCamEyeY = falco->obj.pos.y + 10.0f;
+            gCsCamEyeZ = falco->obj.pos.z - 10.0f;
+
+            gCsCamAtX = falco->obj.pos.x;
+            gCsCamAtY = falco->obj.pos.y + 10.0f;
+            gCsCamAtZ = falco->obj.pos.z + 10.0f;
+
+            if (player->csTimer == 0) {
+                player->csState = 5;
+                player->csTimer = 5;
+            }
+
+            if (player->csTimer == 80) {
+                Radio_PlayMessage(gMsg_ID_2020, RCID_FALCO);
+            }
+
+            // Falco looks towards the camera.
+            if (player->csTimer < 100) {
+                Math_SmoothStepToF(&falco->fwork[TEAM_HEAD_XROT], 50.0f, 0.1f, 3.0f, 0.01f);
+            }
+
+            // Falco's head rocks back and forth as he speaks.
+            falco->fwork[TEAM_HEAD_YROT] = 0.0f;
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                falco->fwork[TEAM_HEAD_YROT] = 5.0f;
+            }
+            break;
+
+        case 5:
+            // Falco's head rotates back.
+            Math_SmoothStepToF(&falco->fwork[TEAM_HEAD_XROT], 0.0f, 0.1f, 3.0f, 0.01f);
+
+            if (player->csTimer == 0) {
+                player->csState = 6;
+                D_ctx_80177A48[0] = 0.0f;
+                player->csTimer = 190;
+            }
+
+            // Camera moves towards Peppy.
+            gCsCamEyeY = falco->obj.pos.y + 10.0f;
+            gCsCamAtY = falco->obj.pos.y + 10.0f;
+            break;
+
+        case 6:
+            // Falco's head rotates back.
+            Math_SmoothStepToF(&falco->fwork[TEAM_HEAD_XROT], 0.0f, 0.1f, 3.0f, 0.01f);
+            Math_SmoothStepToF(&D_ctx_80177A48[0], 0.1f, 1.0f, 0.001f, 0.0f);
+
+            D_ctx_80177A48[3] -= 0.5f;
+
+            // Focus camera on Peppy
+            gCsCamEyeX = peppy->obj.pos.x + 100.0f + D_ctx_80177A48[3];
+            gCsCamEyeY = peppy->obj.pos.y + 10.0f;
+            gCsCamEyeZ = peppy->obj.pos.z - 70.0f;
+
+            gCsCamAtX = peppy->obj.pos.x + 20.0f + (D_ctx_80177A48[3] * 0.5f);
+            gCsCamAtY = peppy->obj.pos.y + 10.0f;
+            gCsCamAtZ = peppy->obj.pos.z + 10.0f;
+
+            if (player->csTimer == 0) {
+                player->csState = 7;
+                player->csTimer = 190;
+                D_ctx_80177A48[0] = 0.0f;
+                falco->obj.pos.y = player->pos.y;
+                falco->obj.pos.z = player->trueZpos + 240.0f;
+            }
+
+            if (player->csTimer == 80) {
+                Radio_PlayMessage(gMsg_ID_2030, RCID_PEPPY);
+            }
+
+            // Peppy's head rocks back and forth as he speaks.
+            peppy->fwork[TEAM_HEAD_YROT] = 0.0f;
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                peppy->fwork[TEAM_HEAD_YROT] = 5.0f;
+            }
+            break;
+
+        case 7:
+            Math_SmoothStepToF(&D_ctx_80177A48[0], 0.1f, 1.0f, 0.001f, 0.0f);
+
+            // Focus camera on Slippy.
+            gCsCamEyeX = slippy->obj.pos.x + 20.0f;
+            gCsCamEyeY = slippy->obj.pos.y + 10.0f;
+            gCsCamEyeZ = slippy->obj.pos.z - 50.0f;
+
+            gCsCamAtX = slippy->obj.pos.x + 10.0f;
+            gCsCamAtY = slippy->obj.pos.y + 10.0f;
+            gCsCamAtZ = slippy->obj.pos.z + 10.0f;
+
+            if (player->csTimer == 0) {
+                player->csState = 8;
+                D_ctx_80177A48[0] = 0.0f;
+                player->csTimer = 300;
+                D_ctx_80177A48[8] = 50.0f;
+                D_ctx_80177A48[3] = 0.0f;
+            }
+
+            if (player->csTimer == 80) {
+                Radio_PlayMessage(gMsg_ID_2040, RCID_SLIPPY);
+                player->pos.x = 0.1f;
+            }
+
+            if (player->csTimer < 100) {
+                Math_SmoothStepToF(&slippy->fwork[TEAM_HEAD_XROT], -20.0f, 0.1f, 3.0f, 0.01f);
+            }
+
+            // Slippy's head rocks back and forth as he speaks.
+            slippy->fwork[TEAM_HEAD_YROT] = 0.0f;
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                slippy->fwork[TEAM_HEAD_YROT] = 5.0f;
+            }
+            break;
+
+        case 8:
+            Math_SmoothStepToF(&D_ctx_80177A48[0], 0.1f, 1.0f, 0.001f, 0.0f);
+
+            if (player->csTimer < 150) {
+                D_ctx_80177A48[3] += player->unk_004;
+                Math_SmoothStepToF(&player->unk_004, 2.0f, 1.0f, 0.2f, 0.0f);
+            }
+
+            // Focus camera on Fox.
+            gCsCamEyeX = player->pos.x;
+            gCsCamEyeZ = (player->trueZpos - 600.0f) + D_ctx_80177A48[3];
+            gCsCamEyeY = player->pos.y + D_ctx_80177A48[8];
+
+            gCsCamAtX = player->pos.x;
+            gCsCamAtY = player->pos.y + 20.0f;
+            gCsCamAtZ = player->trueZpos + 100.0f;
+
+            if (player->csTimer < 100) {
+                Math_SmoothStepToF(&D_ctx_80177A48[8], 10.0f, 0.1f, 0.7f, 0.0f);
+            }
+
+            if (player->csTimer == 200) {
+                Radio_PlayMessage(gMsg_ID_2050, RCID_FOX);
+            }
+
+            // Fox's head rotates back and forth as he speaks.
+            player->arwing.teamFaceXrot = 0.0f;
+            if (gMsgCharIsPrinting && ((gGameFrameCount & 2) != 0)) {
+                player->arwing.teamFaceXrot = 5.0f;
+            }
+
+            if (player->csTimer == 80) {
+                falco->fwork[29] = 5.0f;
+            }
+
+            if (player->csTimer == 60) {
+                slippy->fwork[29] = 5.0f;
+            }
+
+            if (player->csTimer == 40) {
+                peppy->fwork[29] = 5.0f;
+            }
+
+            if ((player->csTimer > 70) && (player->csTimer < 80)) {
+                falco->iwork[11] = 2;
+            }
+
+            if ((player->csTimer > 50) && (player->csTimer < 60)) {
+                slippy->iwork[11] = 2;
+            }
+
+            if ((player->csTimer > 30) && (player->csTimer < 40)) {
+                peppy->iwork[11] = 2;
+            }
+
+            if (player->csTimer == 70) {
+                falco->state = 1;
+                Play_PlaySfxFirstPlayer(player->sfxSource, NA_SE_ARWING_BOOST);
+            }
+
+            if (player->csTimer == 50) {
+                slippy->state = 2;
+                Play_PlaySfxFirstPlayer(player->sfxSource, NA_SE_ARWING_BOOST);
+            }
+
+            if (player->csTimer == 30) {
+                peppy->state = 3;
+                Play_PlaySfxFirstPlayer(player->sfxSource, NA_SE_ARWING_BOOST);
+            }
+
+            if (player->csTimer == 0) {
+                player->csState = 9;
+                Play_PlaySfxFirstPlayer(player->sfxSource, NA_SE_ARWING_BOOST);
+                player->csTimer = 3;
+                player->unk_194 = 5.0f;
+                player->unk_190 = 5.0f;
+            }
+            break;
+
+        case 9:
+            gCsCamEyeX = player->pos.x;
+            gCsCamEyeY = player->pos.y;
+            gCsCamEyeZ = player->trueZpos + 1000.0f;
+
+            gCsCamAtX = player->pos.x;
+            gCsCamAtY = player->pos.y;
+            gCsCamAtZ = player->trueZpos + 1100.0f;
+
+            D_ctx_80177A48[0] = 0.03f;
+
+            player->unk_190 = 2.0f;
+
+            if (player->csTimer == 0) {
+                gFillScreenAlphaTarget = 255;
+                gFillScreenAlphaStep = 48;
+                gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 255;
+            }
+
+            if (gFillScreenAlpha == 255) {
+                AUDIO_PLAY_BGM(gBgmSeqId);
+
+                Object_Kill(&falco->obj, falco->sfxSource);
+                Object_Kill(&slippy->obj, slippy->sfxSource);
+                Object_Kill(&peppy->obj, peppy->sfxSource);
+
+                gLevelStartStatusScreenTimer = 80;
+
+                player->pos.y = 350.0f;
+                player->cam.eye.x = player->pos.x;
+                player->cam.eye.y = (player->pos.y * player->unk_148) + 50.0f;
+                player->cam.eye.z = 30.0f;
+                player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                player->csState = 0;
+                player->cam.at.x = player->pos.x;
+                player->cam.at.y = (player->pos.y * player->unk_148) + 20.0f;
+                player->cam.at.z = player->trueZpos;
+
+                D_ctx_80177950 = 1.0f;
+
+                gPlayerGlareAlphas[0] = gPlayerGlareAlphas[1] = gPlayerGlareAlphas[2] = gPlayerGlareAlphas[3] = 0;
+                gLoadLevelObjects = 1;
+                gFillScreenAlphaTarget = 0;
+                player->csTimer = 15;
+            }
+            break;
+
+        case 10:
+            break;
+    }
+
+    Math_SmoothStepToF(&player->cam.eye.x, gCsCamEyeX, D_ctx_80177A48[0], 20000.0f, 0.0f);
+    Math_SmoothStepToF(&player->cam.eye.y, player->yBob + gCsCamEyeY, D_ctx_80177A48[0], 20000.0f, 0.0f);
+    Math_SmoothStepToF(&player->cam.eye.z, gCsCamEyeZ, D_ctx_80177A48[0], 20000.0f, 0.0f);
+
+    Math_SmoothStepToF(&player->cam.at.x, gCsCamAtX, D_ctx_80177A48[0], 20000.0f, 0.0f);
+    Math_SmoothStepToF(&player->cam.at.y, gCsCamAtY - player->yBob, D_ctx_80177A48[0], 20000.0f, 0.0f);
+    Math_SmoothStepToF(&player->cam.at.z, gCsCamAtZ, D_ctx_80177A48[0], 20000.0f, 0.0f);
+
+    Math_SmoothStepToF(&player->arwing.upperRightFlapYrot, D_ctx_80177A48[1], 0.2f, 1.0f, 0.0f);
+    Math_SmoothStepToF(&player->arwing.upperLeftFlapYrot, D_ctx_80177A48[2], 0.2f, 1.0f, 0.0f);
+
+    player->arwing.bottomRightFlapYrot = player->arwing.upperRightFlapYrot;
+    player->arwing.bottomLeftFlapYrot = player->arwing.upperLeftFlapYrot;
+
+    player->cam.eye.y -= 3.0f;
+    player->cam.at.y -= 3.0f;
+    player->pos.y -= 3.0f;
+
+    falco->vwork[20].y -= 3.0f;
+    falco->obj.pos.y -= 3.0f;
+    peppy->vwork[20].y -= 3.0f;
+    peppy->obj.pos.y -= 3.0f;
+    slippy->vwork[20].y -= 3.0f;
+    slippy->obj.pos.y -= 3.0f;
 }
 #endif
 
