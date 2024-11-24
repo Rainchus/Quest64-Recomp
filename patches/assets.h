@@ -90,6 +90,7 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern f32 sMaTrainSpeedTarget;
 extern f32 gTestVarF;
 extern s32 D_menu_801B91A0;
 extern Vec3f D_menu_801AF100[];
@@ -385,6 +386,24 @@ extern Animation D_MA_602EA0C;
 extern Animation D_MA_6027320;
 extern Animation D_MA_601EAB0;
 extern s16 D_i5_801BE310;
+extern f32 D_MA_801BE250[40];
+extern s16 D_MA_801BE2F0[9];
+extern char D_i5_801BE308[8];
+extern s16 D_i5_801BE310;
+extern u8 D_i5_801BE312;
+extern u8 D_i5_801BE313;
+extern s16 D_i5_801BE314;
+extern s16 D_i5_801BE316;
+extern s16 D_i5_801BE318;
+extern s16 D_i5_801BE320[35];
+extern f32 D_i5_801BE368[50];
+extern f32 D_i5_801BA854[8];
+extern f32 D_i5_801BA874[8];
+extern f32 D_i5_801BA894[8];
+extern Vec3f D_i5_801BE430[50];
+extern Vec3f D_i5_801BE688[2];
+extern Vec3f D_i5_801BE6A0[12];
+extern s32 D_i5_801BE734[4];
 extern f32 D_i6_801A6B64[5];
 extern s32 D_display_800CA22C;
 extern Gfx* sExpertFaceDL[4];
