@@ -130,9 +130,17 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     //
                     // gTestVarF = interpolateComponent;
 
+                    f32 bgCutsceneFix;
+                    if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) && (gCurrentLevel == LEVEL_CORNERIA)) {
+                        bgCutsceneFix = 100.0f;
+                    } else {
+                        bgCutsceneFix = 0.0f;
+                    }
+
                     // Apply camera roll and translate matrix to the starting position (far left)
                     Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
-                    Matrix_Translate(gGfxMatrix, sp13C - (7280.0f * 2.0f), -2000.0f + sp134, -6000.0f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, sp13C - (7280.0f * 2.0f), -2000.0f + sp134 + bgCutsceneFix, -6000.0f,
+                                     MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
                     // if ((gLevelMode == LEVELMODE_ALL_RANGE) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO)
