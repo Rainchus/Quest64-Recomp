@@ -553,6 +553,7 @@ RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange* this) {
     Vec3f D_i4_8019F4A8 = { 0.0f, 0.0f, 0.0f };
     Vec3f pad[30];
 
+    // @recomp: never use low poly
     this->iwork[KA_ACTOR_LOW_POLY] = false;
 
     if ((this->iwork[KA_ACTOR_IWORK_8] != 0) && (this->aiType < AI360_GREAT_FOX)) {
