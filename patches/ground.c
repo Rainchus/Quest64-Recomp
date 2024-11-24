@@ -1120,3 +1120,56 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
     }
 }
 #endif
+
+extern u16 D_BO_6008BB8[];
+extern u16 D_BO_600AD80[];
+extern Gfx D_BO_600BEC0[];
+
+RECOMP_PATCH void Bolse_DrawDynamicGround(void) {
+    Vec3f spDC = { 0.0f, 0.0f, 0.0f };
+    Vec3f spD0;
+    f32 rnd;
+    f32 x;
+    f32 z;
+
+    gDPSetFogColor(gMasterDisp++, gFogRed, gFogGreen, gFogBlue, gFogAlpha);
+    gSPFogPosition(gMasterDisp++, gFogNear, gFogFar);
+
+    if (gBosses[1].obj.status == OBJ_ACTIVE) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_34);
+        if ((gGameFrameCount % 2) != 0) {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 128, 160, 255);
+        } else {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 192, 224, 255);
+        }
+    } else {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_33);
+    }
+
+    Matrix_Push(&gGfxMatrix);
+    Rand_SetSeed(1, 29100, 9786);
+    Matrix_Translate(gGfxMatrix, 0.0f, gCameraShakeY, 0.0f, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, gBosses[0].obj.rot.y * M_DTOR, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, 5.0f, 1.0f, 5.0f, MTXF_APPLY);
+
+    for (z = -3200.0f; z <= 3200.0f; z += 800.0f) {
+        for (x = -3200.0f; x <= 3200.0f; x += 800.0f) {
+            rnd = Rand_ZeroOneSeeded();
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, x, 0.0f, z, MTXF_APPLY);
+            Matrix_MultVec3f(gGfxMatrix, &spDC, &spD0);
+            if ((spD0.z < 3000.0f) && (spD0.z > -13000.0f) && (fabsf(spD0.x) < (fabsf(spD0.z * 0.7f) + 9000.0f)) &&
+                (fabsf(spD0.y) < (fabsf(spD0.z * 0.5f) + 4000.0f))) {
+                if (rnd < 0.3f) {
+                    gDPLoadTileTexture(gMasterDisp++, D_BO_6008BB8, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
+                } else {
+                    gDPLoadTileTexture(gMasterDisp++, D_BO_600AD80, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
+                }
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, D_BO_600BEC0);
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+    }
+    Matrix_Pop(&gGfxMatrix);
+}
