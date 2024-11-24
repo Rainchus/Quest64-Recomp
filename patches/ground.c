@@ -296,11 +296,13 @@ RECOMP_PATCH void Background_DrawGround(void) {
             break;
 
         case LEVEL_TRAINING:
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedVertsOrderAuto(gMasterDisp++, TAG_GROUND, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+           //// @recomp Tag the transform.
+           //gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+           //                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+           //                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+           //                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
 
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
@@ -336,53 +338,56 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
 
-                // CENTER FAR
+                // Original Display (Center)
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f /* + gPathTexScroll*/, MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, sp1C0);
-                Matrix_Pop(&gGfxMatrix);
-                // LEFT
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -3000.0f, MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, sp1C0);
-                Matrix_Pop(&gGfxMatrix);
-                // RIGHT
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -3000.0f /* + gPathTexScroll*/, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -2500.0f /* + gPathTexScroll */, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
 
-                // CENTER
+                // Original Display for the second section (Center)
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -9000.0f /* + gPathTexScroll*/, MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, sp1C0);
-                Matrix_Pop(&gGfxMatrix);
-                // LEFT
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -9000.0f /* + gPathTexScroll*/, MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, sp1C0);
-                Matrix_Pop(&gGfxMatrix);
-                // RIGHT
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -9000.0f /* + gPathTexScroll*/, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -8435.0f + 65 /* + gPathTexScroll */, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
 
+                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+
+                // Mirrored Display - Left Side
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 3000.0f /* + gPathTexScroll*/, MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
+                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -2500.0f /* + gPathTexScroll */,
+                                 MTXF_APPLY); // Move left by the width of the original (-8000.0f)
+                Matrix_Scale(gGfxMatrix, -1.0f, 1.0f, 0.5f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, sp1C0);
+                Matrix_Pop(&gGfxMatrix);
+
+                // Mirrored Display - Right Side
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -2500.0f /* + gPathTexScroll */,
+                                 MTXF_APPLY); // Move right by the width of the original (+8000.0f)
+                Matrix_Scale(gGfxMatrix, -1.0f, 1.0f, 0.5f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, sp1C0);
+                Matrix_Pop(&gGfxMatrix);
+
+                // Mirrored Display - Left Side for the second section
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -8435.0f + 65 /* + gPathTexScroll */,
+                                 MTXF_APPLY); // Move left by the width of the original (-8000.0f)
+                Matrix_Scale(gGfxMatrix, -1.0f, 1.0f, 0.5f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, sp1C0);
+                Matrix_Pop(&gGfxMatrix);
+
+                // Mirrored Display - Right Side for the second section
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -8435.0f + 65 /* + gPathTexScroll */,
+                                 MTXF_APPLY); // Move right by the width of the original (+8000.0f)
+                Matrix_Scale(gGfxMatrix, -1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
