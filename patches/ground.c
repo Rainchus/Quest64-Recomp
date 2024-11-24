@@ -296,13 +296,14 @@ RECOMP_PATCH void Background_DrawGround(void) {
             break;
 
         case LEVEL_TRAINING:
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedVertsOrderAuto(gMasterDisp++, TAG_GROUND, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-           //// @recomp Tag the transform.
-           //gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-           //                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-           //                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-           //                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedVertsOrderAuto(gMasterDisp++, TAG_GROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
+            //// @recomp Tag the transform.
+            // gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+            //                          G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+            //                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+            //                          G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
 
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
@@ -354,7 +355,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gSPDisplayList(gMasterDisp++, sp1C0);
                 Matrix_Pop(&gGfxMatrix);
 
-                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+                gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
 
                 // Mirrored Display - Left Side
                 Matrix_Push(&gGfxMatrix);
@@ -718,7 +719,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
-               
+
                 /*
                 memcpy2(dynaFloor1, SEGMENTED_TO_VIRTUAL(D_SO_6002E60), 724 * sizeof(Gfx));
                 memcpy2(dynaFloor2, SEGMENTED_TO_VIRTUAL(D_SO_60005B0), 724 * sizeof(Gfx));
