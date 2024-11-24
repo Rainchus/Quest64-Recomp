@@ -322,6 +322,7 @@ RECOMP_PATCH void Display_Update(void) {
 
         if (gControllerPress[0].button & L_TRIG) {
             pl->state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
+            gMissionStatus = MISSION_ACCOMPLISHED;
         }
     }
 #endif
@@ -409,6 +410,16 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
+#if 0
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+    Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "STICKX:");
+    Graphics_DisplaySmallNumber(60, 210, (int) ABS(gInputPress->stick_x));
+    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "STICKY:");
+    Graphics_DisplaySmallNumber(60, 220, (int) ABS(gInputPress->stick_y));
+    if (gInputPress->stick_x < 0.0f) Graphics_DisplaySmallText(110, 210, 1.0f, 1.0f, "NEG:");
+    if (gInputPress->stick_y < 0.0f) Graphics_DisplaySmallText(110, 220, 1.0f, 1.0f, "NEG:");
+#endif
 #if DEBUG_NO_COLLISION == 1
     gPlayer->mercyTimer = 1000;
 #endif
@@ -416,20 +427,8 @@ RECOMP_PATCH void Display_Update(void) {
 #if 0
     RCP_SetupDL(&gMasterDisp, SETUPDL_83);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-    if (gTestVarF > 0) {
-       // Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TEST:");
-    } else {
-        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TESTNEG:");
-    }
-    Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TEST:");
-    Graphics_DisplaySmallNumber(80, 220, (int) ABS(gTestVarF));
-
-    if (gControllerPress[0].button & Z_TRIG) {
-        gTestVarF -= 10;
-    } else if (gControllerPress[0].button & R_TRIG) {
-        gTestVarF += 10;
-    }
-
+    Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "CSFR:");
+    Graphics_DisplaySmallNumber(80, 210, (int)gCsFrameCount);
 #endif
 // for draw distance tests
 #if 0
