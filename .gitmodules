@@ -21,7 +21,7 @@
 	url = https://github.com/sonicdcer/Starfox64RecompSyms.git
 [submodule "lib/rt64"]
 	path = lib/rt64
-	url = https://github.com/sonicdcer/rt64.git
+	url = https://github.com/rt64/rt64
 [submodule "rt64"]
 	path = rt64
 	url = https://github.com/rt64/rt64
