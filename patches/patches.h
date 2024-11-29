@@ -36,6 +36,7 @@
 #include "functions.h"
 #include "rt64_extended_gbi.h"
 #include "graphics.h"
+#include "PR/abi.h"
 #include "audioseq_cmd.h"
 #include "macros.h"
 #include "variables.h"
