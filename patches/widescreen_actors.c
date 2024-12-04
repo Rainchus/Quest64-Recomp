@@ -1802,4 +1802,28 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
     }
 }
 
+RECOMP_PATCH bool Display_CheckPlayerVisible(s32 index, s32 reflectY) {
+    Vec3f src = { 0.0f, 0.0f, 0.0f };
+    Vec3f dest;
+
+    Matrix_MultVec3f(gGfxMatrix, &src, &dest);
+
+    if ((dest.z < 200.0f) && (dest.z > -12000.0f)) {
+        // @recomp: Extend player visibility to widescreen.
+        if (fabsf(dest.x) < (fabsf(dest.z * /*0.5f*/ 1.5f) + 500.0f)) {
+            if (fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+                if (reflectY == 0) {
+                    sPlayersVisible[index] = true;
+                }
+                return true;
+            }
+        }
+    }
+
+    if (reflectY == 0) {
+        sPlayersVisible[index] = false;
+    }
+    return false;
+}
+
 #endif // full scope
