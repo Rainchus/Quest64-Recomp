@@ -90,6 +90,7 @@ typedef struct {
     /* 0x10 */ f32 scale;
 } TitleCorneria; // size = 0x14
 
+extern u8 sPlayersVisible[];
 extern f32 sMaTrainSpeedTarget;
 extern f32 gTestVarF;
 extern s32 D_menu_801B91A0;

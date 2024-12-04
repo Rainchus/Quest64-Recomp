@@ -23,6 +23,7 @@ void Macbeth_Effect357_Spawn2(f32 xPos, f32 yPos, f32 zPos, f32 arg3);
 void Macbeth_801AF27C(ActorCutscene* this, s32 arg1);
 void Macbeth_801AF44C(void);
 void Audio_FadeOutAll(u8);
+void PlayerShot_DrawLaser(PlayerShot* shot);
 
 // for draw distance tests
 #if 0

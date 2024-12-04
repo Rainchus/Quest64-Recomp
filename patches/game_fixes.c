@@ -26,10 +26,10 @@ void* memcpy2(void* s1, const void* s2, size_t n) {
 
 // @recomp: Fix Pigma's voice line being cut out
 RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
-    s32 i;
+    s32 i = 0;
     Player* player = &gPlayer[0];
     s32 pad;
-    Actor* actor;
+    Actor* actor = NULL;
 
     gBolseDynamicGround = true;
     D_i4_801A0530++;
