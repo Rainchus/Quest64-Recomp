@@ -813,7 +813,6 @@ struct UIContext {
                 }
                 current_document->Hide();
             }
-
             auto find_it = documents.find(menu);
             if (find_it != documents.end()) {
                 assert(find_it->second && "Document for menu not loaded!");

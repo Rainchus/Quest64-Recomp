@@ -1,0 +1,30 @@
+# Config file for Quest 64 Recompilation
+
+[input]
+entrypoint = 0x80000400
+# Paths are relative to the location of this config file.
+elf_path = "quest64.elf"
+output_func_path = "RecompiledFuncs"
+
+[patches]
+stubs = [
+    "func_800471B0", #some libleo function
+    "func_8004793C", #another libleo function
+]
+
+ignored = [
+    "__osBlockSum",
+    "__osPfsReleasePages",
+    "__osPfsDeclearPage",
+    "__osClearPage"
+]
+
+[[patches.hook]]
+func = "func_80024690"
+text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
+before_vram = 0x80024690
+
+[[patches.hook]]
+func = "func_80024260"
+text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
+before_vram = 0x80024260
