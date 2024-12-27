@@ -1,5 +1,5 @@
-# Chameleon Twist: Recompiled
-Chameleon Twist: Recompiled is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Chameleon Twist into a native port with many new features and enhancements. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
+# Quest64: Recompiled
+Quest64: Recompiled is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Quest64 into a native port with many new features and enhancements. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
 
 ### [Check out the latest release here](https://github.com/Rainchus/ChameleonTwist1-JP-Recomp/releases).
 
@@ -90,7 +90,7 @@ Unlike N64 ports in the past, this project is not based on the source code provi
 - Linux: `~/.config/ChameleonTwistRecompiled/saves`
 
 #### How do I choose a different ROM?
-**You don't.** This project is **only** a port of Chameleon Twist and it will only accept one specific ROM: the JP version of the N64 release of Chameleon Twist. ROMs in formats other than .z64 will be automatically converted, as long as it is the correct ROM. **It is not an emulator and it cannot run any arbitrary ROM.** 
+**You don't.** This project is **only** a port of Quest64 and it will only accept one specific ROM: the JP version of the N64 release of Quest64. ROMs in formats other than .z64 will be automatically converted, as long as it is the correct ROM. **It is not an emulator and it cannot run any arbitrary ROM.** 
 
 If you want to play a modded ROM or in another language, note that support for modding and other languages will be added to the project itself in the future and will not rely on you supplying a different ROM. 
 
@@ -109,7 +109,7 @@ Building is not required to play this project, as prebuilt binaries (which do no
 * [FreeType](https://freetype.org/) for font rendering, used by RmlUi  
 * [moodycamel::ConcurrentQueue](https://github.com/cameron314/concurrentqueue) for semaphores and fast, lock-free MPMC queues
 * [Gamepad Motion Helpers](https://github.com/JibbSmart/GamepadMotionHelpers) for sensor fusion and calibration algorithms to implement gyro aiming
-* [Chameleon Twist Decompilation](https://github.com/chameleonTwistRet/chameleonTwistv1.0-JP) for headers and some function definitions, used for making patches or some enhancements
+* [Quest64 Decompilation](https://github.com/chameleonTwistRet/chameleonTwistv1.0-JP) for headers and some function definitions, used for making patches or some enhancements
 * [Ares emulator](https://github.com/ares-emulator/ares) for RSP vector instruction reference implementations, used in RSP recompilation
 
 Special thanks to [thecozies](https://github.com/thecozies) for designing and helping implement the launcher and config menus!
