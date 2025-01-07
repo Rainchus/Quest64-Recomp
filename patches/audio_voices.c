@@ -4,48 +4,48 @@
 #include "audiothread_cmd.h"
 
 #if (DEBUG_AUDIO_LOCALIZATION == 1)
-    #if DEBUG_JP_AUDIO == 1
-    #include "audio_jp/audio_bank_jp.c"
-    #include "audio_jp/audio_seq_jp.c"
-    #include "audio_jp/audio_table_jp.c"
-    #include "audio_jp/audiotables_jp.c"
-    #define audio_seq_localized audio_seq_jp
-    #define audio_bank_localized audio_bank_jp
-    #define audio_table_localized audio_table_jp
-    #define gSeqTableInit_localized gSeqTableInit_jp
-    #define gSoundFontTableInit_localized gSoundFontTableInit_jp
-    #define gSampleBankTableInit_localized gSampleBankTableInit_jp
-    #define gSeqFontTableInit_localized gSeqFontTableInit_jp
-    #endif
+#if DEBUG_JP_AUDIO == 1
+#include "audio_jp/audio_bank_jp.c"
+#include "audio_jp/audio_seq_jp.c"
+#include "audio_jp/audio_table_jp.c"
+#include "audio_jp/audiotables_jp.c"
+#define audio_seq_localized audio_seq_jp
+#define audio_bank_localized audio_bank_jp
+#define audio_table_localized audio_table_jp
+#define gSeqTableInit_localized gSeqTableInit_jp
+#define gSoundFontTableInit_localized gSoundFontTableInit_jp
+#define gSampleBankTableInit_localized gSampleBankTableInit_jp
+#define gSeqFontTableInit_localized gSeqFontTableInit_jp
+#endif
 
-    #if DEBUG_US_AUDIO == 1
-    #include "audio_us/audio_bank_us.c"
-    #include "audio_us/audio_seq_us.c"
-    #include "audio_us/audio_table_us.c"
-    #include "audio_us/audiotables_us.c"
-    #define audio_seq_localized audio_seq_us
-    #define audio_bank_localized audio_bank_us
-    #define audio_table_localized audio_table_us
-    #define gSeqTableInit_localized gSeqTableInit
-    #define gSoundFontTableInit_localized gSoundFontTableInit
-    #define gSampleBankTableInit_localized gSampleBankTableInit
-    #define gSeqFontTableInit_localized gSeqFontTableInit
-    #endif
+#if DEBUG_US_AUDIO == 1
+#include "audio_us/audio_bank_us.c"
+#include "audio_us/audio_seq_us.c"
+#include "audio_us/audio_table_us.c"
+#include "audio_us/audiotables_us.c"
+#define audio_seq_localized audio_seq_us
+#define audio_bank_localized audio_bank_us
+#define audio_table_localized audio_table_us
+#define gSeqTableInit_localized gSeqTableInit
+#define gSoundFontTableInit_localized gSoundFontTableInit
+#define gSampleBankTableInit_localized gSampleBankTableInit
+#define gSeqFontTableInit_localized gSeqFontTableInit
+#endif
 
-    #if DEBUG_EU_AUDIO == 1
-    #define VERSION_EU
-    #include "audio_eu/audio_bank_eu.c"
-    #include "audio_eu/audio_seq_eu.c"
-    #include "audio_eu/audio_table_eu.c"
-    #include "audio_eu/audiotables_eu.c"
-    #define audio_seq_localized audio_seq_eu
-    #define audio_bank_localized audio_bank_eu
-    #define audio_table_localized audio_table_eu
-    #define gSeqTableInit_localized gSeqTableInit_eu
-    #define gSoundFontTableInit_localized gSoundFontTableInit_eu
-    #define gSampleBankTableInit_localized gSampleBankTableInit_eu
-    #define gSeqFontTableInit_localized gSeqFontTableInit_eu
-    #endif
+#if DEBUG_EU_AUDIO == 1
+#define VERSION_EU
+#include "audio_eu/audio_bank_eu.c"
+#include "audio_eu/audio_seq_eu.c"
+#include "audio_eu/audio_table_eu.c"
+#include "audio_eu/audiotables_eu.c"
+#define audio_seq_localized audio_seq_eu
+#define audio_bank_localized audio_bank_eu
+#define audio_table_localized audio_table_eu
+#define gSeqTableInit_localized gSeqTableInit_eu
+#define gSoundFontTableInit_localized gSoundFontTableInit_eu
+#define gSampleBankTableInit_localized gSampleBankTableInit_eu
+#define gSeqFontTableInit_localized gSeqFontTableInit_eu
+#endif
 #endif
 
 extern s32 gAudioHeapSize;
@@ -164,7 +164,8 @@ s8 Audio_GetSfxReverb(u8 bankId, u8 entryIndex, u8 channelId);
 f32 Audio_GetSfxFreqMod(u8 bankId, u8 entryIndex);
 s8 Audio_GetSfxPan(f32 xPos, f32 zPos, u8 mode);
 
-extern SfxChannelState sSfxChannelState[16];;
+extern SfxChannelState sSfxChannelState[16];
+;
 extern Modulation sSfxVolumeMods[5];
 extern u8 sSfxChannelLayout;
 
@@ -300,12 +301,12 @@ void AudioHeap_InitPersistentPoolsAndCaches(AudioCommonPoolSplit* split);
 void AudioHeap_InitTemporaryPoolsAndCaches(AudioCommonPoolSplit* split);
 void AudioHeap_InitSampleCaches(u32 persistentSampleCacheSize, u32 temporarySampleCacheSize);
 void AudioHeap_ResetLoadStatus(void);
-void* AudioHeap_AllocZeroed(AudioAllocPool* pool, u32 size);
-void osWritebackDCacheAll(void);
-s32 osAiSetFrequency(u32 freq);
 
 #define osAiSetFrequency osAiSetFrequency_recomp
 #define osWritebackDCacheAll osWritebackDCacheAll_recomp
+void* AudioHeap_AllocZeroed(AudioAllocPool* pool, u32 size);
+void osWritebackDCacheAll(void);
+s32 osAiSetFrequency(u32 freq);
 
 RECOMP_PATCH void AudioHeap_Init(void) {
     s32 i;
@@ -343,13 +344,13 @@ RECOMP_PATCH void AudioHeap_Init(void) {
     gAudioBufferParams.maxAiBufferLength *= gAudioBufferParams.count;
     gAudioBufferParams.minAiBufferLength *= gAudioBufferParams.count;
     gAudioBufferParams.ticksPerUpdate *= gAudioBufferParams.count;
-    
-//#ifdef VERSION_US
+
+    // #ifdef VERSION_US
     if (gAudioBufferParams.count >= 2) {
         gAudioBufferParams.maxAiBufferLength -= 0x10;
     }
-//#endif
-    
+    // #endif
+
     gMaxAudioCmds = (gNumNotes * 20 * gAudioBufferParams.ticksPerUpdate) + (spec->numReverbs * 32) + 480;
     persistentSize = spec->persistentSeqCacheSize + spec->persistentFontCacheSize +
                      spec->persistentSampleBankCacheSize + spec->persistentSampleCacheSize + 0x10;
@@ -384,9 +385,9 @@ RECOMP_PATCH void AudioHeap_Init(void) {
     for (i = 0; i < ARRAY_COUNT(gSynthReverbs); i++) {
         gSynthReverbs[i].useReverb = 0;
     }
-    
+
     gNumSynthReverbs = spec->numReverbs;
-    
+
     for (i = 0; i < gNumSynthReverbs; i++) {
         settings = &spec->reverbSettings[i];
         reverb = &gSynthReverbs[i];
@@ -405,6 +406,22 @@ RECOMP_PATCH void AudioHeap_Init(void) {
 
         reverb->bufSizePerChan = reverb->windowSize;
         reverb->framesToIgnore = 2;
+
+        // recomp_printf("reverb->downsampleRate: %d:\n", reverb->downsampleRate);
+        // recomp_printf("reverb->windowSize: %d:\n", reverb->windowSize);
+        // recomp_printf("reverb->decayRatio: %d:\n", reverb->decayRatio);
+        // recomp_printf("reverb->leakRtL: %d:\n", reverb->leakRtL);
+        // recomp_printf("reverb->leakLtR: %d:\n", reverb->leakLtR);
+        // recomp_printf("reverb->useReverb: %d:\n", reverb->useReverb);
+// 
+        // recomp_printf("reverb->leftRingBuf: %x:\n", reverb->leftRingBuf);
+        // recomp_printf("reverb->rightRingBuf: %x:\n", reverb->rightRingBuf);
+        // recomp_printf("reverb->nextRingBufPos: %d:\n", reverb->nextRingBufPos);
+        // recomp_printf("reverb->unk_20: %d:\n", reverb->unk_20);
+        // recomp_printf("reverb->curFrame: %d:\n", reverb->curFrame);
+        // recomp_printf("reverb->bufSizePerChan: %d:\n", reverb->bufSizePerChan);
+        // recomp_printf("reverb->framesToIgnore: %d:\n \n", reverb->framesToIgnore);
+
         if (reverb->downsampleRate != 1) {
             reverb->resampleFlags = 1;
             reverb->unk_0A = (0x8000 / reverb->downsampleRate);
@@ -451,7 +468,7 @@ RECOMP_PATCH s32 AudioLoad_Dma(OSIoMesg* mesg, u32 priority, s32 direction, u32 
                 return 0;
         }
     */
-   
+
     if (size % 16) {
         size = ALIGN16(size);
     }
@@ -583,16 +600,16 @@ RECOMP_PATCH s32 AudioLoad_RelocateFontAndPreloadSamples(s32 fontId, u32 fontDat
     }
 }
 #endif
+
 #if 0
 void func_80009AAC(s32 updateIndex);
 void func_8001678C(s32 arg0);
 Acmd* func_8000A25C(s16* aiBuf, s32 aiBufLen, Acmd* aList, s32 updateIndex);
 void func_800080C0(s32 sampleCount, s32 itemIndex, s32 reverbIndex);
 
-
 RECOMP_PATCH Acmd* func_80009B64(Acmd* aList, s32* cmdCount, s16* aiBufStart, s32 aiBufLen) {
     Acmd* aCmdPtr;
-    s32* aiBufPtr;
+    s16* aiBufPtr;
     s32 chunkLen;
     s32 i;
     s32 j;
@@ -603,20 +620,18 @@ RECOMP_PATCH Acmd* func_80009B64(Acmd* aList, s32* cmdCount, s16* aiBufStart, s3
         func_80009AAC(gAudioBufferParams.ticksPerUpdate - i);
     }
 
-    aiBufPtr = (s32*) aiBufStart;
+    aiBufPtr = aiBufStart;
+
+    recomp_printf("ticksPerUpdate: %d\n", gAudioBufferParams.ticksPerUpdate);
     for (i = gAudioBufferParams.ticksPerUpdate; i > 0; i--) {
         if (i == 1) {
             chunkLen = aiBufLen;
-            recomp_printf("func_80009B64 i == 1\n");
         } else if ((aiBufLen / i) >= gAudioBufferParams.samplesPerTickMax) {
             chunkLen = gAudioBufferParams.samplesPerTickMax;
-            recomp_printf("func_80009B64 (aiBufLen / i) >= gAudioBufferParams.samplesPerTickMax\n");
         } else if (gAudioBufferParams.samplesPerTickMin >= (aiBufLen / i)) {
             chunkLen = gAudioBufferParams.samplesPerTickMin;
-            recomp_printf("func_80009B64 gAudioBufferParams.samplesPerTickMin >= (aiBufLen / i)\n");
         } else {
             chunkLen = gAudioBufferParams.samplesPerTick;
-            recomp_printf("func_80009B64 else\n");
         }
 
         for (j = 0; j < gNumSynthReverbs; j++) {
@@ -624,10 +639,14 @@ RECOMP_PATCH Acmd* func_80009B64(Acmd* aList, s32* cmdCount, s16* aiBufStart, s3
                 func_800080C0(chunkLen, gAudioBufferParams.ticksPerUpdate - i, j);
             }
         }
-        // recomp_printf("chunkLen: %d, aiBufLen: %d \n", chunkLen, aiBufLen);
+        static int timessynthreverbs = 0;
+        if (timessynthreverbs < 10) {
+            recomp_printf("chunkLen: %x\n", chunkLen);
+        }
+        timessynthreverbs++;
         aCmdPtr = func_8000A25C((s16*) aiBufPtr, chunkLen, aCmdPtr, gAudioBufferParams.ticksPerUpdate - i);
         aiBufLen -= chunkLen;
-        aiBufPtr += chunkLen;
+        aiBufPtr += chunkLen * 2;
     }
 
     for (j = 0; j < gNumSynthReverbs; j++) {
@@ -1341,3 +1360,164 @@ RECOMP_PATCH void Game_Update(void) {
     }
 }
 #endif
+
+#if 0
+RECOMP_PATCH Acmd* func_800098DC(Acmd* aList, u16 dmem, u16 startPos, s32 size, s32 reverbIndex) {
+    recomp_printf("LOAD gSynthReverbs[reverbIndex].leftRingBuf[startPos]: %08x\n dmem; %x\n size: %d\n",
+                  OS_K0_TO_PHYSICAL(&gSynthReverbs[reverbIndex].leftRingBuf[startPos]), dmem, size);
+
+    aLoadBuffer(aList++, OS_K0_TO_PHYSICAL(&gSynthReverbs[reverbIndex].leftRingBuf[startPos]), dmem, size);
+    aLoadBuffer(aList++, OS_K0_TO_PHYSICAL(&gSynthReverbs[reverbIndex].rightRingBuf[startPos]), dmem + DMEM_1CH_SIZE,
+                size);
+    return aList;
+}
+#endif
+
+#if 0
+RECOMP_PATCH Acmd* func_80009984(Acmd* aList, u16 dmem, u16 startPos, s32 size, s32 reverbIndex) {
+    recomp_printf("SAVE gSynthReverbs[reverbIndex].leftRingBuf[startPos]: %08x\n dmem; %x\n size: %d\n",
+                  OS_K0_TO_PHYSICAL(&gSynthReverbs[reverbIndex].leftRingBuf[startPos]), dmem, size);
+
+    aSaveBuffer(aList++, dmem, OS_K0_TO_PHYSICAL(&gSynthReverbs[reverbIndex].leftRingBuf[startPos]), size);
+    aSaveBuffer(aList++, dmem + DMEM_1CH_SIZE, OS_K0_TO_PHYSICAL(&gSynthReverbs[reverbIndex].rightRingBuf[startPos]),
+                size);
+    return aList;
+}
+#endif
+
+#if 0
+// func_80009D78
+#define DMEM_COMPRESSED_ADPCM_DATA 0x990
+#define DMEM_LEFT_CH 0x990
+#define DMEM_RIGHT_CH 0xB10
+#define DMEM_HAAS_TEMP 0x650
+#define DMEM_TEMP 0x450
+#define DMEM_UNCOMPRESSED_NOTE 0x5F0
+#define DMEM_WET_LEFT_CH 0xC90
+#define DMEM_WET_RIGHT_CH 0xE10 // = DMEM_WET_LEFT_CH + DMEM_1CH_SIZE
+#define SAMPLE_SIZE sizeof(s16)
+
+// AudioSynth_LoadRingBufferPart
+Acmd* func_800098DC(Acmd* aList, u16 dmem, u16 startPos, s32 size, s32 reverbIndex);
+
+RECOMP_PATCH Acmd* func_80009D78(Acmd* aList, s32 aiBufLen, s16 reverbIndex, s16 updateIndex) {
+    ReverbRingBufferItem* sp64 = &gSynthReverbs[reverbIndex].items[gSynthReverbs[reverbIndex].curFrame][updateIndex];
+    s16 sp62;
+    s16 sp60;
+    static int segaCounter = 0;
+
+    aClearBuffer(aList++, DMEM_WET_LEFT_CH, DMEM_2CH_SIZE);
+
+    if (gSynthReverbs[reverbIndex].downsampleRate == 1) {
+        if (segaCounter < 10) {
+            // recomp_printf("sp64->startPos: %x\n sp64->lengthA: %x\n", sp64->startPos, sp64->lengthA);
+        }
+        segaCounter++;
+        aList = func_800098DC(aList, DMEM_WET_LEFT_CH, sp64->startPos, sp64->lengthA, reverbIndex);
+        if (sp64->lengthB != 0) {
+            aList = func_800098DC(aList, sp64->lengthA + DMEM_WET_LEFT_CH, 0, sp64->lengthB, reverbIndex);
+        }
+        aAddMixer(aList++, 0x300, DMEM_WET_LEFT_CH, DMEM_LEFT_CH, 0);
+        aMix(aList++, 0x30, gSynthReverbs[reverbIndex].decayRatio + 0x8000, DMEM_WET_LEFT_CH, DMEM_WET_LEFT_CH);
+    } else {
+        sp62 = (sp64->startPos & 7) * 2;
+        sp60 = ALIGN16(sp62 + sp64->lengthA);
+        aList = func_800098DC(aList, 0x470, sp64->startPos - (sp62 / 2), DMEM_1CH_SIZE, reverbIndex);
+        if (sp64->lengthB != 0) {
+            aList = func_800098DC(aList, sp60 + 0x470, 0, DMEM_1CH_SIZE - sp60, reverbIndex);
+        }
+        aSetBuffer(aList++, 0, sp62 + 0x470, DMEM_WET_LEFT_CH, aiBufLen * 2);
+        aResample(aList++, gSynthReverbs[reverbIndex].resampleFlags, gSynthReverbs[reverbIndex].unk_0A,
+                  OS_K0_TO_PHYSICAL(gSynthReverbs[reverbIndex].unk_30));
+        aSetBuffer(aList++, 0, sp62 + DMEM_UNCOMPRESSED_NOTE, DMEM_WET_RIGHT_CH, aiBufLen * 2);
+        aResample(aList++, gSynthReverbs[reverbIndex].resampleFlags, gSynthReverbs[reverbIndex].unk_0A,
+                  OS_K0_TO_PHYSICAL(gSynthReverbs[reverbIndex].unk_34));
+        aAddMixer(aList++, 0x300, DMEM_WET_LEFT_CH, DMEM_LEFT_CH, 0);
+        aMix(aList++, 0x30, gSynthReverbs[reverbIndex].decayRatio + 0x8000, DMEM_WET_LEFT_CH, DMEM_WET_LEFT_CH);
+    }
+
+    if ((gSynthReverbs[reverbIndex].leakRtL != 0) || (gSynthReverbs[reverbIndex].leakLtR != 0)) {
+        aDMEMMove(aList++, DMEM_WET_LEFT_CH, 0x470, DMEM_1CH_SIZE);
+        aMix(aList++, DMEM_1CH_SIZE >> 4, gSynthReverbs[reverbIndex].leakRtL, DMEM_WET_RIGHT_CH, DMEM_WET_LEFT_CH);
+        aMix(aList++, DMEM_1CH_SIZE >> 4, gSynthReverbs[reverbIndex].leakLtR, 0x470, DMEM_WET_RIGHT_CH);
+    }
+    return aList;
+}
+#endif
+
+#if 0
+void AudioSynth_InitNextRingBuf(s32 sampleCount, s32 itemIndex, s32 reverbIndex);
+Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* aList, s32 updateIndex);
+void AudioSynth_SyncSampleStates(s32 updateIndex);
+void func_8001678C(s32 arg0);
+
+RECOMP_PATCH Acmd* func_80009B64(Acmd* aList, s32* cmdCount, s16* aiBufStart, s32 aiBufLen) {
+    Acmd* aCmdPtr;
+    s16* aiBufPtr;
+    s32 chunkLen;
+    s32 i;
+    s32 j;
+
+    aCmdPtr = aList;
+    for (i = gAudioBufferParams.ticksPerUpdate; i > 0; i--) {
+        func_8001678C(i - 1);
+        AudioSynth_SyncSampleStates(gAudioBufferParams.ticksPerUpdate - i);
+    }
+
+    aiBufPtr = aiBufStart;
+    for (i = gAudioBufferParams.ticksPerUpdate; i > 0; i--) {
+        if (i == 1) {
+            chunkLen = aiBufLen;
+        } else if ((aiBufLen / i) >= gAudioBufferParams.samplesPerTickMax) {
+            chunkLen = gAudioBufferParams.samplesPerTickMax;
+        } else if (gAudioBufferParams.samplesPerTickMin >= (aiBufLen / i)) {
+            chunkLen = gAudioBufferParams.samplesPerTickMin;
+        } else {
+            chunkLen = gAudioBufferParams.samplesPerTick;
+        }
+
+        for (j = 0; j < gNumSynthReverbs; j++) {
+            if (gSynthReverbs[j].useReverb) {
+                AudioSynth_InitNextRingBuf(chunkLen, gAudioBufferParams.ticksPerUpdate - i, j);
+            }
+        }
+            static int timessynthreverbs = 0;
+        if (timessynthreverbs < 10) {
+            recomp_printf("chunkLen: %x\n", chunkLen);
+        }
+        timessynthreverbs++;
+
+        aCmdPtr =
+            AudioSynth_DoOneAudioUpdate((s16*) aiBufPtr, chunkLen, aCmdPtr, gAudioBufferParams.ticksPerUpdate - i);
+        aiBufLen -= chunkLen;
+        aiBufPtr += chunkLen * 2;
+    }
+
+    for (j = 0; j < gNumSynthReverbs; j++) {
+        if (gSynthReverbs[j].framesToIgnore != 0) {
+            gSynthReverbs[j].framesToIgnore--;
+        }
+        gSynthReverbs[j].curFrame ^= 1;
+    }
+
+    *cmdCount = aCmdPtr - aList;
+
+    return aCmdPtr;
+}
+#endif
+
+/*
+RECOMP_PATCH f32 func_80013708(Portamento* portamento) {
+    u32 temp;
+    f32 temp2;
+
+    portamento->cur += portamento->speed;
+    temp = portamento->cur;
+    if (temp > 127) {
+        temp = 127;
+    }
+    temp2 = 1.0f + ((gBendPitchOneOctaveFrequencies[128 + temp] - 1.0f) * portamento->extent);
+    recomp_printf("temp2: %f\n", temp2);
+    return temp2;
+}
+*/
