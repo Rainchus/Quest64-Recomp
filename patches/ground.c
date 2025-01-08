@@ -752,6 +752,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f, MTXF_APPLY); // Center Further
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
+
             if ((gGameFrameCount % 2) != 0) {
                 gSPDisplayList(gMasterDisp++, D_ZO_6008830);
             } else {
@@ -769,9 +770,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -786,9 +787,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -815,9 +816,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -832,9 +833,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -861,9 +862,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -878,9 +879,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -907,9 +908,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -924,9 +925,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -953,9 +954,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -970,9 +971,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -1068,9 +1069,7 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
 
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &spC4, &spB8);
 
-        if (gCurrentLevel == LEVEL_SOLAR) {
-            spB4[*spB0].n.n[0] = spB8.x;
-        }
+        spB4[*spB0].n.n[0] = spB8.x;
         spB4[*spB0].n.n[1] = spB8.y;
         spB4[*spB0].n.n[2] = spB8.z;
     }
@@ -1096,7 +1095,7 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
                 // spB4_copy[*spB0].n.n[2] *= -1.0f;
             }
             break;
-            /*
+
             case LEVEL_ZONESS:
                 if ((gGameFrameCount % 2) != 0) {
                     spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_6009ED0);
@@ -1116,7 +1115,6 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
                     // spB4_copy[*spB0].n.n[2] *= -1.0f;
                 }
                 break;
-                */
     }
 }
 #endif
