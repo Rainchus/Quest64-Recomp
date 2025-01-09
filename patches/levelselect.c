@@ -35,7 +35,15 @@ extern s32 sMapTimer3;
 extern s32 D_menu_801CD970;
 extern s32 D_menu_801CD97C;
 extern Planet sPlanets[PLANET_MAX];
+extern s32 D_menu_801CEFD4;
+extern s32 D_menu_801CEFDC;
+extern s32 D_menu_801CD94C;
+extern s32 D_menu_801CEFD0;
+extern s32 D_menu_801CF010;
+extern s32 D_menu_801CF014;
+extern MissionStatus sPrevMissionStatus;
 
+void Map_SetState_ZoomPlanet(void);
 void Map_LevelStart_AudioSpecSetup(LevelId level);
 void Map_CurrentLevel_Setup(void);
 void Map_PositionCursor(void);
@@ -150,8 +158,8 @@ void Map_LevelSelect(void) {
         timer--;
     }
 
-    // Bypass briefing
-    #if DEBUG_SKIP_BRIEFING
+// Bypass briefing
+#if DEBUG_SKIP_BRIEFING
     if ((timer == 0) && (startLevel == 1)) {
         if ((sMapState == 2) && (sMapSubState > 0)) {
             if (sCurrentPlanetId == PLANET_VENOM) {
@@ -173,7 +181,7 @@ void Map_LevelSelect(void) {
             }
         }
     }
-    #endif
+#endif
 }
 
 RECOMP_PATCH void Map_Update(void) {
@@ -327,5 +335,153 @@ RECOMP_PATCH void Map_Prologue_Update(void) {
         D_menu_801CD97C = 1;
         sMapSubState = 0;
         sMapState = MAP_IDLE;
+    }
+}
+
+RECOMP_PATCH void Map_Idle_Update(void) {
+    s32 i;
+    bool movingCamera;
+    bool movingCameraStick;
+    u8 var_a1 = 0;
+    u8 var_a2 = 0;
+    u8 var_a0;
+    f32 stickX;
+    f32 stickY;
+
+    movingCameraStick = false;
+    movingCamera = false;
+
+    if (gControllerPress[gMainController].button & A_BUTTON) {
+#if DEBUG_LEVEL_SELECT == 1
+        goto loadLevel;
+#endif
+        if ((gLastGameState == GSTATE_PLAY) && (sPrevMissionStatus != MISSION_COMPLETE) && !D_menu_801CEFD0) {
+            Audio_PlayMapMenuSfx(1);
+            D_menu_801CEFC4 = 1;
+            D_menu_801CEFD4 = 0;
+            D_menu_801CEFDC = 0;
+            sMapState = MAP_PATH_CHANGE;
+            D_menu_801CD94C = 0;
+        } else {
+#if DEBUG_LEVEL_SELECT == 1
+            loadLevel:
+#endif
+            for (i = 0; i < TEAM_ID_MAX; i++) {
+                D_ctx_80177C58[i] = gTeamShields[i];
+            }
+            Map_SetState_ZoomPlanet();
+        }
+        return;
+    }
+
+    if (gControllerPress[gMainController].button & START_BUTTON) {
+        if ((sMapState == MAP_IDLE) && (gLastGameState == GSTATE_PLAY)) {
+            if (D_menu_801CEFD0) {
+                AUDIO_PLAY_SFX(NA_SE_ERROR, gDefaultSfxSource, 4);
+            } else {
+                Audio_PlayMapMenuSfx(1);
+                D_menu_801CEFC4 = 1;
+                D_menu_801CEFD4 = 0;
+                D_menu_801CEFDC = 0;
+                sMapState = MAP_PATH_CHANGE;
+                D_menu_801CD94C = 0;
+            }
+            return;
+        }
+    }
+
+    stickX = gControllerPress[gMainController].stick_x;
+    stickY = gControllerPress[gMainController].stick_y;
+
+    if (stickY != 0.0f) {
+        if (D_menu_801CDA0C - (stickY * 0.05f) < -80.0f) {
+            D_menu_801CDA0C = -80.0f;
+            stickY = 0.0f;
+        } else if (D_menu_801CDA0C - (stickY * 0.05f) > 80.0f) {
+            D_menu_801CDA0C = 80.0f;
+            stickY = 0.0f;
+        } else {
+            D_menu_801CDA0C -= stickY * 0.05f;
+            movingCameraStick = true;
+            var_a1 = (s32) fabsf(((stickY * 0.05f) / 0.27f));
+        }
+    }
+
+    if (stickX != 0.0f) {
+        D_menu_801CDA10 += stickX * 0.05f;
+        var_a2 = (s32) fabsf((stickX * 0.05f) / 0.27f);
+        movingCameraStick = true;
+    }
+
+    if (D_menu_801CF014 == 1) {
+        var_a0 = var_a1;
+        if (var_a1 < var_a2) {
+            var_a0 = var_a2;
+        }
+        Audio_SetSfxMapModulation(var_a0);
+    }
+
+    if ((D_menu_801CF014 == 0) && (movingCameraStick == true)) {
+        Audio_PlaySfxModulated(gDefaultSfxSource, NA_SE_MAP_ROLL);
+        D_menu_801CF014 = 1;
+    }
+
+    if ((D_menu_801CF014 == 1) && (movingCameraStick == false) && (stickY == 0.0f) && (stickX == 0.0f)) {
+        var_a1 = 0;
+        var_a2 = 0;
+        Audio_KillSfxById(NA_SE_MAP_ROLL);
+        D_menu_801CF014 = 0;
+    }
+
+    if (gControllerHold[gMainController].button & R_TRIG) {
+        if ((D_menu_801CDA14 - 20.0f) > 2475.0f) {
+            D_menu_801CDA14 -= 20.0f;
+            movingCamera = true;
+        }
+    }
+
+    if (gControllerHold[gMainController].button & Z_TRIG) {
+        if ((D_menu_801CDA14 + 20.0f) < 7695.0f) {
+            D_menu_801CDA14 += 20.0f;
+            movingCamera = true;
+        }
+    }
+
+    if (gControllerHold[gMainController].button & U_CBUTTONS) {
+        if ((sMapCamAtY - 10.0f) >= -1200.0f) {
+            sMapCamAtY -= 10.0f;
+            movingCamera = true;
+        }
+    }
+
+    if (gControllerHold[gMainController].button & D_CBUTTONS) {
+        if ((sMapCamAtY + 10.0f) <= 1200.0f) {
+            sMapCamAtY += 10.0f;
+            movingCamera = true;
+        }
+    }
+
+    if (gControllerHold[gMainController].button & L_CBUTTONS) {
+        if ((sMapCamAtX + 10.0f) <= 1200.0f) {
+            sMapCamAtX += 10.0f;
+            movingCamera = true;
+        }
+    }
+
+    if (gControllerHold[gMainController].button & R_CBUTTONS) {
+        if ((sMapCamAtX - 10.0f) >= -1200.0f) {
+            sMapCamAtX -= 10.0f;
+            movingCamera = true;
+        }
+    }
+
+    if ((D_menu_801CF010 == 0) && (movingCamera == true)) {
+        AUDIO_PLAY_SFX(NA_SE_MAP_MOVE, gDefaultSfxSource, 4);
+        D_menu_801CF010 = 1;
+    }
+
+    if ((D_menu_801CF010 == 1) && (movingCamera == false)) {
+        Audio_KillSfxById(NA_SE_MAP_MOVE);
+        D_menu_801CF010 = 0;
     }
 }
