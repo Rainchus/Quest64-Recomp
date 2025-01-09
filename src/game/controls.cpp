@@ -109,8 +109,8 @@ bool recomp::get_n64_input(int controller_num, uint16_t* buttons_out, float* x_o
     }
 
     *buttons_out = cur_buttons;
-    *x_out = std::clamp(cur_x, -1.0f, 1.0f);
-    *y_out = std::clamp(cur_y, -1.0f, 1.0f);
+    *x_out = std::clamp(cur_x * 0.65f, -1.0f, 1.0f);
+    *y_out = std::clamp(cur_y * 0.65f, -1.0f, 1.0f);
 
     return true;
 }
