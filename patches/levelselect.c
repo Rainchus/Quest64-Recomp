@@ -24,6 +24,17 @@ extern f32 D_menu_801CDA18;
 extern f32 D_menu_801CDA14;
 extern f32 D_menu_801CDA10;
 extern f32 D_menu_801CDA1C;
+extern s32 sPrologueTexIdx;
+extern f32 sPrologueTextXpos;
+extern f32 sPrologueTextYpos;
+extern f32 sPrologueNextTexAlpha;
+extern f32 sPrologueCurrentTexAlpha;
+extern f32 D_menu_801CD9EC;
+extern s32 sPrologueTexIdx;
+extern s32 sMapTimer3;
+extern s32 D_menu_801CD970;
+extern s32 D_menu_801CD97C;
+extern Planet sPlanets[PLANET_MAX];
 
 void Map_LevelStart_AudioSpecSetup(LevelId level);
 void Map_CurrentLevel_Setup(void);
@@ -41,6 +52,10 @@ void Map_LevelStart_Update(void);
 void Map_ZoomPlanetPath_Update(void);
 void Map_PathChange_Update(void);
 void Map_GameOver_Update(void);
+void Audio_ClearVoice(void);
+void Audio_PlayVoiceWithoutBGM(u32);
+
+bool gBackToMap = false;
 
 PlanetId sPlanetArray[][3] = {
     { PLANET_CORNERIA, PLANET_CORNERIA, PLANET_CORNERIA }, { PLANET_METEO, PLANET_METEO, PLANET_SECTOR_Y },
@@ -219,4 +234,98 @@ RECOMP_PATCH void Map_Update(void) {
         Map_LevelSelect();
     }
 #endif
+}
+
+RECOMP_PATCH void Map_Prologue_Update(void) {
+    PlanetId planetId;
+    static f32 D_menu_801B6934[] = {
+        99.0f, 24, -90.0f, -150.0f, -208.0f, -276.0f,
+    };
+
+    switch (sMapSubState) {
+        case 100:
+            break;
+
+        case 0:
+            sPrologueTexIdx = 0;
+            sPrologueTextXpos = 30.0f;
+            sPrologueTextYpos = 230.0f;
+            sPrologueCurrentTexAlpha = 0;
+            sPrologueNextTexAlpha = 0;
+            D_menu_801CD9EC = 0.29f;
+            gStarCount = 800;
+            sMapTimer3 = 5;
+            sMapSubState++;
+            break;
+
+        case 1:
+            if ((sMapTimer3 == 0) && (gFillScreenAlpha == 0)) {
+                if ((s32) sPrologueTextYpos == 205) {
+                    Audio_PlayVoiceWithoutBGM(1000);
+                }
+
+                if (sPrologueTextYpos > -355.0f) {
+                    sPrologueTextYpos -= D_menu_801CD9EC;
+                }
+
+                if ((sPrologueTextYpos < 200.0f) && (sPrologueCurrentTexAlpha != 255)) {
+                    sPrologueCurrentTexAlpha += 8;
+                    if (sPrologueCurrentTexAlpha > 255) {
+                        sPrologueCurrentTexAlpha = 255;
+                    }
+                }
+
+                if (sPrologueTextYpos < D_menu_801B6934[sPrologueTexIdx]) {
+                    sPrologueNextTexAlpha += 8;
+                    if (sPrologueNextTexAlpha > 255) {
+                        sPrologueNextTexAlpha = 255;
+                    }
+                }
+
+                if (sPrologueTextYpos <= -355.0f) {
+                    sMapSubState++;
+                }
+            }
+            break;
+
+        case 2:
+            sPrologueCurrentTexAlpha -= 16;
+            if (sPrologueCurrentTexAlpha < 0) {
+                sPrologueCurrentTexAlpha = 0;
+                sMapSubState++;
+                sMapTimer3 = 20;
+            }
+            break;
+
+        case 3:
+            if (sMapTimer3 == 0) {
+                sMapSubState = 0;
+                sMapState = MAP_LYLAT_CARD;
+            }
+            break;
+    }
+
+    if (gControllerPress[gMainController].button & START_BUTTON || gBackToMap) {
+        gBackToMap = false;
+        AUDIO_PLAY_BGM(NA_BGM_MAP);
+        AUDIO_PLAY_SFX(NA_SE_MAP_MOVE_STOP, gDefaultSfxSource, 4);
+
+        for (planetId = 0; planetId < PLANET_MAX; planetId++) {
+            if ((planetId == PLANET_SECTOR_Z) || (planetId == PLANET_SECTOR_X) || (planetId == PLANET_SECTOR_Y)) {
+                sPlanets[planetId].alpha = 144;
+            } else {
+                sPlanets[planetId].alpha = 255;
+            }
+            D_menu_801CD900[planetId] = 255;
+        }
+
+        D_menu_801CD970 = 255;
+
+        Audio_ClearVoice();
+
+        D_menu_801CD974 = 1;
+        D_menu_801CD97C = 1;
+        sMapSubState = 0;
+        sMapState = MAP_IDLE;
+    }
 }

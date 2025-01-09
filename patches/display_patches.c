@@ -13,6 +13,7 @@ extern u8 sPlayersVisible[];
 extern f32 sReticleScales[4];
 extern f32 D_i3_801C41B8[30];
 extern s32 D_i3_801C4190[10];
+extern bool gBackToMap;
 
 void Display_CsLevelCompleteHandleCamera(Player* player);
 void Display_Player_Update(Player* player, s32 reflectY);
@@ -347,19 +348,22 @@ RECOMP_PATCH void Display_Update(void) {
         }
     }
 #endif
-#if DEBUG_Z_R_START_TO_MAP == 1
+#if DEBUG_BACK_TO_MAP == 1
     {
         Player* pl = &gPlayer[0];
 
         if ((gControllerHold[0].button & Z_TRIG) && (gControllerHold[0].button & R_TRIG) &&
-            (gControllerPress[0].button & START_BUTTON)) {
-            gFillScreenAlphaTarget = 255;
-            gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 0;
-            gFillScreenAlphaStep = 8;
-            gShowLevelClearStatusScreen = false;
-            pl->state_1C8 = PLAYERSTATE_1C8_NEXT;
-            pl->csTimer = 0;
-            gFadeoutType = 4;
+            (gControllerPress[0].button & U_CBUTTONS)) {
+                gShowLevelClearStatusScreen = false;
+                gLevelStartStatusScreenTimer = 0;
+                gStarCount = 0;
+                gGameState = GSTATE_MAP;
+                gNextGameStateTimer = 2;
+                gMapState = 0;
+                gLastGameState = GSTATE_NONE;
+                gDrawMode = DRAW_NONE;
+                gControllerLock = 3;
+                gBackToMap = true;
         }
     }
 #endif

@@ -57,7 +57,7 @@ void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* join
                                    Matrix* transform);
 
 void DrawBorders(void) {
-#if ENDING_SKIP_INTERPOLATION == 1
+#if ENDING_BORDERS == 1
     static int frame = 0;
     int max_frame = 1800; // Duration of the animation in frames
     int margin = 20;
