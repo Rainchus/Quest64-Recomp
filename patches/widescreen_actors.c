@@ -421,25 +421,17 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
 
     drawn = false;
 
-    // @recomp draw no matter what
-    goto render;
-
     if ((dest.z < 0.0f) && (dest.z > -12000.0f)) {
-        if (fabsf(dest.x) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+        // @recomp: Extend draw distance up to 32/9
+        if (fabsf(dest.x) < (fabsf(dest.z * /* 0.5f */ 1.5f) + 500.0f)) {
             if (fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)) {
-            render:
                 if (this->info.draw != NULL) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
                     Matrix_RotateZ(gGfxMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
                     if (this->info.drawType == 0) {
-                        // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                                       G_EX_EDIT_ALLOW);
                         gSPDisplayList(gMasterDisp++, this->info.dList);
-                        // @recomp Pop the transform id.
-                        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                     } else {
                         this->info.draw(&this->obj);
                     }
@@ -738,7 +730,7 @@ RECOMP_PATCH void Corneria_LevelStart(Player* player) {
             break;
 
         case 3: // Falco appears on scene from behind
-            
+
             // @recomp: adjust Falco's maxStep so he flies faster in compensation for the previous change
             if (fabsf(Math_SmoothStepToF(&falco->obj.pos.z, player->pos.z + 100.0f, 0.05f, 3.0f * 5.0f, 0.0f)) < 1.0f) {
                 player->csState = 4;
