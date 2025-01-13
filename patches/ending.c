@@ -52,9 +52,9 @@ void Ending_8018A828(void);
 void Ending_801926D4(void);
 void Ending_8018C21C(void);
 void Ending_8018CE20(s32);
-void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
-                                   OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
-                                   Matrix* transform);
+void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+                                              OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                              Matrix* transform);
 
 void DrawBorders(void) {
 #if ENDING_BORDERS == 1
@@ -156,11 +156,14 @@ RECOMP_PATCH void Title_NextState_OptionMenu(void) {
                     sWipeHeight += 18;
                 } else {
                     gGameState = GSTATE_ENDING;
+                    gGreatFoxIntact = 1;
+                    gLeveLClearStatus[LEVEL_ZONESS] = 1;
+                    gLeveLClearStatus[LEVEL_KATINA] = 1;
                     gNextGameStateTimer = 2;
                     gOptionMenuStatus = OPTION_WAIT;
                     gDrawMode = DRAW_NONE;
                     gStarCount = 0;
-                    sLevelStartState = false;
+                    sLevelStartState = 0;
                     sWipeHeight = 0;
                     gControllerLock = 3;
                 }
@@ -209,7 +212,8 @@ RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
     if ((asset->unk_04 == aFoxSkel) || (asset->unk_04 == aFalcoSkel) || (asset->unk_04 == aPeppySkel) ||
         (asset->unk_04 == aSlippySkel)) {
         // @recomp: Skip interpolation in the ending running sequence of the ending.
-        Animation_DrawSkeleton_Ending(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
+        Animation_DrawSkeleton_SkipInterpolation(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL,
+                                                 &gIdentityMatrix);
     } else {
         // @recomp: Normal for everything else.
         Animation_DrawSkeleton(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
@@ -319,13 +323,13 @@ RECOMP_PATCH void Ending_Draw(void) {
 #endif
 
 #if DEBUG_ENDING == 1
-        // @recomp: Ending timer.
-        if ((D_ending_80192E70 >= 0) && (D_ending_80192E70 < 10000)) {
-            RCP_SetupDL(&gMasterDisp, SETUPDL_83);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
-            Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TIMER");
-            Graphics_DisplaySmallNumber(80, 220, D_ending_80192E70);
-        }
+    // @recomp: Ending timer.
+    if ((D_ending_80192E70 >= 0) && (D_ending_80192E70 < 10000)) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+        Graphics_DisplaySmallText(10, 220, 1.0f, 1.0f, "TIMER");
+        Graphics_DisplaySmallNumber(80, 220, D_ending_80192E70);
+    }
 #endif
 
     Matrix_Pop(&gGfxMatrix);

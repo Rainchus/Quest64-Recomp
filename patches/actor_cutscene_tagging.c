@@ -52,6 +52,119 @@ extern void Aquas_801BE0F0(ActorCutscene*);
 
 */
 
+RECOMP_PATCH void Cutscene_DrawGreatFox(void) {
+    Vec3f* var_s6_2;
+    s32 i;
+    s32 j;
+    f32 sp9C[4];
+    Gfx* dList;
+
+    PRINTF("Demo_Time=%d\n");
+    PRINTF("Demo_Time=%d\n");
+    PRINTF("d Enm->wrk0 %d\n");
+
+    if (gGameState == GSTATE_TITLE) {
+        dList = aTitleArwingEngineGlowDL;
+    } else if (gGameState == GSTATE_ENDING) {
+        dList = D_END_7010970;
+    } else {
+        dList = aOrbDL;
+    }
+
+    if (gCurrentLevel == LEVEL_TITANIA) {
+        RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, 1005);
+    }
+
+    // @recomp: skip interpolation in the running part of the ending
+    if (gGameState == GSTATE_ENDING) {
+#if ENDING_SKIP_INTERPOLATION == 1
+        if ((D_ending_80192E70 >= 3099) && (D_ending_80192E70 <= 4800)) {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_ALLOW);
+        }
+#else
+        goto ending_gf_tag;
+#endif
+    } else {
+    ending_gf_tag:
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    }
+
+    if (gGreatFoxIntact) {
+        gSPDisplayList(gMasterDisp++, aGreatFoxIntactDL);
+    } else {
+        gSPDisplayList(gMasterDisp++, aGreatFoxDamagedDL);
+    }
+
+    if ((gCurrentLevel != LEVEL_AQUAS) &&
+        ((gCurrentLevel != LEVEL_SECTOR_Z) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE))) {
+        RCP_SetupDL_49();
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+
+        for (i = 0, var_s6_2 = D_demo_800CA0BC; i < ARRAY_COUNT(sp9C); i++, var_s6_2++) {
+            if ((i != 1) || gGreatFoxIntact) {
+                sp9C[i] = 0.0f;
+
+                if (i < 2) {
+                    if ((gGameFrameCount & ((64 - 1) & ~(8 - 1))) == 0) {
+                        sp9C[i] = D_demo_800CA170[gGameFrameCount % 8U];
+                    }
+                    gDPSetEnvColor(gMasterDisp++, 255, 32, 32, 128);
+                } else {
+                    if (((gGameFrameCount + 32) & 0x38) == 0) {
+                        sp9C[i] = D_demo_800CA170[gGameFrameCount % 8U];
+                    }
+                    gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 128);
+                }
+
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, var_s6_2->x, var_s6_2->y, var_s6_2->z, MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, sp9C[i], sp9C[i], 1.0f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, dList);
+                Matrix_Pop(&gGfxMatrix);
+            }
+        }
+
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 48);
+        gDPSetEnvColor(gMasterDisp++, 255, 255, 0, 48);
+
+        for (i = 0, var_s6_2 = D_demo_800CA0EC; i < 3; i++, var_s6_2++) {
+            sp9C[i] = D_demo_800CA190[gGameFrameCount % 2U];
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, var_s6_2->x, var_s6_2->y, var_s6_2->z, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, sp9C[i], sp9C[i], 1.0f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, dList);
+
+            for (j = 0; j < 4; j++) {
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, D_demo_800CA1B4[2 * j], MTXF_APPLY);
+                Matrix_Scale(gGfxMatrix, D_demo_800CA1D4[2 * j], D_demo_800CA1D4[2 * j], 1.0f, MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, dList);
+                Matrix_Pop(&gGfxMatrix);
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+
+        if ((gCurrentLevel == LEVEL_METEO) && (gPlayer[0].csEventTimer != 0)) {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 128);
+            gDPSetEnvColor(gMasterDisp++, 255, 255, 32, 128);
+            Matrix_Translate(gGfxMatrix, D_ctx_80177A48[3] * (-74.0f), -232.0f, 1190.0f, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, D_demo_800CA198[gPlayer[0].csEventTimer], D_demo_800CA198[gPlayer[0].csEventTimer],
+                         1.0f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, dList);
+        }
+    }
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+#if 0
 RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
     static f32 D_800CA210 = 0.0f;
     static f32 D_800CA214 = 0.0f;
@@ -540,115 +653,4 @@ RECOMP_PATCH void ActorCutscene_Draw(ActorCutscene* this) {
             break;
     }
 }
-
-RECOMP_PATCH void Cutscene_DrawGreatFox(void) {
-    Vec3f* var_s6_2;
-    s32 i;
-    s32 j;
-    f32 sp9C[4];
-    Gfx* dList;
-
-    PRINTF("Demo_Time=%d\n");
-    PRINTF("Demo_Time=%d\n");
-    PRINTF("d Enm->wrk0 %d\n");
-
-    if (gGameState == GSTATE_TITLE) {
-        dList = aTitleArwingEngineGlowDL;
-    } else if (gGameState == GSTATE_ENDING) {
-        dList = D_END_7010970;
-    } else {
-        dList = aOrbDL;
-    }
-
-    if (gCurrentLevel == LEVEL_TITANIA) {
-        RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, 1005);
-    }
-
-    // @recomp: skip interpolation in the running part of the ending
-    if (gGameState == GSTATE_ENDING) {
-        #if ENDING_SKIP_INTERPOLATION == 1
-        if ((D_ending_80192E70 >= 3099) && (D_ending_80192E70 <= 4800)) {
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW,
-                                            G_EX_EDIT_ALLOW);
-        }
-        #else
-        goto ending_gf_tag;
-        #endif
-    } else {
-        ending_gf_tag:
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-    }
-
-    if (gGreatFoxIntact) {
-        gSPDisplayList(gMasterDisp++, aGreatFoxIntactDL);
-    } else {
-        gSPDisplayList(gMasterDisp++, aGreatFoxDamagedDL);
-    }
-
-    if ((gCurrentLevel != LEVEL_AQUAS) &&
-        ((gCurrentLevel != LEVEL_SECTOR_Z) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE))) {
-        RCP_SetupDL_49();
-        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-
-        for (i = 0, var_s6_2 = D_demo_800CA0BC; i < ARRAY_COUNT(sp9C); i++, var_s6_2++) {
-            if ((i != 1) || gGreatFoxIntact) {
-                sp9C[i] = 0.0f;
-
-                if (i < 2) {
-                    if ((gGameFrameCount & ((64 - 1) & ~(8 - 1))) == 0) {
-                        sp9C[i] = D_demo_800CA170[gGameFrameCount % 8U];
-                    }
-                    gDPSetEnvColor(gMasterDisp++, 255, 32, 32, 128);
-                } else {
-                    if (((gGameFrameCount + 32) & 0x38) == 0) {
-                        sp9C[i] = D_demo_800CA170[gGameFrameCount % 8U];
-                    }
-                    gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 128);
-                }
-
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, var_s6_2->x, var_s6_2->y, var_s6_2->z, MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, sp9C[i], sp9C[i], 1.0f, MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, dList);
-                Matrix_Pop(&gGfxMatrix);
-            }
-        }
-
-        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 48);
-        gDPSetEnvColor(gMasterDisp++, 255, 255, 0, 48);
-
-        for (i = 0, var_s6_2 = D_demo_800CA0EC; i < 3; i++, var_s6_2++) {
-            sp9C[i] = D_demo_800CA190[gGameFrameCount % 2U];
-            Matrix_Push(&gGfxMatrix);
-            Matrix_Translate(gGfxMatrix, var_s6_2->x, var_s6_2->y, var_s6_2->z, MTXF_APPLY);
-            Matrix_Scale(gGfxMatrix, sp9C[i], sp9C[i], 1.0f, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gSPDisplayList(gMasterDisp++, dList);
-
-            for (j = 0; j < 4; j++) {
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, D_demo_800CA1B4[2 * j], MTXF_APPLY);
-                Matrix_Scale(gGfxMatrix, D_demo_800CA1D4[2 * j], D_demo_800CA1D4[2 * j], 1.0f, MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, dList);
-                Matrix_Pop(&gGfxMatrix);
-            }
-            Matrix_Pop(&gGfxMatrix);
-        }
-
-        if ((gCurrentLevel == LEVEL_METEO) && (gPlayer[0].csEventTimer != 0)) {
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 128);
-            gDPSetEnvColor(gMasterDisp++, 255, 255, 32, 128);
-            Matrix_Translate(gGfxMatrix, D_ctx_80177A48[3] * (-74.0f), -232.0f, 1190.0f, MTXF_APPLY);
-            Matrix_Scale(gGfxMatrix, D_demo_800CA198[gPlayer[0].csEventTimer], D_demo_800CA198[gPlayer[0].csEventTimer],
-                         1.0f, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gSPDisplayList(gMasterDisp++, dList);
-        }
-    }
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
+#endif

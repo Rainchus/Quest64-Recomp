@@ -666,6 +666,78 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
     player->rockAngle = SIN_DEG(player->rockPhase);
 }
 
+#if 1
+RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
+    Vec3f src = { 0.0f, 0.0f, 0.0f };
+    Vec3f dest;
+
+    Matrix_MultVec3f(gGfxMatrix, &src, &dest);
+
+    if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */ !gBossActive) ||
+         (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
+         (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) &&
+        (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
+        if (this->obj.id == OBJ_ACTOR_CUTSCENE) {
+            if (((gCurrentLevel == LEVEL_VENOM_2) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) &&
+                 (this->index == 10)) ||
+                ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) && (gPlayer[0].csState >= 100) &&
+                 (gCurrentLevel == LEVEL_KATINA) && (this->index == 1)) ||
+                ((gCurrentLevel == LEVEL_SECTOR_Y) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) &&
+                 (this->state == 5))) {
+                gActorTeamArwing.rightWingState = gPlayer[0].arwing.rightWingState;
+                gActorTeamArwing.leftWingState = gPlayer[0].arwing.leftWingState;
+            } else {
+                gActorTeamArwing.rightWingState = gActorTeamArwing.leftWingState = WINGSTATE_INTACT;
+            }
+        } else {
+            gActorTeamArwing.rightWingState = gActorTeamArwing.leftWingState = WINGSTATE_INTACT;
+        }
+
+        gActorTeamArwing.upperRightFlapYrot = this->fwork[15];
+        gActorTeamArwing.upperLeftFlapYrot = this->fwork[16];
+        gActorTeamArwing.bottomRightFlapYrot = this->fwork[26];
+        gActorTeamArwing.bottomLeftFlapYrot = this->fwork[27];
+        gActorTeamArwing.laserGunsYpos = gActorTeamArwing.laserGunsXpos = gActorTeamArwing.wingsXrot =
+            gActorTeamArwing.wingsYrot = gActorTeamArwing.cockpitGlassXrot = gActorTeamArwing.wingsZrot = 0.0f;
+        gActorTeamArwing.unk_28 = this->fwork[17];
+        gActorTeamArwing.drawFace = this->iwork[14];
+        gActorTeamArwing.teamFaceXrot = this->fwork[20];
+        gActorTeamArwing.teamFaceYrot = this->fwork[19];
+
+        if (gLevelType == LEVELTYPE_SPACE) {
+            gActorTeamArwing.upperRightFlapYrot = gActorTeamArwing.bottomRightFlapYrot =
+                gActorTeamArwing.upperLeftFlapYrot = gActorTeamArwing.bottomLeftFlapYrot = 0.0f;
+        }
+        Display_ArwingWings(&gActorTeamArwing);
+    } else if (gLevelType == LEVELTYPE_PLANET) {
+        // @recomp Tag the transform.
+        //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+        gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
+
+        // @recomp Pop the transform id.
+        //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    } else if (gPlayer[0].wingPosition == 2) {
+        // @recomp Tag the transform.
+        //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4003BD0);
+
+        // @recomp Pop the transform id.
+        //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    } else {
+        // @recomp Tag the transform.
+        //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4007870);
+
+        // @recomp Pop the transform id.
+        //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+    Actor_DrawEngineAndContrails(this);
+}
+#endif
+
 #if 0
 extern f32 D_i1_80199AE4[3];
 extern f32 D_i1_80199AF0[3];

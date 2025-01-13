@@ -2,7 +2,193 @@
 
 bool func_effect_800798C4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* data);
 
-#if 1 // Global Scope
+RECOMP_PATCH void TexturedLine_Draw(void) {
+    s32 i;
+
+    if (gCurrentLevel == LEVEL_MACBETH) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_33);
+        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+    } else if ((gCurrentLevel == LEVEL_AQUAS) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_41);
+    } else {
+        RCP_SetupDL_14();
+    }
+
+    for (i = 0; i < ARRAY_COUNT(gTexturedLines); i++) {
+        TexturedLine* texLine = &gTexturedLines[i];
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEXTURED_LINE + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        if (gTexturedLines[i].mode != 0) {
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, texLine->posAA.x, texLine->posAA.y, texLine->posAA.z + gPathProgress,
+                             MTXF_APPLY);
+            Matrix_RotateY(gGfxMatrix, texLine->yRot, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, texLine->xRot, MTXF_APPLY);
+            Matrix_RotateZ(gGfxMatrix, texLine->yRot, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, texLine->xyScale, texLine->xyScale, texLine->zScale, MTXF_APPLY);
+
+            if ((gCurrentLevel == LEVEL_AQUAS) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) {
+                s32 alpha = ((gGameFrameCount % 2) != 0) ? 180 : 50;
+
+                gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, alpha);
+                if (gCurrentLevel == LEVEL_AQUAS) {
+                    Matrix_Scale(gGfxMatrix, 0.01f, 0.3f, 0.0025f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
+                    Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 5.0f * M_DTOR, MTXF_APPLY);
+                    Matrix_SetGfxMtx(&gMasterDisp);
+                    gSPDisplayList(gMasterDisp++, D_AQ_60119A0);
+                } else if (gCurrentLevel == LEVEL_VENOM_ANDROSS) {
+                    Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.0025f, MTXF_APPLY);
+                    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
+                    Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 25.0f * M_DTOR, MTXF_APPLY);
+                    Matrix_SetGfxMtx(&gMasterDisp);
+                    gSPDisplayList(gMasterDisp++, D_ANDROSS_C017440);
+                }
+            } else {
+                Matrix_SetGfxMtx(&gMasterDisp);
+                if (gCurrentLevel == LEVEL_MACBETH) {
+                    gSPDisplayList(gMasterDisp++, D_MA_6012C00);
+                } else {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, texLine->prim.r, texLine->prim.g, texLine->prim.b,
+                                    texLine->prim.a);
+                    gSPDisplayList(gMasterDisp++, D_edisplay_800CFD80);
+                }
+            }
+            Matrix_Pop(&gGfxMatrix);
+        }
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+}
+
+RECOMP_PATCH void Effect_Effect395_Draw(Effect395* this) {
+    //! FAKE: Probably some debug stuff printing different messages depending on what state is.
+    if ((this->state != 0) && (this->state != 6)) {
+        if (this->unk_4A && this->unk_4A) {}
+        PRINTF("ＺＯ＿ＤＩＳＰ ＨＥＬＰ %d\n", this->state);
+    }
+    if ((this->state != 1) && (this->state != 2) && (this->state != 4) && (this->state != 5) && (this->state != 7)) {
+        if (this->unk_4A && !this->scale2) {}
+        PRINTF("ＡＣ＿ＤＩＳＰ ＨＥＬＰ %d\n", this->state);
+    }
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + this->state, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    switch (this->state) {
+        case 0:
+            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
+            Matrix_Scale(gGfxMatrix, 0.7f, 0.7f, 1.0f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+            gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 255);
+            gSPDisplayList(gMasterDisp++, aOrbDL);
+            break;
+
+        case 1:
+            RCP_SetupDL(&gMasterDisp, SETUPDL_41);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+            Graphics_SetScaleMtx(this->scale2);
+            gSPDisplayList(gMasterDisp++, aStarDL);
+            break;
+
+        case 2:
+            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
+            Matrix_Scale(gGfxMatrix, this->scale2, this->scale2, this->scale2, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+            gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 255);
+            gSPDisplayList(gMasterDisp++, aOrbDL);
+            break;
+
+        case 3:
+            RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+            gSPDisplayList(gMasterDisp++, aA6SpaceMineDL);
+            break;
+
+        case 4:
+            Graphics_SetScaleMtx(this->scale2);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_68);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 0, 0, this->unk_4A);
+            gDPSetEnvColor(gMasterDisp++, 0, 0, 0, 0);
+            gSPDisplayList(gMasterDisp++, D_1023750);
+            break;
+
+        case 5:
+        case 7:
+            Graphics_SetScaleMtx(this->scale2);
+            RCP_SetupDL(&gMasterDisp, SETUPDL_60);
+            if (gCurrentLevel == LEVEL_AQUAS) {
+                gSPDisplayList(gMasterDisp++, D_AQ_600A220);
+            }
+            if (gCurrentLevel == LEVEL_ZONESS) {
+                gSPDisplayList(gMasterDisp++, D_ZO_6016880);
+            }
+            break;
+
+        case 6:
+            Graphics_SetScaleMtx(this->scale2);
+            if (gCurrentLevel == LEVEL_ZONESS) {
+                Graphics_SetScaleMtx(this->scale2);
+            }
+            RCP_SetupDL(&gMasterDisp, SETUPDL_64);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 255, 0, this->unk_4A);
+            gSPDisplayList(gMasterDisp++, D_1023750);
+            break;
+
+        case 8:
+            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
+            Matrix_Scale(gGfxMatrix, this->scale2, this->scale2, this->scale2, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+            gDPSetEnvColor(gMasterDisp++, 255, 0, 128, 255);
+            gSPDisplayList(gMasterDisp++, aOrbDL);
+            break;
+
+        case 9:
+            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
+            Matrix_Scale(gGfxMatrix, this->scale2, this->scale2, this->scale2, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->scale1);
+            gDPSetEnvColor(gMasterDisp++, 255, 255, 128, 255);
+            gSPDisplayList(gMasterDisp++, aOrbDL);
+            break;
+
+        case 10:
+            if (gPlayState != PLAY_PAUSE) {
+                Lib_Texture_Scroll(D_A6_6012840, 16, 16, 0);
+            }
+            RCP_SetupDL(&gMasterDisp, SETUPDL_53);
+            Matrix_Scale(gGfxMatrix, this->unk_60.x, this->unk_60.y, this->unk_60.z, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+            gSPDisplayList(gMasterDisp++, D_A6_6012550);
+            break;
+
+        case 11:
+            RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 111, 111, 111, (s32) this->scale1);
+            gDPSetEnvColor(gMasterDisp++, 255, 255, 255, 255);
+            Graphics_SetScaleMtx(this->scale2);
+            gSPDisplayList(gMasterDisp++, aOrbDL);
+            break;
+
+        case 12:
+            Effect_Effect383_Draw(this);
+            break;
+    }
+
+    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+#if 0 // Global Scope
 
 RECOMP_PATCH void Katina_LaserEnergyParticlesDraw(Effect358* this) {
     RCP_SetupDL(&gMasterDisp, SETUPDL_67);
@@ -1074,129 +1260,6 @@ RECOMP_PATCH void Effect_Effect394_Draw(Effect394* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-RECOMP_PATCH void Effect_Effect395_Draw(Effect395* this) {
-    //! FAKE: Probably some debug stuff printing different messages depending on what state is.
-    if ((this->state != 0) && (this->state != 6)) {
-        if (this->unk_4A && this->unk_4A) {}
-        PRINTF("ＺＯ＿ＤＩＳＰ ＨＥＬＰ %d\n", this->state);
-    }
-    if ((this->state != 1) && (this->state != 2) && (this->state != 4) && (this->state != 5) && (this->state != 7)) {
-        if (this->unk_4A && !this->scale2) {}
-        PRINTF("ＡＣ＿ＤＩＳＰ ＨＥＬＰ %d\n", this->state);
-    }
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + this->state, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
-    switch (this->state) {
-        case 0:
-            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
-            Matrix_Scale(gGfxMatrix, 0.7f, 0.7f, 1.0f, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 255);
-            gSPDisplayList(gMasterDisp++, aOrbDL);
-            break;
-
-        case 1:
-            RCP_SetupDL(&gMasterDisp, SETUPDL_41);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            Graphics_SetScaleMtx(this->scale2);
-            gSPDisplayList(gMasterDisp++, aStarDL);
-            break;
-
-        case 2:
-            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
-            Matrix_Scale(gGfxMatrix, this->scale2, this->scale2, this->scale2, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 255);
-            gSPDisplayList(gMasterDisp++, aOrbDL);
-            break;
-
-        case 3:
-            RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-            gSPDisplayList(gMasterDisp++, aA6SpaceMineDL);
-            break;
-
-        case 4:
-            Graphics_SetScaleMtx(this->scale2);
-            RCP_SetupDL(&gMasterDisp, SETUPDL_68);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 0, 0, this->unk_4A);
-            gDPSetEnvColor(gMasterDisp++, 0, 0, 0, 0);
-            gSPDisplayList(gMasterDisp++, D_1023750);
-            break;
-
-        case 5:
-        case 7:
-            Graphics_SetScaleMtx(this->scale2);
-            RCP_SetupDL(&gMasterDisp, SETUPDL_60);
-            if (gCurrentLevel == LEVEL_AQUAS) {
-                gSPDisplayList(gMasterDisp++, D_AQ_600A220);
-            }
-            if (gCurrentLevel == LEVEL_ZONESS) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6016880);
-            }
-            break;
-
-        case 6:
-            Graphics_SetScaleMtx(this->scale2);
-            if (gCurrentLevel == LEVEL_ZONESS) {
-                Graphics_SetScaleMtx(this->scale2);
-            }
-            RCP_SetupDL(&gMasterDisp, SETUPDL_64);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 255, 0, this->unk_4A);
-            gSPDisplayList(gMasterDisp++, D_1023750);
-            break;
-
-        case 8:
-            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
-            Matrix_Scale(gGfxMatrix, this->scale2, this->scale2, this->scale2, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            gDPSetEnvColor(gMasterDisp++, 255, 0, 128, 255);
-            gSPDisplayList(gMasterDisp++, aOrbDL);
-            break;
-
-        case 9:
-            RCP_SetupDL(&gMasterDisp, SETUPDL_49);
-            Matrix_Scale(gGfxMatrix, this->scale2, this->scale2, this->scale2, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->scale1);
-            gDPSetEnvColor(gMasterDisp++, 255, 255, 128, 255);
-            gSPDisplayList(gMasterDisp++, aOrbDL);
-            break;
-
-        case 10:
-            if (gPlayState != PLAY_PAUSE) {
-                Lib_Texture_Scroll(D_A6_6012840, 16, 16, 0);
-            }
-            RCP_SetupDL(&gMasterDisp, SETUPDL_53);
-            Matrix_Scale(gGfxMatrix, this->unk_60.x, this->unk_60.y, this->unk_60.z, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-            gSPDisplayList(gMasterDisp++, D_A6_6012550);
-            break;
-
-        case 11:
-            RCP_SetupDL(&gMasterDisp, SETUPDL_67);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 111, 111, 111, (s32) this->scale1);
-            gDPSetEnvColor(gMasterDisp++, 255, 255, 255, 255);
-            Graphics_SetScaleMtx(this->scale2);
-            gSPDisplayList(gMasterDisp++, aOrbDL);
-            break;
-
-        case 12:
-            Effect_Effect383_Draw(this);
-            break;
-    }
-
-    RCP_SetupDL(&gMasterDisp, SETUPDL_64);
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
-
 RECOMP_PATCH void Effect_Effect391_Draw(Effect391* this) {
     // @recomp Tag the transform.
     gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
@@ -1423,68 +1486,7 @@ RECOMP_PATCH void Bolse_Effect397_Draw(Effect397* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-RECOMP_PATCH void TexturedLine_Draw(void) {
-    s32 i;
 
-    if (gCurrentLevel == LEVEL_MACBETH) {
-        RCP_SetupDL(&gMasterDisp, SETUPDL_33);
-        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-    } else if ((gCurrentLevel == LEVEL_AQUAS) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) {
-        RCP_SetupDL(&gMasterDisp, SETUPDL_41);
-    } else {
-        RCP_SetupDL_14();
-    }
-
-    for (i = 0; i < ARRAY_COUNT(gTexturedLines); i++) {
-        TexturedLine* texLine = &gTexturedLines[i];
-
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEXTURED_LINE + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                       G_EX_EDIT_ALLOW);
-
-        if (gTexturedLines[i].mode != 0) {
-            Matrix_Push(&gGfxMatrix);
-            Matrix_Translate(gGfxMatrix, texLine->posAA.x, texLine->posAA.y, texLine->posAA.z + gPathProgress,
-                             MTXF_APPLY);
-            Matrix_RotateY(gGfxMatrix, texLine->yRot, MTXF_APPLY);
-            Matrix_RotateX(gGfxMatrix, texLine->xRot, MTXF_APPLY);
-            Matrix_RotateZ(gGfxMatrix, texLine->yRot, MTXF_APPLY);
-            Matrix_Scale(gGfxMatrix, texLine->xyScale, texLine->xyScale, texLine->zScale, MTXF_APPLY);
-
-            if ((gCurrentLevel == LEVEL_AQUAS) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) {
-                s32 alpha = ((gGameFrameCount % 2) != 0) ? 180 : 50;
-
-                gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, alpha);
-                if (gCurrentLevel == LEVEL_AQUAS) {
-                    Matrix_Scale(gGfxMatrix, 0.01f, 0.3f, 0.0025f, MTXF_APPLY);
-                    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
-                    Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 5.0f * M_DTOR, MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, D_AQ_60119A0);
-                } else if (gCurrentLevel == LEVEL_VENOM_ANDROSS) {
-                    Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.0025f, MTXF_APPLY);
-                    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
-                    Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 25.0f * M_DTOR, MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, D_ANDROSS_C017440);
-                }
-            } else {
-                Matrix_SetGfxMtx(&gMasterDisp);
-                if (gCurrentLevel == LEVEL_MACBETH) {
-                    gSPDisplayList(gMasterDisp++, D_MA_6012C00);
-                } else {
-                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, texLine->prim.r, texLine->prim.g, texLine->prim.b,
-                                    texLine->prim.a);
-                    gSPDisplayList(gMasterDisp++, D_edisplay_800CFD80);
-                }
-            }
-            Matrix_Pop(&gGfxMatrix);
-        }
-
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    }
-}
 
 #endif
 

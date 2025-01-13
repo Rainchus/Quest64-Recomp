@@ -38,11 +38,11 @@ RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 cullDir) {
                 Object_ApplyWaterDistortion();
             }
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedSkipRot(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                            G_EX_EDIT_ALLOW);
+            // gEXMatrixGroupDecomposedSkipRot(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
+            //                                G_EX_EDIT_ALLOW);
             gSPDisplayList(gMasterDisp++, this->info.dList);
             // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+            // EXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
         } else {
@@ -70,14 +70,14 @@ RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 cullDir) {
 
                 default:
                     // @recomp Tag the transform.
-                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                                   G_EX_EDIT_ALLOW);
+                    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                    //                                G_EX_EDIT_ALLOW);
                     break;
             }
             gSPDisplayList(gMasterDisp++, this->info.dList);
 
             // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+            // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
 
             if (this->obj.id == OBJ_SCENERY_CO_HIGHWAY_3) {
@@ -98,13 +98,13 @@ RECOMP_PATCH void Sprite_Draw(Sprite* this, s32 arg1) {
 
         if (this->info.drawType == 0) {
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW,
+            //                                G_EX_EDIT_ALLOW);
 
             gSPDisplayList(gMasterDisp++, this->info.dList);
             
             // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+            // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
         } else if (this->info.draw != NULL) {
             this->info.draw(&this->obj);
         }
@@ -115,29 +115,29 @@ RECOMP_PATCH void CoBuilding9_Draw(CoBuilding9* this) {
     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -95.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, aCoBuilding9DL);
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 RECOMP_PATCH void CoBuilding10_Draw(CoBuilding10* this) {
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     // @recomp ReplaceaCoBuilding10DL for aCoBuilding9DL, a full model of the same building.
     gSPDisplayList(gMasterDisp++, aCoBuilding9DL);
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 RECOMP_PATCH void Corneria_CoBuildingOnFire_Draw(CoBuildingOnFire* this) {
     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, D_CO_60199D0);
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
 }
 
@@ -198,39 +198,39 @@ RECOMP_PATCH void SceneryRotateTowardsCamera(Scenery* this) {
         this->obj.rot.y = 0.0f;
     }
 }
-
+#if 0
 RECOMP_PATCH void CoIBeam_Draw(CoIBeam* this) {
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, aCoIBeamDL);
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 RECOMP_PATCH s32 SyShipDebris_Draw(SyShipDebris* this) {
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     RCP_SetupDL(&gMasterDisp, SETUPDL_60);
     gSPDisplayList(gMasterDisp++, aSyDebrisDL);
     RCP_SetupDL(&gMasterDisp, SETUPDL_64);
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     return 0;
 }
 
 RECOMP_PATCH void Aquas_AqBump2_Draw(AqBump2* this) {
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     Matrix_Scale(gGfxMatrix, 0.5f, 0.5f, 0.5f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, aAqBump2DL);
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
 RECOMP_PATCH void FogShadow_Draw(FogShadow* this) {
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     RCP_SetupDL_47(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 180);
@@ -274,7 +274,7 @@ RECOMP_PATCH void FogShadow_Draw(FogShadow* this) {
             break;
     }
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 
     RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 }
@@ -590,7 +590,7 @@ RECOMP_PATCH void MeteoTunnel_Draw(MeTunnel* this) {
 
 RECOMP_PATCH void Scenery_DrawTitaniaBones(Scenery* this) {
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
     if (this->obj.id == OBJ_SCENERY_TI_SKULL) {
         gSPDisplayList(gMasterDisp++, D_TI1_7007350);
@@ -600,7 +600,8 @@ RECOMP_PATCH void Scenery_DrawTitaniaBones(Scenery* this) {
     }
 
     // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+#endif
 
 #endif

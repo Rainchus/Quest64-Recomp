@@ -354,16 +354,16 @@ RECOMP_PATCH void Display_Update(void) {
 
         if ((gControllerHold[0].button & Z_TRIG) && (gControllerHold[0].button & R_TRIG) &&
             (gControllerPress[0].button & U_CBUTTONS)) {
-                gShowLevelClearStatusScreen = false;
-                gLevelStartStatusScreenTimer = 0;
-                gStarCount = 0;
-                gGameState = GSTATE_MAP;
-                gNextGameStateTimer = 2;
-                gMapState = 0;
-                gLastGameState = GSTATE_NONE;
-                gDrawMode = DRAW_NONE;
-                gControllerLock = 3;
-                gBackToMap = true;
+            gShowLevelClearStatusScreen = false;
+            gLevelStartStatusScreenTimer = 0;
+            gStarCount = 0;
+            gGameState = GSTATE_MAP;
+            gNextGameStateTimer = 2;
+            gMapState = 0;
+            gLastGameState = GSTATE_NONE;
+            gDrawMode = DRAW_NONE;
+            gControllerLock = 3;
+            gBackToMap = true;
         }
     }
 #endif
@@ -519,6 +519,35 @@ RECOMP_PATCH void SectorZ_Missile_Update(ActorAllRange* this) {
 }
 #endif
 
+Gfx SETUPDL_63_POINT[] = {
+    gsDPPipeSync(),
+    gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN |
+                          G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE, ENVIRONMENT,
+                       TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPSetOtherMode(G_SETOTHERMODE_L, G_MDSFT_ALPHACOMPARE, 3, G_AC_NONE | G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_CLD_SURF, G_RM_CLD_SURF2),
+    gsSPSetOtherModeHi(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                       G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE),
+    gsSPEndDisplayList(),
+};
+
+Gfx SETUPDL_36_POINT[] = {
+    gsDPPipeSync(),
+    gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN |
+                          G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsSPSetGeometryMode(0),
+    gsSPSetOtherMode(G_SETOTHERMODE_L, G_MDSFT_ALPHACOMPARE, 3, G_AC_NONE | G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsSPSetOtherModeHi(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                       G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE),
+    gsSPEndDisplayList(),
+};
+
 RECOMP_PATCH void Display_Reticle(Player* player) {
     Vec3f* translate;
     s32 i;
@@ -537,7 +566,8 @@ RECOMP_PATCH void Display_Reticle(Player* player) {
             Matrix_Translate(gGfxMatrix, translate->x, translate->y, translate->z, MTXF_APPLY);
 
             if (gChargeTimers[player->num] >= 20) {
-                RCP_SetupDL(&gMasterDisp, SETUPDL_63);
+                // RCP_SetupDL(&gMasterDisp, SETUPDL_63);
+                gSPDisplayList(gMasterDisp++, SETUPDL_63_POINT);
                 if (i == 1) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
                     gDPSetEnvColor(gMasterDisp++, 255, 0, 0, 255);
@@ -547,7 +577,8 @@ RECOMP_PATCH void Display_Reticle(Player* player) {
                     gDPSetEnvColor(gMasterDisp++, 255, 255, 0, 255);
                 }
             } else {
-                RCP_SetupDL_36();
+                // RCP_SetupDL_36();
+                gSPDisplayList(gMasterDisp++, SETUPDL_36_POINT);
             }
 
             if (i == 1) {
@@ -565,6 +596,22 @@ RECOMP_PATCH void Display_Reticle(Player* player) {
         }
     }
 }
+
+Gfx SETUPDL_67_POINT[] = {
+    /* SETUPDL_67_POINT */
+    gsDPPipeSync(),
+    gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN |
+                          G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE, ENVIRONMENT,
+                       TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0),
+    gsSPSetGeometryMode(G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH),
+    gsSPSetOtherMode(G_SETOTHERMODE_L, G_MDSFT_ALPHACOMPARE, 3, G_AC_NONE | G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_ZB_CLD_SURF, G_RM_ZB_CLD_SURF2),
+    gsSPSetOtherModeHi(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                       G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE),
+    gsSPEndDisplayList(),
+};
 
 RECOMP_PATCH void Display_LockOnIndicator(void) {
     s32 i;
@@ -599,7 +646,8 @@ RECOMP_PATCH void Display_LockOnIndicator(void) {
                 Matrix_Scale(gGfxMatrix, var_fs0 * 1.5f, var_fs0 * 1.5f, 1.0f, MTXF_APPLY);
                 Matrix_RotateZ(gGfxMatrix, D_display_801615A8[i] * M_DTOR, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+                // RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+                gSPDisplayList(gMasterDisp++, SETUPDL_67_POINT);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
                 gDPSetEnvColor(gMasterDisp++, 255, 0, 0, 255);
                 gSPDisplayList(gMasterDisp++, D_1024F60);

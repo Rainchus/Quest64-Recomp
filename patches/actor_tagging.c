@@ -1,5 +1,6 @@
 #include "patches.h"
 
+
 u16 next_actor_transform = 0;
 
 void ActorAllRange_DrawBarrelRoll(ActorAllRange* this);
@@ -21,27 +22,189 @@ void Zoness_ZoDodora_Draw(Actor* this);
 void func_edisplay_8005D008(Object* obj, s32 drawType);
 void func_edisplay_8005D3CC(Object* obj, f32 xRot, f32 yRot, f32 zRot, s32 drawType);
 
-u32 create_scenery360_transform_id(void) {
-    u32 ret = next_actor_transform;
-    next_actor_transform++;
+RECOMP_PATCH void Display_Landmaster(Player* player) {
+    f32 sp64;
+    Vec3f sp58;
+    Vec3f sp4C = { 0.0f, 0.0f, 90.0f };
+    Vec3f sp40 = { 0.0f, 40.0f, -70.0f };
 
-    return ret;
-}
+    Matrix_Push(&gGfxMatrix);
 
-/*
-RECOMP_PATCH void Scenery360_Initialize(Scenery360* scenery360) {
-    s32 i;
-    u8* ptr = (u8*) scenery360;
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
+                                   G_EX_EDIT_ALLOW);
 
-    for (i = 0; i < sizeof(Scenery360); i++, ptr++) {
-        *ptr = 0;
+    if (!gVersusMode) {
+        gSPDisplayList(gMasterDisp++, aLandmasterModelDL);
+    } else {
+        gSPDisplayList(gMasterDisp++, aVsLandmasterModelDL);
     }
-    // @recomp Pick a transform ID for this actor and encode it into struct padding
-    u32 cur_transform_id = create_scenery360_transform_id();
-    scenery360IdByte0(scenery360) = (cur_transform_id >>  0) & 0xFF;
-    scenery360IdByte0(scenery360) = (cur_transform_id >>  8) & 0xFF;
+
+    Matrix_MultVec3f(gGfxMatrix, &sp40, &D_display_80161518[player->num]);
+    Matrix_Translate(gGfxMatrix, 0.0f, 51.0f, -10.0f, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, -player->unk_180 * M_DTOR, MTXF_APPLY);
+    Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
+
+    if (gPlayerNum == player->num) {
+        sp64 = 0.0f;
+        if (gChargeTimers[player->num] >= 20) {
+            sp64 = (s32) (gGameFrameCount % 8U) * 80.0f;
+        }
+        sp58.x = 0.0f;
+        sp58.y = 0.0f;
+        sp58.z = 1200.0f;
+        Matrix_MultVec3f(gGfxMatrix, &sp58, &D_display_801613E0[0]);
+        sp58.z = 2400.0f + sp64;
+        Matrix_MultVec3f(gGfxMatrix, &sp58, &D_display_801613E0[1]);
+    }
+
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    if (!gVersusMode) {
+        if (player->unk_1A0 != 0) {
+            RCP_SetupDL_64();
+            gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 64, 255, 64, 255);
+        }
+        gSPDisplayList(gMasterDisp++, aLandmasterCanonDL);
+    } else {
+        gSPDisplayList(gMasterDisp++, aVsLandmasterCanonDL);
+    }
+
+    Matrix_MultVec3f(gGfxMatrix, &sp4C, &D_display_80161548[player->num]);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+    Matrix_Pop(&gGfxMatrix);
 }
-*/
+
+RECOMP_PATCH void Zoness_ZoSpikeBall_Draw(ZoSpikeBall* this) {
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_fs0;
+    f32 temp_fs3;
+    f32 temp_fs4;
+    f32 temp_fs0_2;
+    f32 temp_fs1_2;
+    f32 temp_fs0_4;
+    f32 var_fs5 = 90.0f;
+    s32 i;
+    f32 sp94;
+    s32 var_s4;
+
+    Matrix_Pop(&gGfxMatrix);
+    Matrix_Push(&gGfxMatrix);
+    gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
+
+    if ((gBosses[0].state != 6) && (gBosses[0].state != 7)) {
+        RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
+
+        temp_fa0 = sZoFwork[65] - this->obj.pos.x;
+        temp_fs0 = sZoFwork[66] - this->obj.pos.y;
+        temp_fa1 = sZoFwork[67] - this->obj.pos.z;
+
+        temp_fs3 = sqrtf(SQ(temp_fa0) + SQ(temp_fs0) + SQ(temp_fa1));
+        temp_fs4 = Math_Atan2F(temp_fa0, temp_fa1);
+        temp_fs0_2 = -Math_Atan2F(temp_fs0, sqrtf(SQ(temp_fa0) + SQ(temp_fa1)));
+        var_s4 = temp_fs3 / 70.0f;
+        if (var_s4 > 50) {
+            var_s4 = 50;
+        }
+        if (var_s4 < 0) {
+            var_s4 = 0;
+        }
+        Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + gPathProgress, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, temp_fs4, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, temp_fs0_2, MTXF_APPLY);
+        Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 0.0f, MTXF_APPLY);
+
+        sp94 = (180.0f / var_s4) + 1.0f;
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + 1, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+        for (i = 0; i < var_s4; i++) {
+            temp_fs1_2 = SIN_DEG(i * sp94) * this->fwork[5];
+            temp_fs0_4 = COS_DEG(i * sp94) * this->fwork[5] * -0.25f;
+            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, this->fwork[1], MTXF_APPLY);
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, 0.0f, temp_fs1_2, 0.0f, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, M_DTOR * temp_fs0_4, MTXF_APPLY);
+            Matrix_Push(&gGfxMatrix);
+            Matrix_RotateZ(gGfxMatrix, M_DTOR * var_fs5, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, 1.5f, 1.5f, 1.5f, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, D_ZO_6018660);
+            Matrix_Pop(&gGfxMatrix);
+            Matrix_Pop(&gGfxMatrix);
+            var_fs5 += 90.0f;
+        }
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + 51, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+    Matrix_Pop(&gGfxMatrix);
+    Matrix_Push(&gGfxMatrix);
+    Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + gPathProgress, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
+    Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, 2.6f, 2.6f, 2.6f, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_70);
+    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
+    gSPDisplayList(gMasterDisp++, D_ZO_6004380);
+    Matrix_RotateY(gGfxMatrix, sZoFwork[19] * M_DTOR, MTXF_APPLY);
+    Matrix_RotateX(gGfxMatrix, this->fwork[2] * M_DTOR, MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix, this->fwork[3] * M_DTOR, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    RCP_SetupDL_55();
+    gSPDisplayList(gMasterDisp++, D_ZO_601BCC0);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+RECOMP_PATCH void Aquas_BlueMarine_Draw(Player* player) {
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
+                                   G_EX_EDIT_ALLOW);
+
+    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -40.0f, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_blue_marine_3000C70);
+    Matrix_Push(&gGfxMatrix);
+    Matrix_Translate(gGfxMatrix, 0.0f, -4.5f, 1.2f, MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix, player->unk_178 * M_DTOR, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_blue_marine_3006DE0);
+    Matrix_Pop(&gGfxMatrix);
+    Matrix_Push(&gGfxMatrix);
+    Matrix_Translate(gGfxMatrix, 0.0f, 2.0f, 40.0f, MTXF_APPLY);
+    Matrix_RotateY(gGfxMatrix, -player->unk_180 * M_DTOR, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_blue_marine_3006C70);
+    Matrix_Pop(&gGfxMatrix);
+    Matrix_Push(&gGfxMatrix);
+    Matrix_Translate(gGfxMatrix, -19.0f, -3.6f, 1.2f, MTXF_APPLY);
+    Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_blue_marine_3000AF0);
+    Matrix_Pop(&gGfxMatrix);
+    Matrix_Push(&gGfxMatrix);
+    Matrix_Translate(gGfxMatrix, 19.0f, -3.6f, 1.2f, MTXF_APPLY);
+    Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+    gSPDisplayList(gMasterDisp++, D_blue_marine_3006AF0);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+    Matrix_Pop(&gGfxMatrix);
+}
 
 RECOMP_PATCH void Display_ActorMarks(void) {
     s32 i;
@@ -93,6 +256,128 @@ RECOMP_PATCH void Display_ActorMarks(void) {
         gDPSetTextureFilter(gMasterDisp++, G_TF_BILERP);
     }
 }
+
+#define KA_ACTOR_LOW_POLY (23)
+#define KA_ACTOR_IWORK_8 (8)
+#define EG_RED (0)
+
+extern Gfx aKaEnemyDL[];
+extern Gfx aKaCornerianFighterDL[];
+
+// @recomp: disable LOD on Katina enemies
+RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange* this) {
+    s32 pad3[3];
+    f32 angle;
+    Vec3f D_i4_8019F4A8 = { 0.0f, 0.0f, 0.0f };
+    Vec3f pad[30];
+
+    // @recomp: never use low poly
+    this->iwork[KA_ACTOR_LOW_POLY] = false;
+
+    if ((this->iwork[KA_ACTOR_IWORK_8] != 0) && (this->aiType < AI360_GREAT_FOX)) {
+        angle = SIN_DEG(this->iwork[KA_ACTOR_IWORK_8] * 400.0f) * this->iwork[KA_ACTOR_IWORK_8];
+        Matrix_RotateY(gGfxMatrix, M_DTOR * angle, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, M_DTOR * angle, MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, M_DTOR * angle, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+    }
+
+    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
+
+    if ((this->timer_0C6 % 2) == 0) {
+        gSPFogPosition(gMasterDisp++, gFogNear, 1005);
+    }
+
+    switch (this->animFrame) {
+        case 0:
+            gSPDisplayList(gMasterDisp++, aKaEnemyDL);
+            break;
+
+        case 1:
+            gSPDisplayList(gMasterDisp++, aKaCornerianFighterDL);
+            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -60.0f, MTXF_APPLY);
+            Actor_DrawEngineGlow(this, EG_RED);
+            break;
+    }
+}
+
+extern u8 gMeMoraPartIdx[16];
+extern f32 gMeMoraScale[16];
+extern s16 D_800CFF94[16];
+
+void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot, u8 partIdx,
+                      f32 scale, bool colorFlicker);
+
+RECOMP_PATCH void MeMora_Draw(MeMora* this) {
+    s16 i;
+    s16 j;
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
+                             G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
+                             G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+
+    for (i = this->work_04A; i < ARRAY_COUNT(D_800CFF94); i++) {
+        j = (D_800CFF94[i] + this->counter_04E) % 100;
+        Memora_DrawParts(this, gMeMoraXpos[this->work_046][j], gMeMoraYpos[this->work_046][j],
+                         gMeMoraZpos[this->work_046][j], gMeMoraXrot[this->work_046][j], gMeMoraYrot[this->work_046][j],
+                         gMeMoraZrot[this->work_046][j], gMeMoraPartIdx[i], gMeMoraScale[i], this->timer_0C6 % 2U);
+    }
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+
+#if 0
+RECOMP_PATCH void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot,
+                                   u8 partIdx, f32 scale, bool colorFlicker) {
+    Vec3f src = { 0.0f, 0.0f, 0.0f };
+
+    Matrix_Push(&gGfxMatrix);
+
+    // @recomp Tag the transform.
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + partIdx, G_EX_PUSH, G_MTX_MODELVIEW,
+                                   G_EX_EDIT_ALLOW);
+    Matrix_Translate(gGfxMatrix, xTrans, yTrans, zTrans + gPathProgress, MTXF_APPLY);
+
+    if (partIdx != 1) {
+        Matrix_RotateY(gGfxMatrix, M_DTOR * yRot, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, M_DTOR * xRot, MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, M_DTOR * zRot, MTXF_APPLY);
+    }
+
+    Matrix_Scale(gGfxMatrix, scale, scale, 1.0f, MTXF_APPLY);
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    if (partIdx != 1) {
+        RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+        if ((partIdx == 0) && (this->lockOnTimers[TEAM_ID_FOX] != 0)) {
+            src.y += this->info.targetOffset;
+            Matrix_MultVec3f(gGfxMatrix, &src, &gLockOnTargetViewPos[TEAM_ID_FOX]);
+            if (gLockOnTargetViewPos[TEAM_ID_FOX].z > -500.0f) {
+                this->lockOnTimers[TEAM_ID_FOX] = 0;
+            }
+        }
+    } else {
+        RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+    }
+
+    if (colorFlicker) {
+        RCP_SetupDL_64();
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
+    }
+
+    gSPDisplayList(gMasterDisp++, gMemoraPartDL[partIdx]);
+    Matrix_Pop(&gGfxMatrix);
+    RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
+
+    // @recomp Pop the transform id.
+    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+#endif
+
+#if 0 // global
 
 RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
     f32 sp5C = 70.0f;
@@ -171,39 +456,7 @@ RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
     }
 }
 
-RECOMP_PATCH void Meteo_MeLaserCannon2_Update(MeLaserCannon2* this) {
-    Vec3f dest;
-    Vec3f src;
-
-    this->obj.rot.z += 1.0f;
-
-    Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_NEW);
-
-    src.x = 0.0f;
-    src.y = -1100.0f;
-    src.z = 0.0f;
-
-    Matrix_MultVec3fNoTranslate(gCalcMatrix, &src, &dest);
-
-    this->obj.pos.x = this->fwork[0] + dest.x;
-    this->obj.pos.y = this->fwork[1] + dest.y;
-
-    if (this->dmgType != DMG_NONE) {
-        Actor_Despawn(this);
-        Effect_SpawnTimedSfxAtPos(&this->obj.pos, NA_SE_EN_EXPLOSION_S);
-        Object_Kill(&this->obj, this->sfxSource);
-        func_effect_8007D0E0(this->obj.pos.x, this->obj.pos.y + 30.0f, this->obj.pos.z, 5.0f);
-        Effect386_Spawn1(this->obj.pos.x, this->obj.pos.y + 30.0f, this->obj.pos.z, 0.0f, 0.0f, 0.0f, 3.0f, 10);
-    }
-
-    if (this->timer_0BC == 0) {
-        this->timer_0BC = 40;
-        if (this->obj.pos.z < (gPlayer[0].trueZpos - 1000.0f)) {
-            Effect_EnemyLaser(OBJ_EFFECT_ENEMY_LASER_1, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, 120.0f);
-        }
-    }
-}
-
+#if 0
 RECOMP_PATCH void Actor_DrawOnRails(Actor* this) {
     Vec3f sp34 = { 0.0f, 0.0f, 0.0f };
 
@@ -261,7 +514,9 @@ RECOMP_PATCH void Actor_DrawOnRails(Actor* this) {
         }
     }
 }
+#endif
 
+#if 0
 RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
     f32 sp38;
     s32 pad[3];
@@ -468,128 +723,7 @@ RECOMP_PATCH void ActorAllRange_Draw(ActorAllRange* this) {
         }
     }
 }
-
-RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
-    Vec3f src = { 0.0f, 0.0f, 0.0f };
-    Vec3f dest;
-
-    Matrix_MultVec3f(gGfxMatrix, &src, &dest);
-
-    if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */ !gBossActive) ||
-         (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
-         (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) &&
-        (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
-        if (this->obj.id == OBJ_ACTOR_CUTSCENE) {
-            if (((gCurrentLevel == LEVEL_VENOM_2) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) &&
-                 (this->index == 10)) ||
-                ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) && (gPlayer[0].csState >= 100) &&
-                 (gCurrentLevel == LEVEL_KATINA) && (this->index == 1)) ||
-                ((gCurrentLevel == LEVEL_SECTOR_Y) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) &&
-                 (this->state == 5))) {
-                gActorTeamArwing.rightWingState = gPlayer[0].arwing.rightWingState;
-                gActorTeamArwing.leftWingState = gPlayer[0].arwing.leftWingState;
-            } else {
-                gActorTeamArwing.rightWingState = gActorTeamArwing.leftWingState = WINGSTATE_INTACT;
-            }
-        } else {
-            gActorTeamArwing.rightWingState = gActorTeamArwing.leftWingState = WINGSTATE_INTACT;
-        }
-
-        gActorTeamArwing.upperRightFlapYrot = this->fwork[15];
-        gActorTeamArwing.upperLeftFlapYrot = this->fwork[16];
-        gActorTeamArwing.bottomRightFlapYrot = this->fwork[26];
-        gActorTeamArwing.bottomLeftFlapYrot = this->fwork[27];
-        gActorTeamArwing.laserGunsYpos = gActorTeamArwing.laserGunsXpos = gActorTeamArwing.wingsXrot =
-            gActorTeamArwing.wingsYrot = gActorTeamArwing.cockpitGlassXrot = gActorTeamArwing.wingsZrot = 0.0f;
-        gActorTeamArwing.unk_28 = this->fwork[17];
-        gActorTeamArwing.drawFace = this->iwork[14];
-        gActorTeamArwing.teamFaceXrot = this->fwork[20];
-        gActorTeamArwing.teamFaceYrot = this->fwork[19];
-
-        if (gLevelType == LEVELTYPE_SPACE) {
-            gActorTeamArwing.upperRightFlapYrot = gActorTeamArwing.bottomRightFlapYrot =
-                gActorTeamArwing.upperLeftFlapYrot = gActorTeamArwing.bottomLeftFlapYrot = 0.0f;
-        }
-        Display_ArwingWings(&gActorTeamArwing);
-    } else if (gLevelType == LEVELTYPE_PLANET) {
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
-        gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
-
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    } else if (gPlayer[0].wingPosition == 2) {
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
-        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4003BD0);
-
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    } else {
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
-        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4007870);
-
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    }
-    Actor_DrawEngineAndContrails(this);
-}
-
-#define KA_ACTOR_LOW_POLY (23)
-#define KA_ACTOR_IWORK_8 (8)
-#define EG_RED (0)
-
-extern Gfx aKaEnemyDL[];
-extern Gfx aKaCornerianFighterDL[];
-
-// @recomp Tag & disable LOD on Katina enemies
-RECOMP_PATCH void Katina_EnemyDraw(ActorAllRange* this) {
-    s32 pad3[3];
-    f32 angle;
-    Vec3f D_i4_8019F4A8 = { 0.0f, 0.0f, 0.0f };
-    Vec3f pad[30];
-
-    // @recomp: never use low poly
-    this->iwork[KA_ACTOR_LOW_POLY] = false;
-
-    if ((this->iwork[KA_ACTOR_IWORK_8] != 0) && (this->aiType < AI360_GREAT_FOX)) {
-        angle = SIN_DEG(this->iwork[KA_ACTOR_IWORK_8] * 400.0f) * this->iwork[KA_ACTOR_IWORK_8];
-        Matrix_RotateY(gGfxMatrix, M_DTOR * angle, MTXF_APPLY);
-        Matrix_RotateX(gGfxMatrix, M_DTOR * angle, MTXF_APPLY);
-        Matrix_RotateZ(gGfxMatrix, M_DTOR * angle, MTXF_APPLY);
-        Matrix_SetGfxMtx(&gMasterDisp);
-    }
-
-    RCP_SetupDL(&gMasterDisp, SETUPDL_29);
-
-    if ((this->timer_0C6 % 2) == 0) {
-        gSPFogPosition(gMasterDisp++, gFogNear, 1005);
-    }
-
-    switch (this->animFrame) {
-        case 0:
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-            gSPDisplayList(gMasterDisp++, aKaEnemyDL);
-            // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-            break;
-
-        case 1:
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-            gSPDisplayList(gMasterDisp++, aKaCornerianFighterDL);
-            // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -60.0f, MTXF_APPLY);
-            Actor_DrawEngineGlow(this, EG_RED);
-            break;
-    }
-}
+#endif
 
 RECOMP_PATCH void MeMolarRock_Draw(MeMolarRock* this) {
     Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 1.0f, MTXF_APPLY);
@@ -897,82 +1031,6 @@ RECOMP_PATCH void ActorDebris_Draw(ActorDebris* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-#if 0
-RECOMP_PATCH void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot,
-                                   u8 partIdx, f32 scale, bool colorFlicker) {
-    Vec3f src = { 0.0f, 0.0f, 0.0f };
-
-    Matrix_Push(&gGfxMatrix);
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + partIdx, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
-    Matrix_Translate(gGfxMatrix, xTrans, yTrans, zTrans + gPathProgress, MTXF_APPLY);
-
-    if (partIdx != 1) {
-        Matrix_RotateY(gGfxMatrix, M_DTOR * yRot, MTXF_APPLY);
-        Matrix_RotateX(gGfxMatrix, M_DTOR * xRot, MTXF_APPLY);
-        Matrix_RotateZ(gGfxMatrix, M_DTOR * zRot, MTXF_APPLY);
-    }
-
-    Matrix_Scale(gGfxMatrix, scale, scale, 1.0f, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-
-    if (partIdx != 1) {
-        RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-        if ((partIdx == 0) && (this->lockOnTimers[TEAM_ID_FOX] != 0)) {
-            src.y += this->info.targetOffset;
-            Matrix_MultVec3f(gGfxMatrix, &src, &gLockOnTargetViewPos[TEAM_ID_FOX]);
-            if (gLockOnTargetViewPos[TEAM_ID_FOX].z > -500.0f) {
-                this->lockOnTimers[TEAM_ID_FOX] = 0;
-            }
-        }
-    } else {
-        RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-    }
-
-    if (colorFlicker) {
-        RCP_SetupDL_64();
-        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
-    }
-
-    gSPDisplayList(gMasterDisp++, gMemoraPartDL[partIdx]);
-    Matrix_Pop(&gGfxMatrix);
-    RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
-#endif
-
-extern u8 gMeMoraPartIdx[16];
-extern f32 gMeMoraScale[16];
-extern s16 D_800CFF94[16];
-
-void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot, u8 partIdx,
-                      f32 scale, bool colorFlicker);
-
-RECOMP_PATCH void MeMora_Draw(MeMora* this) {
-    s16 i;
-    s16 j;
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
-                             G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
-
-    for (i = this->work_04A; i < ARRAY_COUNT(D_800CFF94); i++) {
-        j = (D_800CFF94[i] + this->counter_04E) % 100;
-        Memora_DrawParts(this, gMeMoraXpos[this->work_046][j], gMeMoraYpos[this->work_046][j],
-                         gMeMoraZpos[this->work_046][j], gMeMoraXrot[this->work_046][j], gMeMoraYrot[this->work_046][j],
-                         gMeMoraZrot[this->work_046][j], gMeMoraPartIdx[i], gMeMoraScale[i], this->timer_0C6 % 2U);
-    }
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
-
 RECOMP_PATCH void ActorMissileSeek_Draw(Actor* missile) {
     f32 scale;
 
@@ -1262,95 +1320,6 @@ RECOMP_PATCH void Zoness_ZoCraneMagnet_Draw(ZoCraneMagnet* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-RECOMP_PATCH void Zoness_ZoSpikeBall_Draw(ZoSpikeBall* this) {
-    f32 temp_fa0;
-    f32 temp_fa1;
-    f32 temp_fs0;
-    f32 temp_fs3;
-    f32 temp_fs4;
-    f32 temp_fs0_2;
-    f32 temp_fs1_2;
-    f32 temp_fs0_4;
-    f32 var_fs5 = 90.0f;
-    s32 i;
-    f32 sp94;
-    s32 var_s4;
-
-    Matrix_Pop(&gGfxMatrix);
-    Matrix_Push(&gGfxMatrix);
-    gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
-
-    if ((gBosses[0].state != 6) && (gBosses[0].state != 7)) {
-        RCP_SetupDL_60(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
-        gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-
-        temp_fa0 = sZoFwork[65] - this->obj.pos.x;
-        temp_fs0 = sZoFwork[66] - this->obj.pos.y;
-        temp_fa1 = sZoFwork[67] - this->obj.pos.z;
-
-        temp_fs3 = sqrtf(SQ(temp_fa0) + SQ(temp_fs0) + SQ(temp_fa1));
-        temp_fs4 = Math_Atan2F(temp_fa0, temp_fa1);
-        temp_fs0_2 = -Math_Atan2F(temp_fs0, sqrtf(SQ(temp_fa0) + SQ(temp_fa1)));
-        var_s4 = temp_fs3 / 70.0f;
-        if (var_s4 > 50) {
-            var_s4 = 50;
-        }
-        if (var_s4 < 0) {
-            var_s4 = 0;
-        }
-        Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + gPathProgress, MTXF_APPLY);
-        Matrix_RotateY(gGfxMatrix, temp_fs4, MTXF_APPLY);
-        Matrix_RotateX(gGfxMatrix, temp_fs0_2, MTXF_APPLY);
-        Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 0.0f, MTXF_APPLY);
-
-        sp94 = (180.0f / var_s4) + 1.0f;
-
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-        for (i = 0; i < var_s4; i++) {
-            temp_fs1_2 = SIN_DEG(i * sp94) * this->fwork[5];
-            temp_fs0_4 = COS_DEG(i * sp94) * this->fwork[5] * -0.25f;
-            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, this->fwork[1], MTXF_APPLY);
-            Matrix_Push(&gGfxMatrix);
-            Matrix_Translate(gGfxMatrix, 0.0f, temp_fs1_2, 0.0f, MTXF_APPLY);
-            Matrix_RotateX(gGfxMatrix, M_DTOR * temp_fs0_4, MTXF_APPLY);
-            Matrix_Push(&gGfxMatrix);
-            Matrix_RotateZ(gGfxMatrix, M_DTOR * var_fs5, MTXF_APPLY);
-            Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
-            Matrix_Scale(gGfxMatrix, 1.5f, 1.5f, 1.5f, MTXF_APPLY);
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gSPDisplayList(gMasterDisp++, D_ZO_6018660);
-            Matrix_Pop(&gGfxMatrix);
-            Matrix_Pop(&gGfxMatrix);
-            var_fs5 += 90.0f;
-        }
-        // @recomp Pop the transform id.
-        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-    }
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + 50, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
-    Matrix_Pop(&gGfxMatrix);
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z + gPathProgress, MTXF_APPLY);
-    Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
-    Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
-    Matrix_Scale(gGfxMatrix, 2.6f, 2.6f, 2.6f, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    RCP_SetupDL(&gMasterDisp, SETUPDL_70);
-    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-    gSPDisplayList(gMasterDisp++, D_ZO_6004380);
-    Matrix_RotateY(gGfxMatrix, sZoFwork[19] * M_DTOR, MTXF_APPLY);
-    Matrix_RotateX(gGfxMatrix, this->fwork[2] * M_DTOR, MTXF_APPLY);
-    Matrix_RotateZ(gGfxMatrix, this->fwork[3] * M_DTOR, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    RCP_SetupDL_55();
-    gSPDisplayList(gMasterDisp++, D_ZO_601BCC0);
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
-
 RECOMP_PATCH void Zoness_ZoTanker_Draw(ZoTanker* this) {
     // @recomp Tag the transform.
     gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
@@ -1634,101 +1603,6 @@ RECOMP_PATCH void Titania_TiBoulder_Draw(TiBoulder* this) {
 
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-}
-
-RECOMP_PATCH void Aquas_BlueMarine_Draw(Player* player) {
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
-
-    Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -40.0f, MTXF_APPLY);
-    Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3000C70);
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, 0.0f, -4.5f, 1.2f, MTXF_APPLY);
-    Matrix_RotateZ(gGfxMatrix, player->unk_178 * M_DTOR, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006DE0);
-    Matrix_Pop(&gGfxMatrix);
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, 0.0f, 2.0f, 40.0f, MTXF_APPLY);
-    Matrix_RotateY(gGfxMatrix, -player->unk_180 * M_DTOR, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006C70);
-    Matrix_Pop(&gGfxMatrix);
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, -19.0f, -3.6f, 1.2f, MTXF_APPLY);
-    Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3000AF0);
-    Matrix_Pop(&gGfxMatrix);
-    Matrix_Push(&gGfxMatrix);
-    Matrix_Translate(gGfxMatrix, 19.0f, -3.6f, 1.2f, MTXF_APPLY);
-    Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
-    Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006AF0);
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-
-    Matrix_Pop(&gGfxMatrix);
-}
-
-RECOMP_PATCH void Display_Landmaster(Player* player) {
-    f32 sp64;
-    Vec3f sp58;
-    Vec3f sp4C = { 0.0f, 0.0f, 90.0f };
-    Vec3f sp40 = { 0.0f, 40.0f, -70.0f };
-
-    Matrix_Push(&gGfxMatrix);
-
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
-
-    if (!gVersusMode) {
-        gSPDisplayList(gMasterDisp++, aLandmasterModelDL);
-    } else {
-        gSPDisplayList(gMasterDisp++, aVsLandmasterModelDL);
-    }
-
-    Matrix_MultVec3f(gGfxMatrix, &sp40, &D_display_80161518[player->num]);
-    Matrix_Translate(gGfxMatrix, 0.0f, 51.0f, -10.0f, MTXF_APPLY);
-    Matrix_RotateY(gGfxMatrix, -player->unk_180 * M_DTOR, MTXF_APPLY);
-    Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
-
-    if (gPlayerNum == player->num) {
-        sp64 = 0.0f;
-        if (gChargeTimers[player->num] >= 20) {
-            sp64 = (s32) (gGameFrameCount % 8U) * 80.0f;
-        }
-        sp58.x = 0.0f;
-        sp58.y = 0.0f;
-        sp58.z = 1200.0f;
-        Matrix_MultVec3f(gGfxMatrix, &sp58, &D_display_801613E0[0]);
-        sp58.z = 2400.0f + sp64;
-        Matrix_MultVec3f(gGfxMatrix, &sp58, &D_display_801613E0[1]);
-    }
-
-    Matrix_SetGfxMtx(&gMasterDisp);
-
-    if (!gVersusMode) {
-        if (player->unk_1A0 != 0) {
-            RCP_SetupDL_64();
-            gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 64, 255, 64, 255);
-        }
-        gSPDisplayList(gMasterDisp++, aLandmasterCanonDL);
-    } else {
-        gSPDisplayList(gMasterDisp++, aVsLandmasterCanonDL);
-    }
-
-    Matrix_MultVec3f(gGfxMatrix, &sp4C, &D_display_80161548[player->num]);
-
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-
-    Matrix_Pop(&gGfxMatrix);
 }
 
 // Actors 205, 206, 208, 209, 210, 211, 212, 213
@@ -2414,3 +2288,5 @@ RECOMP_PATCH void Aquas_Actor257_Draw(Actor257* this) {
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+
+#endif // global scope

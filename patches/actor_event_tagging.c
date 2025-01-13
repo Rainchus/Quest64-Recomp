@@ -1,5 +1,17 @@
 #include "patches.h"
 
+bool Andross_Gate_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
+
+RECOMP_PATCH void Andross_Gate_Draw(ActorEvent* this) {
+    Vec3f frameTable[20];
+
+    Animation_GetFrameData(&aVe2AndrossGateAnim, this->animFrame, frameTable);
+    // @recomp: Pass &this->obj.pos.z for the interpolation to discriminate between doors.
+    Animation_DrawSkeleton(1, aVe2AndrossGateSkel, frameTable, Andross_Gate_OverrideLimbDraw, NULL, &this->obj.pos.z,
+                           &gIdentityMatrix);
+}
+
+#if 0
 typedef struct {
     /* 0x00 */ Gfx* dList;
     /* 0x04 */ f32* hitbox;
@@ -587,3 +599,5 @@ RECOMP_PATCH void SectorY_SyRobot_Draw(SyRobot* this) {
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 }
+
+#endif

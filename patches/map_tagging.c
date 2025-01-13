@@ -515,7 +515,8 @@ RECOMP_PATCH void Map_PlanetExplosions_Draw(s32 planetId, PlanetExplosions explo
     gDPSetEnvColor(gMasterDisp++, 255, 0, 0, 0);
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_PLANET_EXPLOSIONS, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    // gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_PLANET_EXPLOSIONS, G_EX_PUSH, G_MTX_MODELVIEW,
+    // G_EX_EDIT_ALLOW);
 
     for (i = 0; i < checkIfPlanetIdNotEq9(planetId); i++) {
         switch (D_menu_801CEB58[explosionIdx][i]) {
@@ -566,6 +567,11 @@ RECOMP_PATCH void Map_PlanetExplosions_Draw(s32 planetId, PlanetExplosions explo
 
         gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 200, 200, D_menu_801CEBD0[explosionIdx][i]);
 
+        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_CORNERIA_EXPLOSIONS + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                 G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
         Matrix_Push(&gGfxMatrix);
 
         Matrix_Mult(gGfxMatrix, &D_menu_801CDA60[planetId], MTXF_APPLY);
@@ -579,10 +585,10 @@ RECOMP_PATCH void Map_PlanetExplosions_Draw(s32 planetId, PlanetExplosions explo
         gSPDisplayList(gMasterDisp++, aMapPlanetExplosionDL);
 
         Matrix_Pop(&gGfxMatrix);
-    }
 
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
 }
 #endif
 

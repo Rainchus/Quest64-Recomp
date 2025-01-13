@@ -277,7 +277,7 @@ void Animation_DrawLimbOriginal(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jo
     }
 }
 
-void Animation_DrawLimb_Ending(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
+void Animation_DrawLimb_SkipInterpolation(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
                                      OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data) {
     bool override;
     s32 limbIndex;
@@ -334,15 +334,15 @@ void Animation_DrawLimb_Ending(s32 mode, Limb* limb, Limb** skeleton, Vec3f* joi
     }
     Matrix_Pop(&gGfxMatrix);
     if (limb->child != NULL) {
-        Animation_DrawLimb_Ending(mode, limb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
+        Animation_DrawLimb_SkipInterpolation(mode, limb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
     Matrix_Pop(&gCalcMatrix);
     if (limb->sibling != NULL) {
-        Animation_DrawLimb_Ending(mode, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
+        Animation_DrawLimb_SkipInterpolation(mode, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
 }
 
-void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                          OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
                                          Matrix* transform) {
     bool override;
@@ -413,7 +413,7 @@ void Animation_DrawSkeleton_Ending(s32 mode, Limb** skeletonSegment, Vec3f* join
     Matrix_Pop(&gGfxMatrix);
 
     if (rootLimb->child != NULL) {
-        Animation_DrawLimb_Ending(mode, rootLimb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
+        Animation_DrawLimb_SkipInterpolation(mode, rootLimb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
     }
 
     Matrix_Pop(&gCalcMatrix);

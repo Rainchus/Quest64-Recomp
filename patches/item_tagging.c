@@ -1,3 +1,4 @@
+
 #include "patches.h"
 
 extern Gfx D_101A570[];
@@ -31,9 +32,10 @@ RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
     gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
     Matrix_RotateZ(gGfxMatrix, this->unk_58 * M_DTOR, MTXF_APPLY);
 
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     for (i = 0; i < 8; i++) {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, (TAG_ITEM(this) | 0x10) + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
         Matrix_Push(&gGfxMatrix);
         Matrix_RotateZ(gGfxMatrix, i * 45.0f * M_DTOR, MTXF_APPLY);
         Matrix_Translate(gGfxMatrix, 2.0f * this->width, 0.0f, 0.0f, MTXF_APPLY);
@@ -41,11 +43,13 @@ RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
         Graphics_SetScaleMtx(2.0f * this->unk_50);
         gSPDisplayList(gMasterDisp++, D_101CAE0);
         Matrix_Pop(&gGfxMatrix);
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
-    // @recomp Pop the transform id.
-    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
 }
+
+#if 0
 
 RECOMP_PATCH void ItemSilverRing_Draw(ItemSilverRing* this) {
     RCP_SetupDL(&gMasterDisp, SETUPDL_29);
@@ -161,3 +165,4 @@ RECOMP_PATCH void ItemMeteoWarp_Draw(ItemMeteoWarp* this) {
 
     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK | G_LIGHTING);
 }
+#endif

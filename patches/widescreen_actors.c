@@ -282,8 +282,8 @@ check:
                 Display_SetSecondLight(&this->obj.pos);
 
                 // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY_360(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
+                // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY_360(this), G_EX_PUSH, G_MTX_MODELVIEW,
+                //                                G_EX_EDIT_ALLOW);
 
                 if (this->obj.id == OBJ_SCENERY_AND_PASSAGE) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
@@ -302,7 +302,7 @@ check:
                 }
 
                 // @recomp Pop the transform id.
-                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+                // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
         }
     }
@@ -450,8 +450,7 @@ RECOMP_PATCH void Item_Draw(Item* this, s32 arg1) {
 }
 #endif
 
-// Causes problem with Effects still being drawn when they shouldn't (Granga's plasma beam)
-#if 0
+#if 1
 RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
@@ -473,13 +472,10 @@ RECOMP_PATCH void Effect_DrawAllRange(Effect* this) {
         minZ = -10000.0f;
     }
 
-    // @recomp draw no matter what
-    goto render;
-
     if ((dest.z < 0.0f) && (minZ < dest.z)) {
-        if (fabsf(dest.x) < (fabsf(dest.z * 0.5f) + 500.0f)) {
+        // @recomp: Extend draw distance up to 32/9
+        if (fabsf(dest.x) < (fabsf(dest.z * /* 0.5f */ 1.5f) + 500.0f)) {
             if (fabsf(dest.y) < (fabsf(dest.z * 0.5f) + 500.0f)) {
-            render:
                 if (this->info.draw != NULL) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
