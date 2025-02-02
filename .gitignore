@@ -70,3 +70,8 @@ RSPRecomp
 
 # Controller mappings file
 gamecontrollerdb.txt
+
+# audio data
+patches/audio_jp
+patches/audio_us
+patches/audio_eu
