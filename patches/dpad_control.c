@@ -7,6 +7,7 @@
 #include "patches.h"
 
 extern s32 sPauseScreenIwork[10];
+extern s32 D_menu_801CEFD4;
 
 typedef struct {
     s32 unk_0;
@@ -349,6 +350,36 @@ RECOMP_PATCH s32 Option_Input_DataSelect_X(s32* arg0) {
 
     if (temp == *arg0) {
         ret = 0;
+    }
+
+    return ret;
+}
+
+RECOMP_PATCH bool Map_Input_CursorY(void) {
+    bool ret = false;
+    s8 stickY = gControllerPress[gMainController].stick_y;
+
+    if ((stickY > -40) && (stickY < 40)) {
+        stickY = 0;
+    }
+
+    if (gControllerPress[gMainController].button & D_JPAD) {
+        stickY = -30;
+    } else if (gControllerPress[gMainController].button & U_JPAD) {
+        stickY = +30;
+    }
+
+    if (stickY != 0) {
+        if (D_menu_801CEFD4 == 0) {
+            ret = true;
+        }
+        D_menu_801CEFD4 = stickY;
+    } else {
+        D_menu_801CEFD4 = 0;
+    }
+
+    if (ret) {
+        AUDIO_PLAY_SFX(NA_SE_CURSOR, gDefaultSfxSource, 4);
     }
 
     return ret;
