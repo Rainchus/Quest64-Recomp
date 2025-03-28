@@ -3,7 +3,9 @@
 [input]
 entrypoint = 0x80000400
 # Paths are relative to the location of this config file.
-elf_path = "quest64.elf"
+#elf_path = "quest64.elf"
+symbols_file_path = "Quest64Syms/dump.toml"
+rom_file_path = "quest64.us.z64"
 output_func_path = "RecompiledFuncs"
 
 [patches]
