@@ -12,7 +12,7 @@ output_func_path = "RecompiledFuncs"
 stubs = [
     "func_800471B0", #some libleo function
     "func_8004793C", #another libleo function
-    #"func_8002DD18", #temp, test
+    "__osGetID",
 ]
 
 ignored = [
@@ -60,9 +60,3 @@ before_vram = 0x80031AC4
 func = "func_80031574"
 text = "ctx->r2 = 0;"
 before_vram = 0x800317F8
-
-#move loop counter to file page to load (hacky, might break everything)
-#[[patches.hook]]
-#func = "func_8002DD18"
-#text = "ctx->r5 = ctx->r17 | 0;"
-#before_vram = 0x8002DE68

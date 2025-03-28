@@ -741,3 +741,17 @@ extern "C" void  ReadSaveData(uint8_t* rdram, recomp_context* ctx) {
 
     recomp_save_read(rdram, &temp_ctx);
 }
+
+extern "C" void ReadSaveDataByte(uint8_t* rdram, recomp_context* ctx) {
+    u32 data_buffer = ctx->r4;
+    u32 newOffset = ctx->r5;
+    u32 nBytes = ctx->r6;
+
+    // Make a temporary recomp context to hold the arguments.
+    recomp_context temp_ctx = *ctx;
+    temp_ctx.r4 = data_buffer;
+    temp_ctx.r5 = newOffset;
+    temp_ctx.r6 = nBytes;
+
+    recomp_save_read(rdram, &temp_ctx);
+}

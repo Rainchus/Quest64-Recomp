@@ -14,6 +14,27 @@
 #include "ultramodern/ultramodern.hpp"
 #include "ultramodern/config.hpp"
 
+extern "C" void __osGetId_recomp(uint8_t* rdram, recomp_context* ctx) {
+
+}
+
+extern "C" void __osCheckPackId_recomp(uint8_t* rdram, recomp_context* ctx) {
+
+}
+
+extern "C" void __osRepairPackId_recomp(uint8_t* rdram, recomp_context* ctx) {
+
+}
+
+// extern "C" void rmonPrintf_recomp(uint8_t* rdram, recomp_context* ctx) {
+
+// }
+
+
+extern "C" void rmonPrintf_recomp(uint8_t* rdram, recomp_context* ctx) {
+
+}
+
 extern "C" void recomp_update_inputs(uint8_t* rdram, recomp_context* ctx) {
     recomp::poll_inputs();
 }

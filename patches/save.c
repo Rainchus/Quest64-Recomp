@@ -32,7 +32,7 @@ extern Unk2 D_80090460;
 extern Unk3 D_80092A38[4];
 extern s8 gCurrControllerNum;
 
-void save_read(void* rdram_address, u32 offset, u32 count);
+void recomp_save_read(void* rdram_address, u32 offset, u32 count);
 
 RECOMP_PATCH void func_8002DD18(void) {
     Unk* temp_v0;
@@ -66,13 +66,17 @@ RECOMP_PATCH void func_8002DD18(void) {
     }
     D_8008FD2A = 0;
 
-    for (i = 0; i < 16; i++) {
-        //if slot index is greater than or equal to 0
-        save_read(&byte, 0, 1);
-        
-        if (byte >= 0) {
-            var_a1 = func_800319E0(gCurrControllerNum, i, 0, 0x80, &D_80090460);
-            D_8008FD58[i] = D_80090460;
+    for (i = 0; i < 16; i++) {      
+        if (D_8008FD30[i].unk_00 >= 0) {
+            var_a1 = func_800319E0(gCurrControllerNum, D_8008FD30[i].unk_00, 0, 0x80, &D_80090460);
+            //the below chunk of code is written this way to avoid a memcpy from the compiler
+            //it originally was just `D_8008FD58[i] = D_80090460;`
+            volatile char* dst = D_8008FD58[i].unk_00;
+            char* src = D_80090460.unk_00;
+            for (int j = 0; j < 0x60; j++) {
+                dst[j] = src[j];
+            }
+            D_8008FD58[i].unk_60 = D_80090460.unk_60;
             if (var_a1 != 0) {
                 D_8008FD24 = var_fp;
                 var_fp = -func_80031BB0(var_fp);
