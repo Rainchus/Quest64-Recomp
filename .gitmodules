@@ -16,6 +16,3 @@
 [submodule "lib/N64ModernRuntime"]
 	path = lib/N64ModernRuntime
 	url = https://github.com/Rainchus/N64ModernRuntime.git
-[submodule "lib/Quest64-Decomp"]
-	path = lib/Quest64-Decomp
-	url = https://github.com/Rainchus/Quest64-Decomp
