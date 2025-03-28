@@ -3,9 +3,9 @@
 [input]
 entrypoint = 0x80000400
 # Paths are relative to the location of this config file.
-#elf_path = "quest64.elf"
-symbols_file_path = "Quest64Syms/dump.toml"
-rom_file_path = "quest64.us.z64"
+elf_path = "quest64.elf"
+#symbols_file_path = "Quest64Syms/dump.toml"
+#rom_file_path = "quest64.us.z64"
 output_func_path = "RecompiledFuncs"
 
 [patches]
@@ -30,7 +30,7 @@ before_vram = 0x80024690
 
 #overlay loading function 2 patch
 [[patches.hook]]
-func = "func_80024260"
+func = "dma_write"
 text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
 before_vram = 0x80024260
 
