@@ -10,6 +10,7 @@ output_func_path = "RecompiledFuncs"
 stubs = [
     "func_800471B0", #some libleo function
     "func_8004793C", #another libleo function
+    #"func_8002DD18", #temp, test
 ]
 
 ignored = [
@@ -19,12 +20,47 @@ ignored = [
     "__osClearPage"
 ]
 
+#overlay loading function 1 patch
 [[patches.hook]]
 func = "func_80024690"
 text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
 before_vram = 0x80024690
 
+#overlay loading function 2 patch
 [[patches.hook]]
 func = "func_80024260"
 text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
 before_vram = 0x80024260
+
+#Hook the controller pak save file read
+[[patches.hook]]
+func = "func_800319E0"
+text = "ReadSaveData(rdram, ctx);"
+before_vram = 0x800319E0
+
+#Hook the controller pak save file write
+[[patches.hook]]
+func = "func_80031A44"
+text = """ctx->r1 = S32(0X8009 << 16);
+    ctx->r1 = MEM_B(ctx->r1, -0X2D6);
+    WriteSaveData(rdram, ctx);"""
+before_vram = 0x80031A48
+
+
+#8002D8BC
+[[patches.hook]]
+func = "func_80031A44"
+text = "ctx->r2 = 0;"
+before_vram = 0x80031AC4
+
+#return 0, says controller pak is in
+[[patches.hook]]
+func = "func_80031574"
+text = "ctx->r2 = 0;"
+before_vram = 0x800317F8
+
+#move loop counter to file page to load (hacky, might break everything)
+#[[patches.hook]]
+#func = "func_8002DD18"
+#text = "ctx->r5 = ctx->r17 | 0;"
+#before_vram = 0x8002DE68
