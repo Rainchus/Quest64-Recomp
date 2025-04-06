@@ -77,7 +77,8 @@ RECOMP_PATCH void Effect_Effect395_Draw(Effect395* this) {
     }
 
     // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + this->state, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + this->state, G_EX_PUSH, G_MTX_MODELVIEW,
+                                   G_EX_EDIT_ALLOW);
 
     switch (this->state) {
         case 0:
@@ -400,43 +401,7 @@ RECOMP_PATCH void Effect_Effect385_Draw(Effect385* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-RECOMP_PATCH void Effect_Effect389_Draw(Effect389* this) {
-    s32 i;
 
-    if (this->unk_4A > 10) {
-        if (((this->index + gGameFrameCount) % 2) == 0) {
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 128, 128, 32);
-        } else {
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 128, 128, 128);
-        }
-    } else if (((this->index + gGameFrameCount) % 2) == 0) {
-        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-    } else {
-        gDPSetPrimColor(gMasterDisp++, 0, 0, 96, 96, 255, 255);
-    }
-
-    Graphics_SetScaleMtx(this->scale2);
-
-    for (i = 0; i < 10; i++) {
-        if ((i >= this->unk_48) && (i < this->unk_46)) {
-            Matrix_Push(&gGfxMatrix);
-            Matrix_Translate(gGfxMatrix, 0.0f, -60.0f, 0.0f, MTXF_APPLY);
-            Matrix_Scale(gGfxMatrix, 0.8f, 3.0f, 1.0f, MTXF_APPLY);
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
-
-            Matrix_SetGfxMtx(&gMasterDisp);
-            gSPDisplayList(gMasterDisp++, D_102F5E0);
-            Matrix_Pop(&gGfxMatrix);
-
-            // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-        }
-        Matrix_Translate(gGfxMatrix, 0.0f, -120.0f, 0.0f, MTXF_APPLY);
-        Matrix_RotateZ(gGfxMatrix, D_800D1534[this->unk_4C][i] * M_DTOR, MTXF_APPLY);
-    }
-}
 
 RECOMP_PATCH void Effect_Effect347_Draw(Effect347* this) {
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->unk_44);
@@ -1486,7 +1451,45 @@ RECOMP_PATCH void Bolse_Effect397_Draw(Effect397* this) {
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
-
-
 #endif
 
+#if 1
+RECOMP_PATCH void Effect_Effect389_Draw(Effect389* this) {
+    s32 i;
+
+    if (this->unk_4A > 10) {
+        if (((this->index + gGameFrameCount) % 2) == 0) {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 128, 128, 32);
+        } else {
+            gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 128, 128, 128);
+        }
+    } else if (((this->index + gGameFrameCount) % 2) == 0) {
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+    } else {
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 96, 96, 255, 255);
+    }
+
+    Graphics_SetScaleMtx(this->scale2);
+
+    for (i = 0; i < 10; i++) {
+        if ((i >= this->unk_48) && (i < this->unk_46)) {
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, 0.0f, -60.0f, 0.0f, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, 0.8f, 3.0f, 1.0f, MTXF_APPLY);
+
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this) + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, D_102F5E0);
+            Matrix_Pop(&gGfxMatrix);
+
+            // @recomp Pop the transform id.
+            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+        }
+        Matrix_Translate(gGfxMatrix, 0.0f, -120.0f, 0.0f, MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, D_800D1534[this->unk_4C][i] * M_DTOR, MTXF_APPLY);
+    }
+}
+#endif
