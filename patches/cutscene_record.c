@@ -106,8 +106,6 @@ void UpdateVisPerFrameFromRecording(Record* record, s32 maxFrames) {
 
     for (i = 0; i < maxFrames; i++) {
         if (gCsFrameCount == record[i].frame) {
-            recomp_printf("gCsFrameCount: %d maxFrames: %d record[i].frame: %drecord[i].vis: %d \n", 
-                gCsFrameCount, maxFrames, record[i].frame, record[i].vis);
             gVIsPerFrame = record[i].vis;
         }
     }
