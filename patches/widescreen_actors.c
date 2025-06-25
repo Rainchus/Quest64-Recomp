@@ -14,9 +14,9 @@ extern Matrix D_edisplay_801615F0;
 extern Vec3f D_edisplay_801615D0;
 extern Gfx D_VE2_6007650[];
 
-void func_edisplay_8005D1F0(Object* obj, s32 drawType);
+void Boss_SetMatrix(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32 arg0);
-void func_edisplay_8005D008(Object* obj, s32 drawType);
+void Object_SetMatrix(Object* obj, s32 drawType);
 void Corneria_SpawnClouds(void);
 void Corneria_CsTeamSetup(ActorCutscene* this, s32 teamIdx);
 void Macbeth_Effect357_Spawn2(f32 xPos, f32 yPos, f32 zPos, f32 arg3);
@@ -71,7 +71,7 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
                     Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
                     this->info.draw(&this->obj);
                     sDrewActor = true;
-                    if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) && (this->obj.id == OBJ_ACTOR_ALLRANGE) &&
+                    if ((gPlayer[0].state == PLAYERSTATE_ACTIVE) && (this->obj.id == OBJ_ACTOR_ALLRANGE) &&
                         (this->aiType == AI360_MISSILE)) {
                         gTeamArrowsViewPos[0] = sViewPos;
                     }
@@ -82,8 +82,8 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, MTXF_APPLY);
         Matrix_MultVec3f(gGfxMatrix, &srcViewPos, &sViewPos);
 
-        if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) ||
-            (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) ||
+        if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) ||
+            (gPlayer[0].state == PLAYERSTATE_STANDBY) ||
             ((this->obj.id == OBJ_ACTOR_ALLRANGE) && (this->aiType >= AI360_GREAT_FOX)) ||
             ((this->obj.id == OBJ_ACTOR_CUTSCENE) && (this->info.bonus != 0))) {
             var_ft5 = var_fv0 = 3000.0f;
@@ -110,7 +110,7 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
                         Matrix_SetGfxMtx(&gMasterDisp);
                         this->info.draw(&this->obj);
                         sDrewActor = true;
-                        if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) &&
+                        if ((gPlayer[0].state == PLAYERSTATE_ACTIVE) &&
                             (((this->obj.id == OBJ_ACTOR_ALLRANGE) &&
                               ((this->aiType <= AI360_PEPPY) || (this->aiType == AI360_KATT) ||
                                (this->aiType == AI360_BILL))) ||
@@ -160,10 +160,10 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
 
     if (this->info.unk_19 != 0) {
         this->obj.pos.y += this->yOffset + gCameraShakeY;
-        func_edisplay_8005D1F0(&this->obj, this->info.drawType);
+        Boss_SetMatrix(&this->obj, this->info.drawType);
         this->obj.pos.y -= this->yOffset + gCameraShakeY;
     } else {
-        func_edisplay_8005D1F0(&this->obj, this->info.drawType);
+        Boss_SetMatrix(&this->obj, this->info.drawType);
     }
 
     Matrix_MultVec3f(&D_edisplay_801615F0, &origin, &D_edisplay_801615D0);
@@ -332,7 +332,7 @@ RECOMP_PATCH void SectorY_SyShogun_Init(SyShogun* this) {
         this->fwork[43] = 3.5f;
         this->fwork[45] = 40.0f;
 
-        if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_START_360) {
+        if (gPlayer[0].state == PLAYERSTATE_START_360) {
             this->obj.pos.z = -28900.0f;
             gScenery360[0].obj.pos.z = -30000.0f;
         }
@@ -360,8 +360,8 @@ RECOMP_PATCH void SectorY_SyShogun_Init(SyShogun* this) {
     }
 
     if (gLevelMode == LEVELMODE_ON_RAILS) {
-        if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) {
-            gPlayer[0].state_1C8 = PLAYERSTATE_1C8_START_360;
+        if (gPlayer[0].state == PLAYERSTATE_ACTIVE) {
+            gPlayer[0].state = PLAYERSTATE_START_360;
             gPlayer[0].csState = 0;
             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM, 50);
             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 50);
@@ -378,7 +378,7 @@ RECOMP_PATCH void SectorY_SyShogun_Init(SyShogun* this) {
  */
 #if 1
 RECOMP_PATCH void Scenery_Move(Scenery* this) {
-    if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) {
+    if (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) {
         this->obj.pos.z += this->effectVel.z;
         if ((this->info.cullDistance * 1.5f) < this->obj.pos.z) {
             Object_Kill(&this->obj, this->sfxSource);
@@ -559,26 +559,26 @@ RECOMP_PATCH void Corneria_LevelStart(Player* player) {
 
     // Cloud reflexions on Arwing windshields
     if (sp2C >= 0.0f) {
-        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 2);
-        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 2);
+        Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 2);
+        Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 2);
     } else {
-        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 3);
-        Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 3);
+        Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 3);
+        Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 3);
     }
 
     for (i = 0; (i < 40) && (D_ctx_80177A48[6] >= 0.2f); i++, D_ctx_80177A48[6] -= 0.2f) {
         if (sp44 >= 0) {
-            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 2);
+            Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 2);
         } else {
-            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 3);
+            Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 3);
         }
     }
 
     for (i = 0; (i < 40) && (D_ctx_80177A48[7] >= 0.3f); i++, D_ctx_80177A48[7] -= 0.3f) {
         if (sp40 >= 0) {
-            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 0);
+            Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 0);
         } else {
-            Lib_Texture_Scroll(aWindshieldClouldReflextionTex, 64, 32, 1);
+            Lib_Texture_Scroll(aAwCockpitGlassClouldReflextionTex, 64, 32, 1);
         }
     }
 
@@ -976,7 +976,7 @@ RECOMP_PATCH void Corneria_LevelStart(Player* player) {
                 player->cam.eye.x = player->pos.x;
                 player->cam.eye.y = (player->pos.y * player->unk_148) + 50.0f;
                 player->cam.eye.z = 30.0f;
-                player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                player->state = PLAYERSTATE_ACTIVE;
                 player->csState = 0;
                 player->cam.at.x = player->pos.x;
                 player->cam.at.y = (player->pos.y * player->unk_148) + 20.0f;
@@ -1333,7 +1333,7 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
             Math_SmoothStepToF(&D_ctx_80177A48[5], 240.0f, 1.0f, 2.0f, 0.0f);
 
             if ((gGameFrameCount % 2) == 0) {
-                Effect_FireSmoke_Spawn2(11000.0f, 200.0f, -139000.0f, D_ctx_80177A48[4], 4.0f, D_ctx_80177A48[5],
+                Effect_FireSmoke1_SpawnMoving(11000.0f, 200.0f, -139000.0f, D_ctx_80177A48[4], 4.0f, D_ctx_80177A48[5],
                                         20.0f);
             }
 
@@ -1358,27 +1358,27 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
 
                 gActors[58].scale = 0.8f;
 
-                func_effect_8007D0E0(gActors[D_i5_801BE314].obj.pos.x + 500.0f + RAND_FLOAT_CENTERED(700.0f),
+                Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x + 500.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.y + 500.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.z + 3000.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
             }
             if ((gCsFrameCount > 710) && ((gGameFrameCount % 8) == 0)) {
-                func_effect_8007D0E0(gActors[D_i5_801BE314].obj.pos.x + 500.0f + RAND_FLOAT_CENTERED(700.0f),
+                Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x + 500.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.y + 500.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.z + 3000.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
             }
             if ((gCsFrameCount > 725) && ((gGameFrameCount % 8) == 0)) {
-                func_effect_8007D0E0(gActors[D_i5_801BE314].obj.pos.x - 1500.0f + RAND_FLOAT_CENTERED(700.0f),
+                Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x - 1500.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.y + 1000.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.z + 1700.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
             }
             if ((gCsFrameCount > 740) && ((gGameFrameCount % 8) == 0)) {
-                func_effect_8007D0E0(gActors[D_i5_801BE314].obj.pos.x - 3500.0f + RAND_FLOAT_CENTERED(700.0f),
+                Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x - 3500.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.y + 600.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.z + 1200.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
             }
             if ((gCsFrameCount > 755) && ((gGameFrameCount % 8) == 0)) {
-                func_effect_8007D0E0(gActors[D_i5_801BE314].obj.pos.x - 3000.0f + RAND_FLOAT_CENTERED(700.0f),
+                Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x - 3000.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.y + 400.0f + RAND_FLOAT_CENTERED(700.0f),
                                      gActors[D_i5_801BE314].obj.pos.z + 1300.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
             }
@@ -1523,7 +1523,7 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
 
         case 7:
             if ((gGameFrameCount % 4) == 0) {
-                func_effect_8007D0E0(player->pos.x - 1750.0f + RAND_FLOAT_CENTERED(700.0f), 10.0f,
+                Effect_FireSmoke1_Spawn4(player->pos.x - 1750.0f + RAND_FLOAT_CENTERED(700.0f), 10.0f,
                                      player->pos.z + 5000.0f + RAND_FLOAT_CENTERED(700.0f), 5.0f);
                 Effect_Effect343_Spawn(player->pos.x - 1800.0f + RAND_FLOAT_CENTERED(40.0f), -100.0f,
                                        player->pos.z + 5000.0f + RAND_FLOAT_CENTERED(40.0f), 9.0f);
@@ -1782,7 +1782,7 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
         gFillScreenAlphaTarget = 255;
 
         if (gFillScreenAlpha == 255) {
-            player->state_1C8 = PLAYERSTATE_1C8_NEXT;
+            player->state = PLAYERSTATE_NEXT;
             gFadeoutType = 4;
             Play_ClearObjectData();
             Audio_FadeOutAll(10);

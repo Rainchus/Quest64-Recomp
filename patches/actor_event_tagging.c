@@ -30,8 +30,8 @@ extern Gfx aActorSuppliesDL[];
 extern Vec3f D_enmy_800CFEC4[6];
 extern Vec3f D_enmy_800CFF0C[6];
 extern EventActorInfo sEventActorInfo[108];
-extern Gfx D_ENMY_PLANET_40018A0[];
-extern Gfx D_ENMY_SPACE_4007870[];
+extern Gfx aPlanetArwingAllRangeDL[];
+extern Gfx aSpaceArwingOnRailsDL[];
 extern Gfx aA6NinjinMissileDL[];
 extern Gfx aA6RocketDL[];
 extern Gfx aA6SpaceMineDL[];
@@ -193,9 +193,9 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
                                                    G_EX_EDIT_ALLOW);
 
                     if (gLevelType == LEVELTYPE_PLANET) {
-                        gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
+                        gSPDisplayList(gMasterDisp++, aPlanetArwingAllRangeDL);
                     } else {
-                        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4007870);
+                        gSPDisplayList(gMasterDisp++, aSpaceArwingOnRailsDL);
                     }
 
                     // @recomp Pop the transform id.
@@ -306,7 +306,7 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                     if (this->timer_0C2 != 0) {
                         if (((this->timer_0C2 & 3) == 0) && (gPlayState != PLAY_PAUSE)) {
-                            func_effect_8007D0E0(RAND_FLOAT_CENTERED(200.0f) + this->obj.pos.x,
+                            Effect_FireSmoke1_Spawn4(RAND_FLOAT_CENTERED(200.0f) + this->obj.pos.x,
                                                  RAND_FLOAT_CENTERED(200.0f) + this->obj.pos.y,
                                                  RAND_FLOAT_CENTERED(200.0f) + this->obj.pos.z,
                                                  RAND_FLOAT(1.5f) + 2.5f);
@@ -373,8 +373,8 @@ RECOMP_PATCH void ActorEvent_Draw(ActorEvent* this) {
 
                 case EVID_ME_ROCK_GULL:
                     Matrix_Push(&gGfxMatrix);
-                    Matrix_RotateX(gGfxMatrix, this->rot_0F4.x * M_DTOR, MTXF_APPLY);
-                    Matrix_RotateY(gGfxMatrix, this->rot_0F4.y * M_DTOR, MTXF_APPLY);
+                    Matrix_RotateX(gGfxMatrix, this->orient.x * M_DTOR, MTXF_APPLY);
+                    Matrix_RotateY(gGfxMatrix, this->orient.y * M_DTOR, MTXF_APPLY);
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, 0.0f, this->fwork[15], 0.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);

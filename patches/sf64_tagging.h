@@ -35,7 +35,7 @@
 #define TAG_BOSS_GORGON(vec) ((0x35000000) | (TAG_ADDRESS(vec) & 0x0000FFFF))
 
 // Display_Reticle takes 0 and 1, DisplayLockOnIndicator
-// is taking 2 3 4 and 5, Aquas_801AA20C takes 6 and 7
+// is taking 2 3 4 and 5, Aquas_BlueMarineReticle_Draw takes 6 and 7
 #define TAG_RETICLE (0x700)
 #define TAG_ (0x720)
 #define TAG_GREATFOXDECK (0x2000)

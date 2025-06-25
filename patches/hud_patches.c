@@ -7,11 +7,11 @@
 
 #if 1 // Hud_PlayerShieldGauge_Draw
 
-extern f32 D_801617A8;
-extern f32 D_801617AC;
-extern s32 D_800D1EB4;
-extern s32 D_800D1EB8;
-extern s32 D_800D1EBC;
+extern f32 sShieldGaugeCurrentScale;
+extern f32 sShieldFillAmount;
+extern s32 sShieldBorderColorR;
+extern s32 sShieldBorderColorG;
+extern s32 sShieldBorderColorB;
 
 void HUD_ShieldGaugeBars_Draw(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
 void HUD_ShieldGaugeEdgeLeft_Draw(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -25,13 +25,13 @@ RECOMP_PATCH void HUD_PlayerShieldGauge_Draw(f32 x, f32 y) {
 
     RCP_SetupDL(&gMasterDisp, SETUPDL_75);
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-    HUD_ShieldGaugeBars_Draw(x + 8.0f, y + 2.0f, D_801617A8, 1.0f, D_801617AC);
+    HUD_ShieldGaugeBars_Draw(x + 8.0f, y + 2.0f, sShieldGaugeCurrentScale, 1.0f, sShieldFillAmount);
     // White Outiline
     RCP_SetupDL(&gMasterDisp, SETUPDL_76);
-    gDPSetPrimColor(gMasterDisp++, 0, 0, D_800D1EB4, D_800D1EB8, D_800D1EBC, 255);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, sShieldBorderColorR, sShieldBorderColorG, sShieldBorderColorB, 255);
     HUD_ShieldGaugeEdgeLeft_Draw(x, y, 1.0f, 1.0f);
-    HUD_ShieldGaugeEdgeRight_Draw(x + 7.0f + (D_801617A8 * 6.0f * 8.0f), y, 1.0f, 1.0f);
-    HUD_ShieldGaugeFrame_Draw(x + 7.0f, y, D_801617A8 * 6.0f, 1.0f);
+    HUD_ShieldGaugeEdgeRight_Draw(x + 7.0f + (sShieldGaugeCurrentScale * 6.0f * 8.0f), y, 1.0f, 1.0f);
+    HUD_ShieldGaugeFrame_Draw(x + 7.0f, y, sShieldGaugeCurrentScale * 6.0f, 1.0f);
 
     gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
 }
@@ -50,7 +50,7 @@ extern u8 aLargeText_7[];
 extern u8 aLargeText_8[];
 extern u8 aLargeText_9[];
 
-RECOMP_PATCH void HUD_Hitpoints_Draw(f32 x, f32 y) {
+RECOMP_PATCH void HUD_Score_Draw(f32 x, f32 y) {
     u8* D_800D24DC[] = { aLargeText_0, aLargeText_1, aLargeText_2, aLargeText_3, aLargeText_4,
                          aLargeText_5, aLargeText_6, aLargeText_7, aLargeText_8, aLargeText_9 };
     s32 D_800D2504[] = { 100, 10, 1 };
@@ -469,18 +469,18 @@ RECOMP_PATCH void HUD_DrawBossHealth(void) {
 #endif
 
 #if 1 // Hud_LivesCount2_Draw (player)
-extern u8 aArwingLifeIconTex[];
+extern u8 aAwArwingLifeIconTex[];
 extern u8 aBlueMarineLifeIconTex[];
 extern u8 aLandmasterLifeIconTex[];
-extern u16 aArwingLifeIconTLUT[];
+extern u16 aAwArwingLifeIconTLUT[];
 extern u16 aBlueMarineLifeIconTLUT[];
 extern u16 aLandmasterLifeIconTLUT[];
 extern u8 aXTex[];
 extern u16 aXTLUT[];
 
 RECOMP_PATCH void HUD_LivesCount2_Draw(f32 x, f32 y, s32 number) {
-    u8* sLivesCounterTexs[] = { aArwingLifeIconTex, aBlueMarineLifeIconTex, aLandmasterLifeIconTex };
-    u16* sLivesCounterTLUTs[] = { aArwingLifeIconTLUT, aBlueMarineLifeIconTLUT, aLandmasterLifeIconTLUT };
+    u8* sLivesCounterTexs[] = { aAwArwingLifeIconTex, aBlueMarineLifeIconTex, aLandmasterLifeIconTex };
+    u16* sLivesCounterTLUTs[] = { aAwArwingLifeIconTLUT, aBlueMarineLifeIconTLUT, aLandmasterLifeIconTLUT };
     Player* player = &gPlayer[0];
     f32 x0;
     f32 x1;
@@ -492,7 +492,7 @@ RECOMP_PATCH void HUD_LivesCount2_Draw(f32 x, f32 y, s32 number) {
     s32 i;
     s32 form;
 
-    if (gPlayer[0].state_1C8 != PLAYERSTATE_1C8_LEVEL_COMPLETE) {
+    if (gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) {
         gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0,
                         -(SCREEN_WIDTH) * 4, 0);
         gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, SCREEN_HEIGHT * 4);
@@ -639,8 +639,8 @@ extern s32 D_80161784;
 extern s32 D_8016177C;
 extern u8 aVsBombIconTex[];
 extern u16 aVsBombIconTLUT[];
-extern u8 D_blue_marine_3000090[];
-extern u16 D_blue_marine_3000120[];
+extern u8 aBlueMarineBombCountTex[];
+extern u16 aBlueMarineBombCountTLUT[];
 
 RECOMP_PATCH void HUD_BombCounter_Draw(f32 x, f32 y) {
     s32 i;
@@ -843,7 +843,7 @@ RECOMP_PATCH void HUD_BombCounter_Draw(f32 x, f32 y) {
         case 6:
             RCP_SetupDL(&gMasterDisp, SETUPDL_78);
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            Lib_TextureRect_CI4(&gMasterDisp, D_blue_marine_3000090, D_blue_marine_3000120, 32, 9, x + 1.0f, y, 1.0f,
+            Lib_TextureRect_CI4(&gMasterDisp, aBlueMarineBombCountTex, aBlueMarineBombCountTLUT, 32, 9, x + 1.0f, y, 1.0f,
                                 1.0f);
             break;
     }
@@ -945,7 +945,7 @@ RECOMP_PATCH void Display_DrawHelpAlert(void) {
         return;
     }
 
-    if ((gTeamHelpActor->obj.status != OBJ_ACTIVE) || (gPlayer[0].state_1C8 != PLAYERSTATE_1C8_ACTIVE)) {
+    if ((gTeamHelpActor->obj.status != OBJ_ACTIVE) || (gPlayer[0].state != PLAYERSTATE_ACTIVE)) {
         gTeamHelpActor = NULL;
         gTeamHelpTimer = 0;
         return;
@@ -1096,7 +1096,6 @@ RECOMP_PATCH void Radio_Draw(void) {
     RadioCharacterId radioCharId;
     u32 ret;
     s32 fakeTemp;
-    
 
     Game_InitFullViewport();
     if (gGameState != GSTATE_ENDING) {
@@ -1354,7 +1353,7 @@ RECOMP_PATCH void Radio_Draw(void) {
             }
 
             if ((gActors[idx].obj.status != OBJ_ACTIVE) && (gGameFrameCount & 4) &&
-                (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) && (gCurrentRadioPortrait != RCID_STATIC) &&
+                (gPlayer[0].state == PLAYERSTATE_ACTIVE) && (gCurrentRadioPortrait != RCID_STATIC) &&
                 (gCurrentRadioPortrait != RCID_STATIC + 1) && (gCurrentRadioPortrait != RCID_1000)) {
                 RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 0, 255);

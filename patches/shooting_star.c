@@ -1,13 +1,13 @@
 #include "patches.h"
 
 void Audio_SetAudioSpec(u8 unused, u16 specParam);
-void Andross_80193AE4(s32 actorIndex);
+void Andross_Team_Setup(s32 actorIndex);
 void Andross_AndPassage_Setup(AndPassage* this, f32 xPos, f32 yPos, f32 zPos, s32 arg4);
-void Andross_80193710(void);
-void Andross_801939A0(s32 actorIdx);
+void Andross_LoadLevelObjects(void);
+void Andross_ArwingEscape_Setup(s32 actorIdx);
 void Audio_FadeOutAll(u8 fadeoutTime);
 
-RECOMP_PATCH void Andross_80193C4C(Player* player) {
+RECOMP_PATCH void Andross_LevelComplete(Player* player) {
     s32 i;
     s32 sp90;
     f32 sp8C;
@@ -57,7 +57,7 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             switch (gCsFrameCount) {
                 case 80:
                     Effect_Effect383_Spawn(boss->obj.pos.x, boss->obj.pos.y, boss->obj.pos.z, 40.0f);
-                    Effect_SpawnTimedSfxAtPos(&boss->obj.pos, NA_SE_EN_EXPLOSION_L);
+                    Effect_TimedSfx_Spawn(&boss->obj.pos, NA_SE_EN_EXPLOSION_L);
                     /* fallthrough */
                 case 85:
                 case 90:
@@ -136,7 +136,7 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             }
 
             for (i = 0; i < sp90; i++) {
-                Effect_FireSmoke_Spawn2(player->pos.x + sp68.x, player->pos.y + sp68.y,
+                Effect_FireSmoke1_SpawnMoving(player->pos.x + sp68.x, player->pos.y + sp68.y,
                                         player->pos.z - (D_ctx_80177A48[3] + D_ctx_80177A48[4]), 0.0f, 0.0f, 50.0f,
                                         RAND_FLOAT(2.5f) + 2.5f);
             }
@@ -207,7 +207,7 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
                         gScenery360[i].obj.status = OBJ_FREE;
                     }
 
-                    Andross_80193710();
+                    Andross_LoadLevelObjects();
                     D_ctx_8017782C = true;
                     Play_InitEnvironment();
                     gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 0;
@@ -229,10 +229,10 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             }
 
             if ((gCsFrameCount == 20) && (gVenomHardClear != 0)) {
-                Andross_801939A0(1);
+                Andross_ArwingEscape_Setup(1);
             }
             if (gCsFrameCount == 40) {
-                Andross_801939A0(10);
+                Andross_ArwingEscape_Setup(10);
                 AUDIO_PLAY_SFX(NA_SE_EN_STAR_EXPLOSION, boss->sfxSource, 4);
                 gCameraShake = 30;
                 gSceneSetup = 1;
@@ -240,7 +240,7 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             }
             if (gCsFrameCount > 40) {
                 for (i = 0; i < 3; i++) {
-                    Effect_FireSmoke_Spawn2(boss->obj.pos.x + RAND_FLOAT_CENTERED(150.0f), boss->obj.pos.y + 500.0f,
+                    Effect_FireSmoke1_SpawnMoving(boss->obj.pos.x + RAND_FLOAT_CENTERED(150.0f), boss->obj.pos.y + 500.0f,
                                             boss->obj.pos.z + RAND_FLOAT_CENTERED(150.0f), RAND_FLOAT_CENTERED(10.0f),
                                             60.0f, RAND_FLOAT_CENTERED(10.0f), RAND_FLOAT(5.5f) + 5.5f);
                 }
@@ -263,15 +263,15 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
                 D_ctx_80177A48[2] = 0;
                 D_ctx_80177A48[3] = 1.0f;
                 gActors[10].obj.pos.y = 1500.0f;
-                gActors[10].rot_0F4.z = 180.0f;
+                gActors[10].orient.z = 180.0f;
                 gDrawBackdrop = 0;
                 gFogFar = 1030;
-                D_i6_801A7F40 = gLight1R;
-                D_i6_801A7F44 = gLight1G;
-                D_i6_801A7F48 = gLight1B;
-                D_i6_801A7F4C = gAmbientR;
-                D_i6_801A7F50 = gAmbientG;
-                D_i6_801A7F54 = gAmbientB;
+                sAndLightR = gLight1R;
+                sAndLightG = gLight1G;
+                sAndLightB = gLight1B;
+                sAndAmbientR = gAmbientR;
+                sAndAmbientG = gAmbientG;
+                sAndAmbientB = gAmbientB;
                 gEnvLightyRot = -50.0f;
                 gMissionStatus = MISSION_ACCOMPLISHED;
                 for (i = 0; i < 200; i++) {
@@ -287,20 +287,20 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
                 Math_SmoothStepToF(&D_ctx_80177A48[3], 0.3f, 0.05f, 0.02f, 0.0f);
             }
             if (gCsFrameCount > 205) {
-                Math_SmoothStepToF(&D_i6_801A7F40, 130.0f, 1.0f, 10.0f, 0.0f);
-                Math_SmoothStepToF(&D_i6_801A7F44, 160.0f, 1.0f, 10.0f, 0.0f);
-                Math_SmoothStepToF(&D_i6_801A7F48, 80.0f, 1.0f, 10.0f, 0.0f);
-                Math_SmoothStepToF(&D_i6_801A7F4C, 10.0f, 1.0f, 5.0f, 0.0f);
-                Math_SmoothStepToF(&D_i6_801A7F50, 10.0f, 1.0f, 5.0f, 0.0f);
-                Math_SmoothStepToF(&D_i6_801A7F54, 10.0f, 1.0f, 5.0f, 0.0f);
+                Math_SmoothStepToF(&sAndLightR, 130.0f, 1.0f, 10.0f, 0.0f);
+                Math_SmoothStepToF(&sAndLightG, 160.0f, 1.0f, 10.0f, 0.0f);
+                Math_SmoothStepToF(&sAndLightB, 80.0f, 1.0f, 10.0f, 0.0f);
+                Math_SmoothStepToF(&sAndAmbientR, 10.0f, 1.0f, 5.0f, 0.0f);
+                Math_SmoothStepToF(&sAndAmbientG, 10.0f, 1.0f, 5.0f, 0.0f);
+                Math_SmoothStepToF(&sAndAmbientB, 10.0f, 1.0f, 5.0f, 0.0f);
             }
-            gLight1R = D_i6_801A7F40;
-            gLight1G = D_i6_801A7F44;
-            gLight1B = D_i6_801A7F48;
+            gLight1R = sAndLightR;
+            gLight1G = sAndLightG;
+            gLight1B = sAndLightB;
 
-            gAmbientR = D_i6_801A7F4C;
-            gAmbientG = D_i6_801A7F50;
-            gAmbientB = D_i6_801A7F54;
+            gAmbientR = sAndAmbientR;
+            gAmbientG = sAndAmbientG;
+            gAmbientB = sAndAmbientB;
 
             Math_SmoothStepToF(&D_ctx_80177A48[1], -5000.0f, 0.05f, 15.0f, 0.0f);
 
@@ -313,7 +313,7 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             gCsCamAtZ = gActors[10].obj.pos.z;
 
             if (((gGameFrameCount % 4) == 0) && (gCsFrameCount < 215)) {
-                Effect_FireSmoke_Spawn2(boss->obj.pos.x + RAND_FLOAT_CENTERED(350.0f), boss->obj.pos.y + 500.0f,
+                Effect_FireSmoke1_SpawnMoving(boss->obj.pos.x + RAND_FLOAT_CENTERED(350.0f), boss->obj.pos.y + 500.0f,
                                         boss->obj.pos.z + RAND_FLOAT_CENTERED(350.0f), RAND_FLOAT_CENTERED(10.0f),
                                         60.0f, RAND_FLOAT_CENTERED(10.0f), RAND_FLOAT(5.5f) + 15.5f);
             }
@@ -321,21 +321,21 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             for (i = 0; i < 36; i += 4) {
                 sp8C = __sinf((i * 10.0f * M_DTOR) + sp80) * D_ctx_80177A48[2];
                 sp84 = __cosf((i * 10.0f * M_DTOR) + sp80) * D_ctx_80177A48[2];
-                Effect_FireSmoke_Spawn2(sp8C, 300.0f, sp84, 0.0f, 0.0f, 0.0f, RAND_FLOAT(5.5f) + 15.5f);
+                Effect_FireSmoke1_SpawnMoving(sp8C, 300.0f, sp84, 0.0f, 0.0f, 0.0f, RAND_FLOAT(5.5f) + 15.5f);
             }
 
             Math_SmoothStepToF(&D_ctx_80177A48[2], 10000.0f, 0.05f, 20.0f, 0.0f);
 
             if (gCsFrameCount == 220) {
-                Andross_80193AE4(0);
+                Andross_Team_Setup(0);
                 if (gTeamShields[TEAM_ID_FALCO] > 0) {
-                    Andross_80193AE4(1);
+                    Andross_Team_Setup(1);
                 }
                 if (gTeamShields[TEAM_ID_SLIPPY] > 0) {
-                    Andross_80193AE4(2);
+                    Andross_Team_Setup(2);
                 }
                 if (gTeamShields[TEAM_ID_PEPPY] > 0) {
-                    Andross_80193AE4(3);
+                    Andross_Team_Setup(3);
                 }
             }
 
@@ -362,8 +362,8 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
                 gActors[10].state = 101;
                 gActors[10].fwork[0] = 0.0f;
                 gActors[10].obj.pos.y = 14500.0f;
-                gActors[10].rot_0F4.z = 70.0f;
-                gActors[10].rot_0F4.x = gActors[10].rot_0F4.y = 0.0f;
+                gActors[10].orient.z = 70.0f;
+                gActors[10].orient.x = gActors[10].orient.y = 0.0f;
                 gFillScreenAlpha = gFillScreenAlphaTarget = 255;
                 gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 0;
                 player->csTimer = 3;
@@ -539,7 +539,7 @@ RECOMP_PATCH void Andross_80193C4C(Player* player) {
             player->vel.y = sp68.y;
 
             if (player->csTimer == 0) {
-                player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                player->state = PLAYERSTATE_ACTIVE;
                 player->unk_014 = 0.2f;
                 player->unk_018 = 0.0f;
                 player->unk_01C = 0.05f;

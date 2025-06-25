@@ -2,14 +2,6 @@
 
 // @recomp: Improvement: set team arwing faces for level complete CS.
 
-typedef enum ActorCSTeamFace {
-    /* 0 */ FACE_NONE,
-    /* 1 */ FACE_FOX,
-    /* 2 */ FACE_FALCO,
-    /* 3 */ FACE_SLIPPY,
-    /* 4 */ FACE_PEPPY
-} ActorCSTeamFace;
-
 // PROBLEM: character face rotation is wrong outside of cutscenes
 #if 0
 RECOMP_PATCH void ActorAllRange_SpawnTeam(void) {
@@ -42,7 +34,7 @@ RECOMP_PATCH void ActorAllRange_SpawnTeam(void) {
             }
 
             actor->state = 2;
-            actor->rot_0F4.y = 180.0f;
+            actor->orient.y = 180.0f;
 
             if (actor->aiIndex <= -1) {
                 actor->state = 3;
@@ -89,7 +81,7 @@ RECOMP_PATCH void SectorZ_CsLevelCompleteTeamInit(ActorCutscene* this, s32 index
     this->obj.pos.z = sCsTeamZpos[index];
 
     this->fwork[0] = gPlayer[0].baseSpeed;
-    this->rot_0F4.y = gPlayer[0].rot.y;
+    this->orient.y = gPlayer[0].rot.y;
 
     Object_SetInfo(&this->info, this->obj.id);
 
@@ -158,7 +150,7 @@ RECOMP_PATCH void Corneria_CsLevelComplete1_TeamSetup(ActorCutscene* this, s32 i
 }
 
 // @recomp: For carrier Level complete, this is team setup
-RECOMP_PATCH void func_demo_8004A700(ActorCutscene* this, s32 index) {
+RECOMP_PATCH void Cutscene_TeamSetup(ActorCutscene* this, s32 index) {
     Actor_Initialize(this);
     this->obj.status = OBJ_INIT;
     this->obj.id = OBJ_ACTOR_CUTSCENE;
@@ -174,7 +166,7 @@ RECOMP_PATCH void func_demo_8004A700(ActorCutscene* this, s32 index) {
     this->fwork[3] = 4.0f;
     this->fwork[7] = RAND_FLOAT(100.0f);
     this->fwork[8] = RAND_FLOAT(100.0f);
-    this->obj.rot.z = D_demo_800CA074[index];
+    this->obj.rot.z = sCsTeamSetupZRot[index];
     this->iwork[11] = 1;
     Object_SetInfo(&this->info, this->obj.id);
 
@@ -211,7 +203,7 @@ RECOMP_PATCH void SectorY_8019EB80(void) {
         actor->obj.pos.y = D_i6_801A69FC[i].y + gPlayer[0].pos.y + RAND_FLOAT_SEEDED(1000.0f);
         actor->obj.pos.z = D_i6_801A69FC[i].z + gPlayer[0].pos.z + RAND_FLOAT_SEEDED(1000.0f);
 
-        actor->rot_0F4.z = RAND_FLOAT_CENTERED_SEEDED(200.0f);
+        actor->orient.z = RAND_FLOAT_CENTERED_SEEDED(200.0f);
 
         actor->vwork[0].x = (D_i6_801A69FC[i].x * 0.5f) + gPlayer[0].pos.x;
         actor->vwork[0].y = D_i6_801A69FC[i].y + gPlayer[0].pos.y;
@@ -222,7 +214,7 @@ RECOMP_PATCH void SectorY_8019EB80(void) {
 
         if (i >= 3) {
             actor->animFrame = ACTOR_CS_SY_SHIP_1_SHRINK;
-            actor->rot_0F4.z = 0.0f;
+            actor->orient.z = 0.0f;
         }
         if (i >= 7) {
             actor->animFrame = ACTOR_CS_SY_SHIP_2;
@@ -248,8 +240,8 @@ RECOMP_PATCH void Meteo_LevelComplete_SetupTeam(ActorCutscene* this, s32 teamIdx
     this->obj.pos.y = sMeLevelCompleteTeamSetupPos[teamIdx].y + gPlayer[0].pos.y;
     this->obj.pos.z = sMeLevelCompleteTeamSetupPos[teamIdx].z + gPlayer[0].trueZpos;
 
-    this->rot_0F4.y = 0.0f;
-    this->rot_0F4.z = sMeLevelCompleteTeamSetupModel[teamIdx];
+    this->orient.y = 0.0f;
+    this->orient.z = sMeLevelCompleteTeamSetupModel[teamIdx];
 
     Object_SetInfo(&this->info, this->obj.id);
 
@@ -317,7 +309,7 @@ RECOMP_PATCH void Katina_SFTeam_LevelComplete_Update(void) {
             actor->obj.pos.y = (sCsLevelCompleteActorPos[i].y + gPlayer[0].pos.y) - RAND_FLOAT_SEEDED(1000.0f);
             actor->obj.pos.z = (sCsLevelCompleteActorPos[i].z + gPlayer[0].pos.z) + RAND_FLOAT_SEEDED(1000.0f);
 
-            actor->rot_0F4.z = RAND_FLOAT_CENTERED_SEEDED(200.0f);
+            actor->orient.z = RAND_FLOAT_CENTERED_SEEDED(200.0f);
 
             actor->vwork[0].x = (sCsLevelCompleteActorPos[i].x * 0.5f) + gPlayer[0].pos.x;
             actor->vwork[0].y = sCsLevelCompleteActorPos[i].y + gPlayer[0].pos.y;
@@ -353,7 +345,7 @@ RECOMP_PATCH void Katina_SFTeamFleeUpdate(ActorCutscene* this, s32 idx) {
     this->obj.pos.y = D_i4_8019F2AC[idx + 1];
     this->obj.pos.z = D_i4_8019F2BC[idx + 1];
 
-    this->rot_0F4.y = D_i4_8019F2CC[idx + 1];
+    this->orient.y = D_i4_8019F2CC[idx + 1];
 
     this->fwork[1] = D_i4_8019F2DC[idx + 1];
     this->fwork[0] = 40.0f;
@@ -378,7 +370,7 @@ RECOMP_PATCH void Katina_SFTeamMissionAccomUpdate(ActorCutscene* this, s32 idx) 
     this->obj.pos.y = D_i4_8019F26C[idx + 1] + gPlayer[0].pos.y;
     this->obj.pos.z = D_i4_8019F278[idx + 1] + gPlayer[0].pos.z;
 
-    this->rot_0F4.y = D_i4_8019F284[idx + 1];
+    this->orient.y = D_i4_8019F284[idx + 1];
 
     this->fwork[1] = D_i4_8019F290[idx + 1];
     this->fwork[0] = 40.0f;
@@ -431,8 +423,8 @@ RECOMP_PATCH void Bolse_8018EAEC(ActorCutscene* this, s32 index) {
     this->animFrame = D_i4_8019F000[index];
     this->obj.rot.y = 180.0f;
     this->vel.z = -gPlayer[0].baseSpeed;
-    this->rot_0F4.z = D_i4_8019F00C[index];
-    this->rot_0F4.y = D_i4_8019F018[index];
+    this->orient.z = D_i4_8019F00C[index];
+    this->orient.y = D_i4_8019F018[index];
     Object_SetInfo(&this->info, this->obj.id);
     this->iwork[11] = 1;
 
@@ -606,8 +598,8 @@ RECOMP_PATCH void SectorY_801A06A4(ActorCutscene* this, s32 teamIdx) {
         this->obj.pos.z = gPlayer[0].pos.z + D_i6_801A6AEC[teamIdx].z;
 
         this->fwork[0] = gPlayer[0].baseSpeed;
-        this->rot_0F4.y = gPlayer[0].rot.y;
-        this->rot_0F4.z = gPlayer[0].rot.z;
+        this->orient.y = gPlayer[0].rot.y;
+        this->orient.z = gPlayer[0].rot.z;
         this->state = teamIdx + 7;
         this->iwork[11] = 1;
         Object_SetInfo(&this->info, this->obj.id);
@@ -621,17 +613,17 @@ RECOMP_PATCH void SectorY_801A06A4(ActorCutscene* this, s32 teamIdx) {
 }
 
 // Warp zone level complete team setup
-RECOMP_PATCH void func_demo_80048CC4(ActorCutscene* this, s32 index) {
+RECOMP_PATCH void Cutscene_WarpZoneComplete_TeamSetup(ActorCutscene* this, s32 index) {
     Actor_Initialize(this);
     this->obj.status = OBJ_INIT;
     this->obj.id = OBJ_ACTOR_CUTSCENE;
 
-    this->obj.pos.x = D_demo_800C9F60[index].x + gPlayer[0].pos.x;
-    this->obj.pos.y = D_demo_800C9F60[index].y + gPlayer[0].pos.y;
-    this->obj.pos.z = D_demo_800C9F60[index].z + gPlayer[0].trueZpos;
+    this->obj.pos.x = sCsWarpZoneTeamSetupPos[index].x + gPlayer[0].pos.x;
+    this->obj.pos.y = sCsWarpZoneTeamSetupPos[index].y + gPlayer[0].pos.y;
+    this->obj.pos.z = sCsWarpZoneTeamSetupPos[index].z + gPlayer[0].trueZpos;
 
-    this->rot_0F4.y = 0.0f;
-    this->rot_0F4.z = D_demo_800C9F90[index];
+    this->orient.y = 0.0f;
+    this->orient.z = sCsWarpZoneTeamSetupOrient[index];
 
     Object_SetInfo(&this->info, this->obj.id);
 

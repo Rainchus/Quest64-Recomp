@@ -29,7 +29,7 @@ extern f32 sPrologueTextXpos;
 extern f32 sPrologueTextYpos;
 extern f32 sPrologueNextTexAlpha;
 extern f32 sPrologueCurrentTexAlpha;
-extern f32 D_menu_801CD9EC;
+extern f32 sPrologueTextScrollSpeed;
 extern s32 sPrologueTexIdx;
 extern s32 sMapTimer3;
 extern s32 D_menu_801CD970;
@@ -260,7 +260,7 @@ RECOMP_PATCH void Map_Prologue_Update(void) {
             sPrologueTextYpos = 230.0f;
             sPrologueCurrentTexAlpha = 0;
             sPrologueNextTexAlpha = 0;
-            D_menu_801CD9EC = 0.29f;
+            sPrologueTextScrollSpeed = 0.29f;
             gStarCount = 800;
             sMapTimer3 = 5;
             sMapSubState++;
@@ -273,7 +273,7 @@ RECOMP_PATCH void Map_Prologue_Update(void) {
                 }
 
                 if (sPrologueTextYpos > -355.0f) {
-                    sPrologueTextYpos -= D_menu_801CD9EC;
+                    sPrologueTextYpos -= sPrologueTextScrollSpeed;
                 }
 
                 if ((sPrologueTextYpos < 200.0f) && (sPrologueCurrentTexAlpha != 255)) {

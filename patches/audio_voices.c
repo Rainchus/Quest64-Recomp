@@ -154,7 +154,7 @@ RECOMP_PATCH void AudioLoad_Init(void) __attribute__((optnone)) {
     }
 
     AudioHeap_InitPool(&gPermanentPool.pool, ramAddr, gPermanentPoolSize);
-    func_800168BC();
+    AudioSeq_InitSequencePlayers();
 }
 #endif
 
@@ -167,7 +167,7 @@ s8 Audio_GetSfxPan(f32 xPos, f32 zPos, u8 mode);
 extern SfxChannelState sSfxChannelState[16];
 ;
 extern Modulation sSfxVolumeMods[5];
-extern u8 sSfxChannelLayout;
+extern u8 sSfxLayout;
 
 RECOMP_PATCH void Audio_SetSfxProperties(u8 bankId, u8 entryIndex, u8 channelId) {
     f32 volumeMod = 1.0f;
@@ -194,7 +194,7 @@ RECOMP_PATCH void Audio_SetSfxProperties(u8 bankId, u8 entryIndex, u8 channelId)
             reverb = Audio_GetSfxReverb(bankId, entryIndex, channelId);
             freqMod = Audio_GetSfxFreqMod(bankId, entryIndex) * *entry->freqMod;
             if (!((bankId == SFX_BANK_PLAYER) && ((-200.0f < *entry->zPos) && (*entry->zPos < 200.0f)) &&
-                  (sSfxChannelLayout != SFXCHAN_3))) {
+                  (sSfxLayout != SFX_LAYOUT_VS))) {
                 pan = Audio_GetSfxPan(*entry->xPos, *entry->zPos, entry->token);
             }
             break;
@@ -204,7 +204,7 @@ RECOMP_PATCH void Audio_SetSfxProperties(u8 bankId, u8 entryIndex, u8 channelId)
                 AUDIOCMD_CHANNEL_SET_IO(SEQ_PLAYER_SFX, channelId, 1, gVoiceLanguage);
             }
 #endif
-            if (sSfxChannelLayout == SFXCHAN_3) {
+            if (sSfxLayout == SFX_LAYOUT_VS) {
                 if (entry->token != 4) {
                     pan = (entry->token & 1) * 127;
                 }
@@ -276,7 +276,7 @@ RECOMP_PATCH void Audio_RestartSeqPlayers(void) {
 
     if (sAudioSpecId == AUDIOSPEC_AQ) {
         fadeIn = 360;
-    } else if (sAudioSpecId < AUDIOSPEC_23) {
+    } else if (sAudioSpecId < AUDIOSPEC_TITLE) {
         fadeIn = 90;
     }
     Audio_StartSequence(SEQ_PLAYER_SFX, NA_BGM_SE, -1, fadeIn);
@@ -339,14 +339,14 @@ RECOMP_PATCH void AudioHeap_Init(void) {
     gNumNotes = spec->numNotes;
     D_8014C1B0 = spec->unk_14;
     gMaxTempo = (u16) ((gAudioBufferParams.ticksPerUpdate * 2880000.0f / gSeqTicksPerBeat) / gMaxTempoTvTypeFactors);
-    gAudioBufferParams.count = spec->numBuffers;
-    gAudioBufferParams.samplesPerFrameTarget *= gAudioBufferParams.count;
-    gAudioBufferParams.maxAiBufferLength *= gAudioBufferParams.count;
-    gAudioBufferParams.minAiBufferLength *= gAudioBufferParams.count;
-    gAudioBufferParams.ticksPerUpdate *= gAudioBufferParams.count;
+    gAudioBufferParams.numBuffers = spec->numBuffers;
+    gAudioBufferParams.samplesPerFrameTarget *= gAudioBufferParams.numBuffers;
+    gAudioBufferParams.maxAiBufferLength *= gAudioBufferParams.numBuffers;
+    gAudioBufferParams.minAiBufferLength *= gAudioBufferParams.numBuffers;
+    gAudioBufferParams.ticksPerUpdate *= gAudioBufferParams.numBuffers;
 
     // #ifdef VERSION_US
-    if (gAudioBufferParams.count >= 2) {
+    if (gAudioBufferParams.numBuffers >= 2) {
         gAudioBufferParams.maxAiBufferLength -= 0x10;
     }
     // #endif
@@ -375,8 +375,8 @@ RECOMP_PATCH void AudioHeap_Init(void) {
     AudioHeap_InitSampleCaches(spec->persistentSampleCacheSize, spec->temporarySampleCacheSize);
     AudioHeap_ResetLoadStatus();
     gNotes = AudioHeap_AllocZeroed(&gMiscPool, gNumNotes * sizeof(Note));
-    func_800132E8();
-    func_800128B4();
+    Audio_NoteInitAll();
+    Audio_InitNoteFreeList();
     gNoteSubsEu = AudioHeap_AllocZeroed(&gMiscPool, gAudioBufferParams.ticksPerUpdate * gNumNotes * sizeof(NoteSubEu));
 
     for (i = 0; i != 2; i++) {

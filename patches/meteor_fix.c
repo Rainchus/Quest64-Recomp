@@ -5,7 +5,7 @@ extern Vec3f D_i2_801955C4;
 void Meteo_LevelStart_SetupTeam(ActorCutscene* this, s32 teamIdx);
 void Meteo_8018CAD8(void);
 void Meteo_8018CA10(MeMeteor2* this, ActorCutscene* actorCs, f32 x, f32 y, f32 z);
-void Meteo_Effect346_Spawn(ActorEvent* this);
+void Meteo_SmallRock_Spawn(ActorEvent* this);
 
 PosRot sMeteorGroup1[10] = {
     {
@@ -322,9 +322,9 @@ RECOMP_PATCH void Meteo_LevelStart(Player* player) {
             }
 
             if (gCsFrameCount == 340) {
-                func_effect_8007D2C8(gActors[8].obj.pos.x, gActors[8].obj.pos.y, gActors[8].obj.pos.z, 10.0f);
+                Effect_FireSmoke1_Spawn3(gActors[8].obj.pos.x, gActors[8].obj.pos.y, gActors[8].obj.pos.z, 10.0f);
                 gActors[8].obj.status = OBJ_FREE;
-                Meteo_Effect346_Spawn(&gActors[8]);
+                Meteo_SmallRock_Spawn(&gActors[8]);
             }
 
             if (player->csEventTimer != 0) {
@@ -349,11 +349,11 @@ RECOMP_PATCH void Meteo_LevelStart(Player* player) {
                                              sp68, sp64, 0.0f);
                 }
                 if (player->csEventTimer == 1) {
-                    func_effect_8007D2C8(gActors[player->meTargetIndex].obj.pos.x,
+                    Effect_FireSmoke1_Spawn3(gActors[player->meTargetIndex].obj.pos.x,
                                          gActors[player->meTargetIndex].obj.pos.y,
                                          gActors[player->meTargetIndex].obj.pos.z, 10.0f);
                     gActors[player->meTargetIndex].obj.status = OBJ_FREE;
-                    Meteo_Effect346_Spawn(&gActors[player->meTargetIndex]);
+                    Meteo_SmallRock_Spawn(&gActors[player->meTargetIndex]);
                     Object_Kill(&gPlayerShots[0].obj, gPlayerShots[0].sfxSource);
                 }
             }
@@ -372,7 +372,7 @@ RECOMP_PATCH void Meteo_LevelStart(Player* player) {
             if (player->csTimer == 0) {
                 AUDIO_PLAY_BGM(gBgmSeqId);
                 gLevelStartStatusScreenTimer = 80;
-                player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                player->state = PLAYERSTATE_ACTIVE;
                 player->csState = 0;
                 player->csTimer = 0;
                 player->csEventTimer = 0;

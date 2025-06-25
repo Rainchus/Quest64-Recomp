@@ -113,18 +113,18 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
 
-                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(D_CO_601B6C0));
+                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(aCoGroundGrassTex));
                 temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f)); // 0.64f / 3.0f
                 temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
                 gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
                 switch (gGroundSurface) {
                     case SURFACE_GRASS:
-                        gDPLoadTileTexture(gMasterDisp++, D_CO_601B6C0, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
+                        gDPLoadTileTexture(gMasterDisp++, aCoGroundGrassTex, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
                         gBgColor = 0x845; // 8, 8, 32
                         break;
                     case SURFACE_ROCK:
-                        gDPLoadTileTexture(gMasterDisp++, D_CO_6028260, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
+                        gDPLoadTileTexture(gMasterDisp++, aCoGroundRockTex, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
                         gBgColor = 0x845; // 8, 8, 32
                         break;
                     case SURFACE_WATER:
@@ -139,7 +139,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f, MTXF_APPLY); // Center water
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                gSPDisplayList(gMasterDisp++, aCoGroundOnRailsDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Extend water to the left
@@ -147,7 +147,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, -3000.0f, MTXF_APPLY); // Left water
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                gSPDisplayList(gMasterDisp++, aCoGroundOnRailsDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Extend water to the right
@@ -155,7 +155,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, -3000.0f, MTXF_APPLY); // Right water
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                gSPDisplayList(gMasterDisp++, aCoGroundOnRailsDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Drawing the original water in the middle
@@ -163,7 +163,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, 3000.0f, MTXF_APPLY); // Center water
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                gSPDisplayList(gMasterDisp++, aCoGroundOnRailsDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Extend water to the left
@@ -171,7 +171,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, -8000.0f, 0.0f, 3000.0f, MTXF_APPLY); // Left water
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                gSPDisplayList(gMasterDisp++, aCoGroundOnRailsDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Extend water to the right
@@ -179,7 +179,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, 8000.0f, 0.0f, 3000.0f, MTXF_APPLY); // Right water
                 Matrix_Scale(gGfxMatrix, 1.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_CO_601B640);
+                gSPDisplayList(gMasterDisp++, aCoGroundOnRailsDL);
 
                 // @recomp Pop the transform id.
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -200,7 +200,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                     Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
                                      MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, D_CO_601EAA0);
+                    gSPDisplayList(gMasterDisp++, aCoGroundAllRangeDL);
                     Matrix_Pop(&gGfxMatrix);
                 }
 
@@ -214,15 +214,15 @@ RECOMP_PATCH void Background_DrawGround(void) {
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             switch (gCurrentLevel) {
                 case LEVEL_VENOM_1:
-                    sp1C4 = D_VE1_6006750;
-                    sp1C0 = D_VE1_60066D0;
+                    sp1C4 = aVe1GroundTex;
+                    sp1C0 = aVe1GroundDL;
                     gDPLoadTextureBlock(gMasterDisp++, sp1C4, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0,
                                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD,
                                         G_TX_NOLOD);
                     break;
                 case LEVEL_MACBETH:
-                    sp1C4 = D_MA_602DCB8;
-                    sp1C0 = D_MA_60306D0;
+                    sp1C4 = aMaGroundTex;
+                    sp1C0 = aMaGroundDL;
                     gDPLoadTextureBlock(gMasterDisp++, sp1C4, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0,
                                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD,
                                         G_TX_NOLOD);
@@ -323,7 +323,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gsSPEndDisplayList(),
             };
 
-            sp1C4 = D_TR_6005938;
+            sp1C4 = aTrGroundTex;
             sp1C0 = trainingGroundDL_FIX;
             gDPLoadTextureBlock(gMasterDisp++, sp1C4, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                 G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
@@ -409,7 +409,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                                      MTXF_APPLY);
                     Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, D_TR_6005880);
+                    gSPDisplayList(gMasterDisp++, aTrGroundDL);
                     Matrix_Pop(&gGfxMatrix);
                 }
 
@@ -420,14 +420,14 @@ RECOMP_PATCH void Background_DrawGround(void) {
 
         case LEVEL_AQUAS:
             RCP_SetupDL(&gMasterDisp, SETUPDL_20);
-            sp1C0 = D_AQ_600AB10;
+            sp1C0 = aAqGroundDL;
             gSPFogPosition(gMasterDisp++, gFogNear, gFogFar);
 
-            if ((D_bg_8015F964 == 0) && ((gAqDrawMode == 0) || (gAqDrawMode == 2))) {
+            if ((gDrawAquasSurfaceWater == 0) && ((gAqDrawMode == 0) || (gAqDrawMode == 2))) {
 
-                gDPLoadTileTexture(gMasterDisp++, SEGMENTED_TO_VIRTUAL(D_AQ_600AB68), G_IM_FMT_RGBA, G_IM_SIZ_16b, 32,
+                gDPLoadTileTexture(gMasterDisp++, SEGMENTED_TO_VIRTUAL(aAqGroundTex), G_IM_FMT_RGBA, G_IM_SIZ_16b, 32,
                                    32);
-                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(D_AQ_600AB68));
+                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(aAqGroundTex));
                 temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f));
                 temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
                 gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
@@ -486,10 +486,10 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Pop(&gGfxMatrix);
             }
 
-            if ((D_bg_8015F964 != 0) || (gAqDrawMode == 0)) {
-                gDPLoadTileTexture(gMasterDisp++, SEGMENTED_TO_VIRTUAL(D_AQ_602ACC0), G_IM_FMT_RGBA, G_IM_SIZ_16b, 32,
+            if ((gDrawAquasSurfaceWater != 0) || (gAqDrawMode == 0)) {
+                gDPLoadTileTexture(gMasterDisp++, SEGMENTED_TO_VIRTUAL(aAqWaterTex), G_IM_FMT_RGBA, G_IM_SIZ_16b, 32,
                                    32);
-                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(D_AQ_602ACC0));
+                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(aAqWaterTex));
                 temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f));
                 temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
                 gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
@@ -500,13 +500,13 @@ RECOMP_PATCH void Background_DrawGround(void) {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_37);
                 }
 
-                if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) && (gPlayer[0].csState < 2)) {
+                if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) && (gPlayer[0].csState < 2)) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-                } else if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
-                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, D_bg_8015F974, D_bg_8015F978, D_bg_8015F97C,
-                                    D_bg_8015F980);
+                } else if (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, gAquasSurfaceColorR, gAquasSurfaceColorG, gAquasSurfaceColorB,
+                                    gAquasSurfaceAlpha2);
                 } else {
-                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, (s32) D_AQ_801C4188);
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, (s32) gAquasSurfaceAlpha);
                 }
 
                 // Render the original object in the middle TEST
@@ -516,79 +516,79 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_AQ_2, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
 
-                Matrix_Translate(gGfxMatrix, 0.0f, D_bg_8015F970, -9000.0f, MTXF_APPLY); // Center
+                Matrix_Translate(gGfxMatrix, 0.0f, gSurfaceWaterYPos, -9000.0f, MTXF_APPLY); // Center
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
                 // Render the extended object to the left
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -16000.0f, D_bg_8015F970, -9000.0f,
+                Matrix_Translate(gGfxMatrix, -16000.0f, gSurfaceWaterYPos, -9000.0f,
                                  MTXF_APPLY); // Left (-6000.0f on X-axis)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the extended object to the right
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 16000.0f, D_bg_8015F970, -9000.0f,
+                Matrix_Translate(gGfxMatrix, 16000.0f, gSurfaceWaterYPos, -9000.0f,
                                  MTXF_APPLY); // Right (6000.0f on X-axis)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the original object in the middle
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, D_bg_8015F970, -3000.0f, MTXF_APPLY); // Center
+                Matrix_Translate(gGfxMatrix, 0.0f, gSurfaceWaterYPos, -3000.0f, MTXF_APPLY); // Center
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the extended object to the left
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -16000.0f, D_bg_8015F970, -3000.0f,
+                Matrix_Translate(gGfxMatrix, -16000.0f, gSurfaceWaterYPos, -3000.0f,
                                  MTXF_APPLY); // Left (-6000.0f on X-axis)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the extended object to the right
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 16000.0f, D_bg_8015F970, -3000.0f,
+                Matrix_Translate(gGfxMatrix, 16000.0f, gSurfaceWaterYPos, -3000.0f,
                                  MTXF_APPLY); // Right (6000.0f on X-axis)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the original object in the middle (other row)
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 0.0f, D_bg_8015F970, 3000.0f, MTXF_APPLY); // Center (other row)
+                Matrix_Translate(gGfxMatrix, 0.0f, gSurfaceWaterYPos, 3000.0f, MTXF_APPLY); // Center (other row)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the extended object to the left (other row)
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, -16000.0f, D_bg_8015F970, 3000.0f,
+                Matrix_Translate(gGfxMatrix, -16000.0f, gSurfaceWaterYPos, 3000.0f,
                                  MTXF_APPLY); // Left (-6000.0f on X-axis, other row)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
                 Matrix_Pop(&gGfxMatrix);
 
                 // Render the extended object to the right (other row)
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, 16000.0f, D_bg_8015F970, 3000.0f,
+                Matrix_Translate(gGfxMatrix, 16000.0f, gSurfaceWaterYPos, 3000.0f,
                                  MTXF_APPLY); // Right (6000.0f on X-axis, other row)
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
-                gSPDisplayList(gMasterDisp++, D_AQ_602AC40);
+                gSPDisplayList(gMasterDisp++, aAqWaterSurfaceDL);
 
                 // @recomp Pop the transform id.
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -607,7 +607,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 RCP_SetupDL_20(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             }
 
-            if ((gCurrentLevel == LEVEL_FORTUNA) && !(gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE)) {
+            if ((gCurrentLevel == LEVEL_FORTUNA) && !(gPlayer[0].state == PLAYERSTATE_ACTIVE)) {
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
@@ -625,13 +625,13 @@ RECOMP_PATCH void Background_DrawGround(void) {
                                  MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 if (gCurrentLevel == LEVEL_FORTUNA) {
-                    gSPDisplayList(gMasterDisp++, D_FO_6001360);
+                    gSPDisplayList(gMasterDisp++, aFoGroundDL);
                 } else if (gCurrentLevel == LEVEL_KATINA) {
-                    gSPDisplayList(gMasterDisp++, D_KA_6009250);
+                    gSPDisplayList(gMasterDisp++, aKaGroundDL);
                 } else if (gCurrentLevel == LEVEL_BOLSE) {
-                    gSPDisplayList(gMasterDisp++, D_BO_600A810);
+                    gSPDisplayList(gMasterDisp++, aBoGroundDL);
                 } else if (gCurrentLevel == LEVEL_VENOM_2) {
-                    gSPDisplayList(gMasterDisp++, D_VE2_6010700);
+                    gSPDisplayList(gMasterDisp++, aVe2GroundDL);
                 }
                 Matrix_Pop(&gGfxMatrix);
             }
@@ -659,9 +659,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 Matrix_Translate(gGfxMatrix, sGroundPositions360x[i], 0.0f, sGroundPositions360z[i], MTXF_APPLY);
                 Matrix_SetGfxMtx(&gMasterDisp);
                 if (gVersusStage == VS_STAGE_CORNERIA) {
-                    gSPDisplayList(gMasterDisp++, D_versus_3018800);
+                    gSPDisplayList(gMasterDisp++, aVsCorneriaGroundDL);
                 } else {
-                    gSPDisplayList(gMasterDisp++, D_versus_30160A0);
+                    gSPDisplayList(gMasterDisp++, aVsKatinaGroundDL);
                 }
                 Matrix_Pop(&gGfxMatrix);
             }
@@ -682,7 +682,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -2000.0f, MTXF_APPLY);
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
-            gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0 : D_SO_6002E60);
+            gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? aSoLava1DL : aSoLava2DL);
             Matrix_Pop(&gGfxMatrix);
             // @recomp Pop the transform id.
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -721,14 +721,14 @@ RECOMP_PATCH void Background_DrawGround(void) {
                                                G_EX_EDIT_ALLOW);
 
                 /*
-                memcpy2(dynaFloor1, SEGMENTED_TO_VIRTUAL(D_SO_6002E60), 724 * sizeof(Gfx));
-                memcpy2(dynaFloor2, SEGMENTED_TO_VIRTUAL(D_SO_60005B0), 724 * sizeof(Gfx));
+                memcpy2(dynaFloor1, SEGMENTED_TO_VIRTUAL(aSoLava2DL), 724 * sizeof(Gfx));
+                memcpy2(dynaFloor2, SEGMENTED_TO_VIRTUAL(aSoLava1DL), 724 * sizeof(Gfx));
                 memcpy2(dynaFloor1Vtx, SEGMENTED_TO_VIRTUAL(D_SO_6001C50), 17 * 17 * sizeof(Vtx));
                 memcpy2(dynaFloor2Vtx, SEGMENTED_TO_VIRTUAL(D_SO_6004500), 17 * 17 * sizeof(Vtx));
                 */
 
                 // Render the display list based on the current frame
-                gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? D_SO_60005B0_copy : D_SO_6002E60_copy);
+                gSPDisplayList(gMasterDisp++, (gGameFrameCount % 2) ? aSoLava1DL_copy : aSoLava2DL_copy);
 
                 // @recomp Pop the transform id.
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -754,9 +754,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_SetGfxMtx(&gMasterDisp);
 
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL);
             }
             Matrix_Pop(&gGfxMatrix);
 
@@ -770,9 +770,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -787,9 +787,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -800,9 +800,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL);
             }
             Matrix_Pop(&gGfxMatrix);
 
@@ -816,9 +816,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -833,9 +833,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -846,9 +846,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL);
             }
             Matrix_Pop(&gGfxMatrix);
 
@@ -862,9 +862,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -879,9 +879,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -892,9 +892,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL);
             }
             Matrix_Pop(&gGfxMatrix);
 
@@ -908,9 +908,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -925,9 +925,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -938,9 +938,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL);
             }
             Matrix_Pop(&gGfxMatrix);
 
@@ -954,9 +954,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -971,9 +971,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
             gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5, G_TX_NOLOD,
                        G_TX_WRAP, 5, G_TX_NOLOD);
             if ((gGameFrameCount % 2) != 0) {
-                gSPDisplayList(gMasterDisp++, D_ZO_6008830_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater1DL_copy);
             } else {
-                gSPDisplayList(gMasterDisp++, D_ZO_600B0E0_copy);
+                gSPDisplayList(gMasterDisp++, aZoWater2DL_copy);
             }
             gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK); // Re-enable backface culling
             Matrix_Pop(&gGfxMatrix);
@@ -1119,8 +1119,8 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
 }
 #endif
 
-extern u16 D_BO_6008BB8[];
-extern u16 D_BO_600AD80[];
+extern u16 aBoGroundTex2[];
+extern u16 aBoGroundTex1[];
 extern Gfx D_BO_600BEC0[];
 
 RECOMP_PATCH void Bolse_DrawDynamicGround(void) {
@@ -1159,9 +1159,9 @@ RECOMP_PATCH void Bolse_DrawDynamicGround(void) {
             if ((spD0.z < 3000.0f) && (spD0.z > -13000.0f) && (fabsf(spD0.x) < (fabsf(spD0.z * 0.7f) + 9000.0f)) &&
                 (fabsf(spD0.y) < (fabsf(spD0.z * 0.5f) + 4000.0f))) {
                 if (rnd < 0.3f) {
-                    gDPLoadTileTexture(gMasterDisp++, D_BO_6008BB8, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
+                    gDPLoadTileTexture(gMasterDisp++, aBoGroundTex2, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
                 } else {
-                    gDPLoadTileTexture(gMasterDisp++, D_BO_600AD80, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
+                    gDPLoadTileTexture(gMasterDisp++, aBoGroundTex1, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32);
                 }
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gSPDisplayList(gMasterDisp++, D_BO_600BEC0);

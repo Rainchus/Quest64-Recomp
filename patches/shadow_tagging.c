@@ -59,7 +59,7 @@ RECOMP_PATCH void Object_DrawShadow(s32 index, Object* obj) {
 
 extern f32 sPlayerShadowing;
 extern Gfx aArwingShadowDL[];
-extern Gfx D_landmaster_3008100[];
+extern Gfx aLandmasterShadowDL[];
 extern Gfx D_versus_301E570[];
 extern Gfx aBallDL[];
 
@@ -100,7 +100,7 @@ RECOMP_PATCH void Display_PlayerShadow_Draw(Player* player) {
                 RCP_SetupDL(&gMasterDisp, SETUPDL_65);
             }
             if (!gVersusMode) {
-                gSPDisplayList(gMasterDisp++, D_landmaster_3008100);
+                gSPDisplayList(gMasterDisp++, aLandmasterShadowDL);
             } else {
                 gSPDisplayList(gMasterDisp++, D_versus_301E570);
             }

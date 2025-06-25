@@ -36,7 +36,7 @@ void KillBoss(void) {
     gLaserStrength[0] = 2;
 
     if (gControllerPress[0].button & U_JPAD) {
-        // player->state_1C8 = PLAYERSTATE_1C8_START_360;
+        // player->state = PLAYERSTATE_START_360;
         player->baseSpeed += 50;
     }
     if (gControllerPress[0].button & D_JPAD) {
@@ -162,7 +162,7 @@ void KillBoss(void) {
 
             case LEVEL_FORTUNA:
                 // Call Starwolf
-                if ((eventState == 0) && (player->state_1C8 == PLAYERSTATE_1C8_ACTIVE) && (bossMercyTimer == 0)) {
+                if ((eventState == 0) && (player->state == PLAYERSTATE_ACTIVE) && (bossMercyTimer == 0)) {
                     gAllRangeSpawnEvent = gAllRangeEventTimer + 2;
                     for (i = 0; i < 6; i++) {
                         gSavedStarWolfTeamAlive[i] = true;
@@ -175,7 +175,7 @@ void KillBoss(void) {
 
 #if 0
                 // Good Ending
-                if ((eventState != 0) && (player->state_1C8 == PLAYERSTATE_1C8_ACTIVE) && (bossMercyTimer == 0)) {
+                if ((eventState != 0) && (player->state == PLAYERSTATE_ACTIVE) && (bossMercyTimer == 0)) {
                     eventState = 0;
                     gAllRangeEventTimer = (10090 * 2) / gVIsPerFrame;
                     for (i = 0; i < 4; i++) {
@@ -186,7 +186,7 @@ void KillBoss(void) {
                 }
 #else
                 // Bad Ending
-                if ((eventState != 0) && (player->state_1C8 == PLAYERSTATE_1C8_ACTIVE) && (bossMercyTimer == 0)) {
+                if ((eventState != 0) && (player->state == PLAYERSTATE_ACTIVE) && (bossMercyTimer == 0)) {
                     eventState = 0;
                     gAllRangeCountdownScale = 1.0f;
                     gShowAllRangeCountdown = 1;

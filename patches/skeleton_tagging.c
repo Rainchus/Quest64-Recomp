@@ -5,7 +5,7 @@
 static s32 transform = 0;
 
 bool Andross_801935B4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
-bool Display_ArwingWingsOverrideLimbDraw(s32 limbIndex, Gfx** gfxPtr, Vec3f* pos, Vec3f* rot, void* wingData);
+bool Display_ArwingOverrideLimbDraw(s32 limbIndex, Gfx** gfxPtr, Vec3f* pos, Vec3f* rot, void* wingData);
 
 RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                          OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
@@ -424,7 +424,7 @@ void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, 
 }
 
 #if 1
-RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
+RECOMP_PATCH void Display_Arwing_Skel(ArwingInfo* arwing) {
     Vec3f frameTable[30];
     s32 drawFace;
 
@@ -436,15 +436,15 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     }
 
     if (gGameState == GSTATE_PLAY) {
-        Animation_DrawSkeleton(1, D_arwing_3016610, gPlayer[0].jointTable, Display_ArwingWingsOverrideLimbDraw, NULL,
+        Animation_DrawSkeleton(1, aAwArwingSkel, gPlayer[0].jointTable, Display_ArwingOverrideLimbDraw, NULL,
                                arwing, &gIdentityMatrix);
     } else {
         if (gGameState == GSTATE_MENU) {
-            Animation_GetFrameData(&D_arwing_3015AF4, 0, frameTable);
+            Animation_GetFrameData(&aAwWingsHalfOpenAnim, 0, frameTable);
         } else {
-            Animation_GetFrameData(&D_arwing_3015C28, 0, frameTable);
+            Animation_GetFrameData(&aAwWingsClosedAnim, 0, frameTable);
         }
-        Animation_DrawSkeleton(1, D_arwing_3016610, frameTable, Display_ArwingWingsOverrideLimbDraw, NULL, arwing,
+        Animation_DrawSkeleton(1, aAwArwingSkel, frameTable, Display_ArwingOverrideLimbDraw, NULL, arwing,
                                &gIdentityMatrix);
     }
 
@@ -484,19 +484,19 @@ RECOMP_PATCH void Display_ArwingWings(ArwingInfo* arwing) {
     Matrix_SetGfxMtx(&gMasterDisp);
     RCP_SetupDL_64_2();
 
-    if ((gGameState == GSTATE_PLAY) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) &&
+    if ((gGameState == GSTATE_PLAY) && (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) &&
         (gCurrentLevel == LEVEL_CORNERIA)) {
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 120);
         gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-        gSPDisplayList(gMasterDisp++, D_arwing_30194E0);
+        gSPDisplayList(gMasterDisp++, aAwCockpitGlassDL);
         RCP_SetupDL_46();
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 100);
-        gSPDisplayList(gMasterDisp++, D_arwing_30183D0);
+        gSPDisplayList(gMasterDisp++, aAwCockpitGlassCsDL);
     } else {
         RCP_SetupDL_46();
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 140);
         gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-        gSPDisplayList(gMasterDisp++, D_arwing_30194E0);
+        gSPDisplayList(gMasterDisp++, aAwCockpitGlassDL);
     }
 
     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);

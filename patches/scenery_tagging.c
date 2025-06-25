@@ -17,7 +17,7 @@ typedef struct Scenery2 {
     /* 0x7C */ bool skipRot;
 } Scenery2; // size = 0x80
 
-void func_edisplay_8005D008(Object* obj, s32 drawType);
+void Object_SetMatrix(Object* obj, s32 drawType);
 void Object_SetCullDirection(s32);
 void Recomp_CoBuilding_Draw(Scenery2* this);
 bool Macbeth_801A0DD8(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
@@ -25,7 +25,7 @@ void Macbeth_801A0E2C(s32 limbIndex, Vec3f* rot, void* thisx);
 
 RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 cullDir) {
     this->obj.pos.y += gCameraShakeY;
-    func_edisplay_8005D008(&this->obj, this->info.drawType);
+    Object_SetMatrix(&this->obj, this->info.drawType);
     this->obj.pos.y -= gCameraShakeY;
 
     if (this->info.drawType == 0) {
@@ -93,7 +93,7 @@ RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 cullDir) {
 RECOMP_PATCH void Sprite_Draw(Sprite* this, s32 arg1) {
     if (arg1 >= 0) {
         this->obj.pos.y += gCameraShakeY;
-        func_edisplay_8005D008(&this->obj, 0);
+        Object_SetMatrix(&this->obj, 0);
         this->obj.pos.y -= gCameraShakeY;
 
         if (this->info.drawType == 0) {
@@ -383,7 +383,7 @@ RECOMP_PATCH void Macbeth_MaProximityLight_Draw(MaProximityLight* this) {
 
 // Scenery 77 to 82, and 84 to 91
 RECOMP_PATCH void Macbeth_IndicatorSign_Draw(Scenery* this) {
-    if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
+    if (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) {
         Object_Kill(&this->obj, this->sfxSource);
     }
 
@@ -454,7 +454,7 @@ RECOMP_PATCH void Macbeth_TrainTrack_Draw(Scenery* this) {
     switch (this->obj.id) {
         case OBJ_SCENERY_MA_TRAIN_TRACK_3:
         case OBJ_SCENERY_MA_TRAIN_TRACK_6:
-            if ((gPlayer[0].state_1C8 != PLAYERSTATE_1C8_LEVEL_COMPLETE) &&
+            if ((gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) &&
                 ((gPlayer[0].trueZpos - this->obj.pos.z) < -2500.0f)) {
                 Object_Kill(&this->obj, this->sfxSource);
             }
@@ -463,7 +463,7 @@ RECOMP_PATCH void Macbeth_TrainTrack_Draw(Scenery* this) {
 
         case OBJ_SCENERY_MA_TRAIN_TRACK_4:
         case OBJ_SCENERY_MA_TRAIN_TRACK_7:
-            if ((gPlayer[0].state_1C8 != PLAYERSTATE_1C8_LEVEL_COMPLETE) &&
+            if ((gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) &&
                 ((gPlayer[0].trueZpos - this->obj.pos.z) < -2500.0f)) {
                 Object_Kill(&this->obj, this->sfxSource);
             }

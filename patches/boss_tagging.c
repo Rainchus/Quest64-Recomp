@@ -2,12 +2,12 @@
 
 extern Gfx D_VE2_600C2D0[];
 extern Gfx D_VE2_600C560[];
-extern Limb* D_VE2_600C0A4[];
+extern Limb* aVe2AndBrainSkel[];
 extern Gfx aKaFLBaseDL[];
 extern Gfx aKaFLBaseDestroyedDL[];
 
 void Meteo_MeCrusherEngineGlow_Draw(s32 scale);
-bool Andross_8018B47C(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
+bool Andross_AndBrain_OverrideLimbDraw(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
 
 RECOMP_PATCH void Andross_AndBrain_Draw(AndBrain* this) {
     s32 j;
@@ -23,7 +23,7 @@ RECOMP_PATCH void Andross_AndBrain_Draw(AndBrain* this) {
         Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 20.0f * M_DTOR, MTXF_APPLY);
         Matrix_Scale(gGfxMatrix, this->fwork[23] + 1.0f, 1.0f - this->fwork[23], 1.0f, MTXF_APPLY);
         Matrix_Scale(gGfxMatrix, this->scale, this->scale, this->scale, MTXF_APPLY);
-        Animation_DrawSkeleton(0, D_VE2_600C0A4, this->vwork, Andross_8018B47C, NULL, this, &gIdentityMatrix);
+        Animation_DrawSkeleton(0, aVe2AndBrainSkel, this->vwork, Andross_AndBrain_OverrideLimbDraw, NULL, this, &gIdentityMatrix);
         if (this->fwork[21] >= 254) {
             RCP_SetupDL(&gMasterDisp, SETUPDL_54);
             gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 64, 64, 255);

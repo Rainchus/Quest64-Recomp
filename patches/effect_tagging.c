@@ -45,7 +45,7 @@ RECOMP_PATCH void TexturedLine_Draw(void) {
                     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -200.0f, MTXF_APPLY);
                     Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 25.0f * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, D_ANDROSS_C017440);
+                    gSPDisplayList(gMasterDisp++, aAndLightningAttackDL);
                 }
             } else {
                 Matrix_SetGfxMtx(&gMasterDisp);
@@ -54,7 +54,7 @@ RECOMP_PATCH void TexturedLine_Draw(void) {
                 } else {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, texLine->prim.r, texLine->prim.g, texLine->prim.b,
                                     texLine->prim.a);
-                    gSPDisplayList(gMasterDisp++, D_edisplay_800CFD80);
+                    gSPDisplayList(gMasterDisp++, gTexturedLineDL);
                 }
             }
             Matrix_Pop(&gGfxMatrix);
@@ -164,7 +164,7 @@ RECOMP_PATCH void Effect_Effect395_Draw(Effect395* this) {
                 Lib_Texture_Scroll(D_A6_6012840, 16, 16, 0);
             }
             RCP_SetupDL(&gMasterDisp, SETUPDL_53);
-            Matrix_Scale(gGfxMatrix, this->unk_60.x, this->unk_60.y, this->unk_60.z, MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, this->orient.x, this->orient.y, this->orient.z, MTXF_APPLY);
             Matrix_SetGfxMtx(&gMasterDisp);
             gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
             gSPDisplayList(gMasterDisp++, D_A6_6012550);
@@ -313,7 +313,7 @@ RECOMP_PATCH void Effect_Effect384_Draw(Effect384* this) {
     Graphics_SetScaleMtx(this->scale2);
 
     if ((this->scale1 == 71.0f) ||
-        ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) && (gCurrentLevel == LEVEL_CORNERIA))) {
+        ((gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) && (gCurrentLevel == LEVEL_CORNERIA))) {
         RCP_SetupDL(&gMasterDisp, SETUPDL_38);
     } else {
         RCP_SetupDL(&gMasterDisp, SETUPDL_67);
@@ -638,7 +638,7 @@ RECOMP_PATCH void Effect_Effect393_Draw(Effect393* this) {
 RECOMP_PATCH void Effect_Effect357_Draw(Effect357* this) {
     Vec3f frameJointTable[50];
 
-    if ((gCurrentLevel == LEVEL_BOLSE) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) {
+    if ((gCurrentLevel == LEVEL_BOLSE) && (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE)) {
         Display_SetSecondLight(&this->obj.pos);
     }
 
@@ -1232,7 +1232,7 @@ RECOMP_PATCH void Effect_Effect391_Draw(Effect391* this) {
     RCP_SetupDL_49();
     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, this->unk_44);
     gDPSetEnvColor(gMasterDisp++, 36, 45, 28, 255);
-    Matrix_Scale(gGfxMatrix, this->unk_60.x, this->scale2 * this->unk_60.y, this->scale2, MTXF_APPLY);
+    Matrix_Scale(gGfxMatrix, this->orient.x, this->scale2 * this->orient.y, this->scale2, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
     gSPDisplayList(gMasterDisp++, D_ZO_601BAD0);
     RCP_SetupDL(&gMasterDisp, SETUPDL_64);
@@ -1284,7 +1284,7 @@ RECOMP_PATCH void Aquas_Effect363_Draw(Effect363* this) {
     // @recomp Tag the transform.
     gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
-    if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) && (gCurrentLevel == LEVEL_AQUAS) &&
+    if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) && (gCurrentLevel == LEVEL_AQUAS) &&
         (gPlayer[0].csState < 2)) {
         RCP_SetupDL(&gMasterDisp, SETUPDL_68);
         gDPSetPrimColor(gMasterDisp++, 0, 0, 0, 21, 34, this->unk_4A);
@@ -1454,7 +1454,7 @@ RECOMP_PATCH void Bolse_Effect397_Draw(Effect397* this) {
 #endif
 
 #if 1
-RECOMP_PATCH void Effect_Effect389_Draw(Effect389* this) {
+RECOMP_PATCH void Effect_ElectricArc_Draw(EffectElectricArc* this) {
     s32 i;
 
     if (this->unk_4A > 10) {

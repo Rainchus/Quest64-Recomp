@@ -223,7 +223,7 @@ RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
 
 #if ENDING_SKIP_INTERPOLATION == 1
 // @recomp Skip interpolation on the floor.
-RECOMP_PATCH void Ending_8018EDB8(u32 arg0, AssetInfo* asset) {
+RECOMP_PATCH void Ending_Floor_Draw(u32 arg0, AssetInfo* asset) {
     f32 temp;
 
     gStarCount = 0;
@@ -255,16 +255,16 @@ RECOMP_PATCH void Ending_8018EDB8(u32 arg0, AssetInfo* asset) {
     Matrix_SetGfxMtx(&gMasterDisp);
 
     // @recomp Skip interpolation on the floor.
-    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ADDRESS(D_END_700E9E0), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_SKIP,
+    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ADDRESS(aEndFloorDL), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_SKIP,
                              G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,
                              G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
 
-    gDPLoadTextureBlock(gMasterDisp++, D_END_700EA38, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_WRAP | G_TX_NOMIRROR,
+    gDPLoadTextureBlock(gMasterDisp++, aEndFloorTex, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_WRAP | G_TX_NOMIRROR,
                         G_TX_WRAP | G_TX_NOMIRROR, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
     gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, arg0 * 14, 0, G_TX_NOMIRROR | G_TX_WRAP,
                  G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
 
-    gSPDisplayList(gMasterDisp++, D_END_700E9E0);
+    gSPDisplayList(gMasterDisp++, aEndFloorDL);
 
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -284,7 +284,7 @@ RECOMP_PATCH void Ending_80190648(s32 arg0, AssetInfo* asset) {
     Matrix_SetGfxMtx(&gMasterDisp);
 
     if (D_ending_80192E70 < 1700) {
-        gSPDisplayList(gMasterDisp++, D_END_7002120);
+        gSPDisplayList(gMasterDisp++, aEndVenomDL);
     }
 }
 

@@ -8,10 +8,10 @@ extern f32 D_800C9BD8[10];
 extern u8 D_800C9C00[4];
 extern u8 D_800C9C04[4];
 extern u8 D_800C9C08[4];
-extern Gfx D_10231A0[];
+extern Gfx aItemBombDL[];
 extern Gfx D_versus_301AD60[];
 extern Gfx D_versus_301AEF0[];
-extern Gfx D_landmaster_3006940[];
+extern Gfx aLandmasterShotDL[];
 extern Gfx aOrbDL[];
 extern Gfx aStarDL[];
 extern Gfx D_1031EC0[];
@@ -178,8 +178,8 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
                 case LEVELMODE_TURRET:
                     Matrix_Push(&gGfxMatrix);
 
-                    if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) ||
-                        (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) || (gCurrentLevel == LEVEL_AQUAS)) {
+                    if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) ||
+                        (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) || (gCurrentLevel == LEVEL_AQUAS)) {
                         Display_SetSecondLight(&actor->obj.pos);
                     }
 
@@ -301,7 +301,7 @@ RECOMP_PATCH void Effect_DrawAll(s32 arg0) {
                 Effect_DrawOnRails(effect, arg0);
                 Matrix_Pop(&gGfxMatrix);
                 Object_UpdateSfxSource(effect->sfxSource);
-                if (effect->obj.id == OBJ_EFFECT_374) {
+                if (effect->obj.id == OBJ_EFFECT_FLAME_PILLAR) {
                     Matrix_Push(&gGfxMatrix);
                     Object_DrawShadow(i, &effect->obj);
                     Matrix_Pop(&gGfxMatrix);
@@ -390,7 +390,7 @@ RECOMP_PATCH void PlayerShot_DrawShot(PlayerShot* shot) {
             case PLAYERSHOT_BOMB:
                 if (shot->unk_5C == 0) {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_29);
-                    gSPDisplayList(gMasterDisp++, D_10231A0);
+                    gSPDisplayList(gMasterDisp++, aItemBombDL);
                     Matrix_Pop(&gGfxMatrix);
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z + gPathProgress,
@@ -500,7 +500,7 @@ RECOMP_PATCH void PlayerShot_DrawShot(PlayerShot* shot) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
                     gDPSetEnvColor(gMasterDisp++, 0, 255, 0, 0);
                     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
-                    gSPDisplayList(gMasterDisp++, D_landmaster_3006940);
+                    gSPDisplayList(gMasterDisp++, aLandmasterShotDL);
                 }
                 break;
             case PLAYERSHOT_ON_FOOT:
@@ -589,7 +589,7 @@ RECOMP_PATCH void PlayerShot_DrawShot(PlayerShot* shot) {
                     gSPDisplayList(gMasterDisp++, aOrbDL);
                 } else {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_29);
-                    gSPDisplayList(gMasterDisp++, D_10231A0);
+                    gSPDisplayList(gMasterDisp++, aItemBombDL);
                     Matrix_Pop(&gGfxMatrix);
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, shot->obj.pos.x, shot->obj.pos.y, shot->obj.pos.z + gPathProgress,

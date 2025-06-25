@@ -19,7 +19,7 @@ void Aquas_AqStoneColumn_PostLimbDraw(s32 limbIndex, Vec3f* rot, void* thisx);
 void Aquas_801ADF7C(f32 xPos, f32 yPos, f32 zPos, f32 xRot, f32 yRot, f32 zRot, u8 type, s32 flag, f32 scale,
                     s32 index);
 void Zoness_ZoDodora_Draw(Actor* this);
-void func_edisplay_8005D008(Object* obj, s32 drawType);
+void Object_SetMatrix(Object* obj, s32 drawType);
 void func_edisplay_8005D3CC(Object* obj, f32 xRot, f32 yRot, f32 zRot, s32 drawType);
 
 RECOMP_PATCH void Display_Landmaster(Player* player) {
@@ -175,30 +175,30 @@ RECOMP_PATCH void Aquas_BlueMarine_Draw(Player* player) {
     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -40.0f, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, M_PI, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3000C70);
+    gSPDisplayList(gMasterDisp++, aBlueMarineBodyDL);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 0.0f, -4.5f, 1.2f, MTXF_APPLY);
     Matrix_RotateZ(gGfxMatrix, player->unk_178 * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006DE0);
+    gSPDisplayList(gMasterDisp++, aBlueMarinePropellerDL);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 0.0f, 2.0f, 40.0f, MTXF_APPLY);
     Matrix_RotateY(gGfxMatrix, -player->unk_180 * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006C70);
+    gSPDisplayList(gMasterDisp++, aBlueMarineBackRudderDL);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, -19.0f, -3.6f, 1.2f, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3000AF0);
+    gSPDisplayList(gMasterDisp++, aBlueMarineLeftRudderDL);
     Matrix_Pop(&gGfxMatrix);
     Matrix_Push(&gGfxMatrix);
     Matrix_Translate(gGfxMatrix, 19.0f, -3.6f, 1.2f, MTXF_APPLY);
     Matrix_RotateX(gGfxMatrix, player->unk_17C * M_DTOR, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    gSPDisplayList(gMasterDisp++, D_blue_marine_3006AF0);
+    gSPDisplayList(gMasterDisp++, aBlueMarineRightRudderDL);
 
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -305,9 +305,10 @@ extern u8 gMeMoraPartIdx[16];
 extern f32 gMeMoraScale[16];
 extern s16 D_800CFF94[16];
 
-void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot, u8 partIdx,
+void MeMora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot, u8 partIdx,
                       f32 scale, bool colorFlicker);
-
+// SYMTODO
+#if 1
 RECOMP_PATCH void MeMora_Draw(MeMora* this) {
     s16 i;
     s16 j;
@@ -320,7 +321,7 @@ RECOMP_PATCH void MeMora_Draw(MeMora* this) {
 
     for (i = this->work_04A; i < ARRAY_COUNT(D_800CFF94); i++) {
         j = (D_800CFF94[i] + this->counter_04E) % 100;
-        Memora_DrawParts(this, gMeMoraXpos[this->work_046][j], gMeMoraYpos[this->work_046][j],
+        MeMora_DrawParts(this, gMeMoraXpos[this->work_046][j], gMeMoraYpos[this->work_046][j],
                          gMeMoraZpos[this->work_046][j], gMeMoraXrot[this->work_046][j], gMeMoraYrot[this->work_046][j],
                          gMeMoraZrot[this->work_046][j], gMeMoraPartIdx[i], gMeMoraScale[i], this->timer_0C6 % 2U);
     }
@@ -328,9 +329,10 @@ RECOMP_PATCH void MeMora_Draw(MeMora* this) {
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+#endif
 
 #if 0
-RECOMP_PATCH void Memora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot,
+RECOMP_PATCH void MeMora_DrawParts(MeMora* this, f32 xTrans, f32 yTrans, f32 zTrans, f32 xRot, f32 yRot, f32 zRot,
                                    u8 partIdx, f32 scale, bool colorFlicker) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
 
@@ -405,7 +407,7 @@ RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
         yRot *= 0.25f;
         sp50 = player->rot.x * 0.25f;
 
-        if (player->state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
+        if (player->state == PLAYERSTATE_LEVEL_COMPLETE) {
             yRot = 0.0f;
             sp50 = 0.0f;
         }
@@ -475,13 +477,13 @@ RECOMP_PATCH void Actor_DrawOnRails(Actor* this) {
         } else {
             if (this->info.unk_19 != 0) {
                 this->obj.pos.y += gCameraShakeY;
-                func_edisplay_8005D008(&this->obj, this->info.drawType);
+                Object_SetMatrix(&this->obj, this->info.drawType);
                 this->obj.pos.y -= gCameraShakeY;
             } else if ((this->obj.id == OBJ_ACTOR_EVENT) && (this->eventType != EVID_A6_UMBRA_STATION)) {
                 func_edisplay_8005D3CC(&this->obj, this->vwork[29].x, this->vwork[29].y,
-                                       this->vwork[29].z + this->rot_0F4.z, this->info.drawType);
+                                       this->vwork[29].z + this->orient.z, this->info.drawType);
             } else {
-                func_edisplay_8005D008(&this->obj, this->info.drawType);
+                Object_SetMatrix(&this->obj, this->info.drawType);
             }
 
             if (this->info.drawType == 0) {
@@ -906,7 +908,7 @@ RECOMP_PATCH void ActorDebris_Draw(ActorDebris* this) {
             break;
 
         case 45:
-            gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
+            gSPDisplayList(gMasterDisp++, aPlanetArwingAllRangeDL);
             break;
 
         case 46:
@@ -1480,8 +1482,8 @@ RECOMP_PATCH void Solar_SoRock_Draw(SoRock1* this) {
         gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
         Matrix_Push(&gGfxMatrix);
-        Matrix_RotateY(gGfxMatrix, this->rot_0F4.y * M_DTOR, MTXF_APPLY);
-        Matrix_RotateX(gGfxMatrix, this->rot_0F4.x * M_DTOR, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, this->orient.y * M_DTOR, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, this->orient.x * M_DTOR, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
 
         switch (this->obj.id) {
@@ -1558,9 +1560,9 @@ RECOMP_PATCH void Andross_AndBrainWaste_Draw(AndBrainWaste* this) {
 
     RCP_SetupDL(&gMasterDisp, SETUPDL_61);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-    Matrix_RotateZ(gGfxMatrix, this->rot_0F4.z * M_DTOR, MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix, this->orient.z * M_DTOR, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, 1.1f, 0.9f, 1.0f, MTXF_APPLY);
-    Matrix_RotateZ(gGfxMatrix, -this->rot_0F4.z * M_DTOR, MTXF_APPLY);
+    Matrix_RotateZ(gGfxMatrix, -this->orient.z * M_DTOR, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, 1.1f, 0.9f, 1.0f, MTXF_APPLY);
     Matrix_Scale(gGfxMatrix, 3.0f, 3.0f, 1.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
@@ -1612,7 +1614,7 @@ RECOMP_PATCH void Macbeth_Train_Draw(Actor* this) {
     Vec3f frameTable[50];
     s32 id;
 
-    if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) {
+    if (gPlayer[0].state == PLAYERSTATE_ACTIVE) {
         if (((gPlayer[0].trueZpos - this->obj.pos.z) > 7000.0f) ||
             ((gPlayer[0].trueZpos - this->obj.pos.z) < -1000.0f)) {
             return;
@@ -1826,7 +1828,7 @@ RECOMP_PATCH void Macbeth_Train_Draw(Actor* this) {
             Animation_DrawSkeleton(1, D_MA_601042C, frameTable, Macbeth_MaLocomotive_OverrideLimbDraw,
                                    Macbeth_MaLocomotive_PostLimbDraw, this, &gIdentityMatrix);
 
-            if (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) {
+            if (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) {
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this) + (TAG_TRAIN + 6), G_EX_PUSH,
                                                G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);

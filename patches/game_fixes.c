@@ -90,9 +90,9 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
             if (gBosses[2].state == 10) {
                 SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM, 1);
                 SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 1);
-                if ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_ACTIVE) ||
-                    (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_U_TURN)) {
-                    gPlayer[0].state_1C8 = PLAYERSTATE_1C8_LEVEL_COMPLETE;
+                if ((gPlayer[0].state == PLAYERSTATE_ACTIVE) ||
+                    (gPlayer[0].state == PLAYERSTATE_U_TURN)) {
+                    gPlayer[0].state = PLAYERSTATE_LEVEL_COMPLETE;
                     gPlayer[0].csTimer = 30;
                     gPlayer[0].csState = 0;
                     gPlayer[0].unk_000 = 0.0f;
@@ -115,7 +115,7 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
                 this->iwork[1] = gHitCount;
                 this->state = 10;
                 this->timer_0BC = 150;
-                gPlayer[0].state_1C8 = PLAYERSTATE_1C8_STANDBY;
+                gPlayer[0].state = PLAYERSTATE_STANDBY;
                 AUDIO_PLAY_BGM(NA_BGM_BOSS_BO);
                 AllRange_ClearRadio();
                 gPlayer[0].cam.eye.x = 400.0f;
@@ -148,7 +148,7 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
                 }
                 if (i == 3) {
                     this->state = 2;
-                    player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                    player->state = PLAYERSTATE_ACTIVE;
                     return;
                 }
             }
@@ -164,7 +164,7 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
 
             if ((gControllerPress->button & START_BUTTON) || ((gAllRangeSpawnEvent + 300) == gAllRangeEventTimer)) {
                 this->state = 2;
-                player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                player->state = PLAYERSTATE_ACTIVE;
                 Camera_Update360(player, true);
                 player->unk_014 = 0.0f;
                 D_hud_80161708 = 0;
@@ -213,7 +213,7 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
             if (!this->timer_0BC) {
                 gAllRangeEventTimer = 3000;
                 this->state = 2;
-                player->state_1C8 = PLAYERSTATE_1C8_ACTIVE;
+                player->state = PLAYERSTATE_ACTIVE;
                 Camera_Update360(player, true);
                 player->unk_014 = 0.0f;
                 Audio_KillSfxBySource(gBosses[1].sfxSource);
@@ -537,7 +537,7 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
                 if (gFillScreenAlpha == 255) {
                     Audio_StopPlayerNoise(0);
                     Audio_FadeOutAll(10);
-                    player->state_1C8 = PLAYERSTATE_1C8_NEXT;
+                    player->state = PLAYERSTATE_NEXT;
                     player->csTimer = 0;
                     gFadeoutType = 4;
                     gLeveLClearStatus[LEVEL_SOLAR] = Play_CheckMedalStatus(100) + 1;
@@ -564,7 +564,7 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
                     Radio_PlayMessage(gMsg_ID_20339, RCID_ROB64);
                     break;
                 default:
-                    func_demo_80048AC0(TEAM_ID_SLIPPY);
+                    Cutscene_AllAircraftReport(TEAM_ID_SLIPPY);
                     break;
             }
             break;
@@ -578,7 +578,7 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
                     Radio_PlayMessage(gMsg_ID_20338, RCID_ROB64);
                     break;
                 default:
-                    func_demo_80048AC0(TEAM_ID_PEPPY);
+                    Cutscene_AllAircraftReport(TEAM_ID_PEPPY);
                     break;
             }
             break;
@@ -592,7 +592,7 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
                     Radio_PlayMessage(gMsg_ID_20337, RCID_ROB64);
                     break;
                 default:
-                    func_demo_80048AC0(TEAM_ID_FALCO);
+                    Cutscene_AllAircraftReport(TEAM_ID_FALCO);
                     break;
             }
             break;
@@ -674,15 +674,15 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
     if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */ !gBossActive) ||
-         (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
-         (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE)) &&
+         (gPlayer[0].state == PLAYERSTATE_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
+         (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE)) &&
         (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
         if (this->obj.id == OBJ_ACTOR_CUTSCENE) {
-            if (((gCurrentLevel == LEVEL_VENOM_2) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) &&
+            if (((gCurrentLevel == LEVEL_VENOM_2) && (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) &&
                  (this->index == 10)) ||
-                ((gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_COMPLETE) && (gPlayer[0].csState >= 100) &&
+                ((gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) && (gPlayer[0].csState >= 100) &&
                  (gCurrentLevel == LEVEL_KATINA) && (this->index == 1)) ||
-                ((gCurrentLevel == LEVEL_SECTOR_Y) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_STANDBY) &&
+                ((gCurrentLevel == LEVEL_SECTOR_Y) && (gPlayer[0].state == PLAYERSTATE_STANDBY) &&
                  (this->state == 5))) {
                 gActorTeamArwing.rightWingState = gPlayer[0].arwing.rightWingState;
                 gActorTeamArwing.leftWingState = gPlayer[0].arwing.leftWingState;
@@ -708,12 +708,12 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
             gActorTeamArwing.upperRightFlapYrot = gActorTeamArwing.bottomRightFlapYrot =
                 gActorTeamArwing.upperLeftFlapYrot = gActorTeamArwing.bottomLeftFlapYrot = 0.0f;
         }
-        Display_ArwingWings(&gActorTeamArwing);
+        Display_Arwing_Skel(&gActorTeamArwing);
     } else if (gLevelType == LEVELTYPE_PLANET) {
         // @recomp Tag the transform.
         //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
-        gSPDisplayList(gMasterDisp++, D_ENMY_PLANET_40018A0);
+        gSPDisplayList(gMasterDisp++, aPlanetArwingAllRangeDL);
 
         // @recomp Pop the transform id.
         //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -721,7 +721,7 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
         // @recomp Tag the transform.
         //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
-        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4003BD0);
+        gSPDisplayList(gMasterDisp++, aSpaceArwingAllRangeDL);
 
         // @recomp Pop the transform id.
         //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -729,7 +729,7 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
         // @recomp Tag the transform.
         //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
 
-        gSPDisplayList(gMasterDisp++, D_ENMY_SPACE_4007870);
+        gSPDisplayList(gMasterDisp++, aSpaceArwingOnRailsDL);
 
         // @recomp Pop the transform id.
         //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);

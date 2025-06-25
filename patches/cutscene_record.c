@@ -121,7 +121,7 @@ RECOMP_PATCH void Cutscene_LevelComplete(Player* player) {
     switch (player->form) {
         case FORM_ARWING:
             if ((gCurrentLevel == LEVEL_VENOM_ANDROSS) || ((gCurrentLevel == LEVEL_VENOM_2) && (gLevelPhase == 1))) {
-                Andross_80193C4C(player);
+                Andross_LevelComplete(player);
             } else if (gCurrentLevel == LEVEL_SECTOR_X) {
                 if (gLevelPhase == 0) {
                     SectorX_LevelComplete(player);

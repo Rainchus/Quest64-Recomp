@@ -258,7 +258,7 @@ RECOMP_PATCH void Camera_SetStarfieldPos(f32 xEye, f32 yEye, f32 zEye, f32 xAt, 
     gStarfieldY = FloatMod(sp30, starfieldHeight);
 
     // Special case handling for specific game state and level
-    if ((gGameState == GSTATE_PLAY) && (gPlayer[0].state_1C8 == PLAYERSTATE_1C8_LEVEL_INTRO) &&
+    if ((gGameState == GSTATE_PLAY) && (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) &&
         (gCurrentLevel == LEVEL_METEO)) {
         if (fabsf(gStarfieldX - sp20) < 50.0f) {
             D_bg_8015F96C = 0.0f;

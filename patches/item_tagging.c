@@ -4,12 +4,12 @@
 extern Gfx D_101A570[];
 extern Gfx D_1019CA0[];
 extern Gfx D_1016870[];
-extern Gfx D_10231A0[];
+extern Gfx aItemBombDL[];
 extern Gfx D_1022E80[];
 extern Gfx D_1019820[];
 extern Gfx D_101A8E0[];
-extern Gfx D_1023C80[];
-extern Gfx D_101CAE0[];
+extern Gfx aCheckpointCenterDL[];
+extern Gfx aCheckpointArrowDL[];
 extern Gfx D_blue_marine_3005980[];
 
 RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
@@ -22,7 +22,7 @@ RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
         Matrix_Scale(gGfxMatrix, 3.2f, 3.2f, 3.2f, MTXF_APPLY);
         Matrix_SetGfxMtx(&gMasterDisp);
         gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
-        gSPDisplayList(gMasterDisp++, D_1023C80);
+        gSPDisplayList(gMasterDisp++, aCheckpointCenterDL);
         gDPSetTextureFilter(gMasterDisp++, G_TF_BILERP);
         Matrix_Pop(&gGfxMatrix);
     }
@@ -41,7 +41,7 @@ RECOMP_PATCH void ItemCheckpoint_Draw(ItemCheckpoint* this) {
         Matrix_Translate(gGfxMatrix, 2.0f * this->width, 0.0f, 0.0f, MTXF_APPLY);
         Matrix_RotateZ(gGfxMatrix, (gGameFrameCount + (i * 110.0f)) * M_DTOR * 7.2f * this->unk_54, MTXF_APPLY);
         Graphics_SetScaleMtx(2.0f * this->unk_50);
-        gSPDisplayList(gMasterDisp++, D_101CAE0);
+        gSPDisplayList(gMasterDisp++, aCheckpointArrowDL);
         Matrix_Pop(&gGfxMatrix);
         // @recomp Pop the transform id.
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -104,7 +104,7 @@ RECOMP_PATCH void ItemBomb_Draw(ItemBomb* this) {
         RCP_SetupDL(&gMasterDisp, SETUPDL_29);
         gSPTexture(gMasterDisp++, 2000, 2000, 0, G_TX_RENDERTILE, G_ON);
         gSPSetGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
-        gSPDisplayList(gMasterDisp++, D_10231A0);
+        gSPDisplayList(gMasterDisp++, aItemBombDL);
         gSPClearGeometryMode(gMasterDisp++, G_TEXTURE_GEN);
         RCP_SetupDL(&gMasterDisp, SETUPDL_27);
         gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
