@@ -278,6 +278,8 @@ zelda64::renderer::RT64Context::RT64Context(uint8_t* rdram, ultramodern::rendere
     app->userConfig.developerMode = debug;
     // Force gbi depth branches to prevent LODs from kicking in.
     app->enhancementConfig.f3dex.forceBranch = true;
+    // Set postBlendNoiseNegative
+    app->emulatorConfig.dither.postBlendNoiseNegative = true;
     // Scale LODs based on the output resolution.
     app->enhancementConfig.textureLOD.scale = true;
     // Pick an API if the user has set an override.
