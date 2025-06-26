@@ -368,6 +368,8 @@ struct SoundOptionsContext {
     std::atomic<int> low_health_beeps_enabled; // RmlUi doesn't seem to like "true"/"false" strings for setting variants so an int is used here instead.
     void reset() {
         bgm_volume = 100;
+        sfx_volume = 100;
+		voice_volume = 100;
         main_volume = 100;
         low_health_beeps_enabled = (int)true;
     }
@@ -962,6 +964,8 @@ public:
 
         bind_atomic(constructor, sound_options_model_handle, "main_volume", &sound_options_context.main_volume);
         bind_atomic(constructor, sound_options_model_handle, "bgm_volume", &sound_options_context.bgm_volume);
+        bind_atomic(constructor, sound_options_model_handle, "sfx_volume", &sound_options_context.sfx_volume);
+		bind_atomic(constructor, sound_options_model_handle, "voice_volume", &sound_options_context.voice_volume);
         bind_atomic(constructor, sound_options_model_handle, "low_health_beeps_enabled", &sound_options_context.low_health_beeps_enabled);
     }
 
