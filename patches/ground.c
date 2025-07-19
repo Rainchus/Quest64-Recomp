@@ -13,11 +13,148 @@ f32 gTestVarF = 0.0f;
 void Bolse_DrawDynamicGround(void);
 
 static f32 sGroundPositions360x_FIX[] = {
-    5999.0f, -5999.0f, 5999.0f, -5999.0f, /* 5999.0f * 2.0f, 5999.0f * 2.0f, -5999.0f * 2.0f, -5999.0f * 2.0f,*/
+    // center pieces : 0 - 3
+    5999.0f,         -5999.0f, 5999.0f, -5999.0f,
+    5999.0f * 3.0f,  // lower right corner piece : 4
+    5999.0f * 1.0f,  // lower middle left piece : 5
+    -5999.0f * 1.0f, // lower middle right piece : 6
+    -5999.0f * 3.0f, // lower left corner piece : 7
+    -5999.0f * 3.0f, // upper left corner piece : 8
+    -5999.0f * 1.0f, // uppder middle left piece : 9
+    +5999.0f * 1.0f, // Upper middle right pieceX : 10
+    +5999.0f * 3.0f, // upper right corner piece : 11
+    -5999.0f * 3.0f, // side upper left piece : 12
+    -5999.0f * 3.0f, // side lower left piece : 13
+    +5999.0f * 3.0f, // side upper right piece: 14
+    +5999.0f * 3.0f, // side lower right piece : 15
 };
+
 static f32 sGroundPositions360z_FIX[] = {
-    5999.0f, 5999.0f, -5999.0f, -5999.0f, /* 5999.0f * 2.0f, 5999.0f * 2.0f, -5999.0f * 2.0f, -5999.0f * 2.0f,*/
+    // center pieces : 0 - 3
+    5999.0f,         5999.0f, -5999.0f, -5999.0f,
+    5999.0f * 3.0f,  // lower right corner piece : 4
+    5999.0f * 3.0f,  // lower middle left piece : 5
+    +5999.0f * 3.0f, // lower middle right piece : 6
+    5999.0f * 3.0f,  // lower left corner piece : 7
+    -5999.0f * 3.0f, // upper left corner piece : 8
+    -5999.0f * 3.0f, // uppder middle left piece : 9
+    -5999.0f * 3.0f, // Upper middle right pieceX : 10
+    -5999.0f * 3.0f, // upper right corner piece : 11
+    -5999.0f * 1.0f, // side upper left piece : 12
+    5999.0f * 1.0f,  // side lower left piece : 13
+    -5999.0f * 1.0f, // side upper right piece: 14
+    5999.0f * 1.0f,  // side lower right piece : 15
 };
+
+void AllRangeGround_Draw(void) {
+    for (int i = 0; i < ARRAY_COUNT(sGroundPositions360x_FIX); i++) {
+        const f32 maxDistZ = 0.0f;
+        const f32 maxDistX = 0.0f;
+
+        // UPPER LEFT QUADRANT
+        if (gPlayer[0].pos.x < maxDistX && gPlayer[0].pos.z < maxDistZ) {
+            // upper left corner piece : 8
+            // side upper  left piece : 12
+            // side lower left piece : 13
+            // Upper middle right piece : 10
+            // upper middle left piece : 9
+            if ((i > 3) && (i != 8) && (i != 12) && (i != 9) && (i != 13) && (i != 10)) {
+                continue;
+            }
+        }
+
+        // LOWER LEFT QUADRANT
+        if (gPlayer[0].pos.x < maxDistX && gPlayer[0].pos.z > maxDistZ) {
+            // lower middle left piece: 5
+            // lower middle right piece : 6
+            // lower left corner piece: 7
+            // side upper left piece : 12
+            // side lower left piece : 13
+            if ((i > 3) && (i != 5) && (i != 7) && (i != 13) && (i != 6) && (i != 12)) {
+                continue;
+            }
+        }
+
+        // UPPER RIGHT QUADRANT
+        if (gPlayer[0].pos.x > maxDistX && gPlayer[0].pos.z < maxDistZ) {
+            // uppder middle left piece : 9
+            // Upper middle right piece : 10
+            // upper right corner piece : 11
+            // side upper right piece: 14
+            // side lower right piece : 15
+            if ((i > 3) && (i != 10) && (i != 11) && (i != 14) && (i != 9) && (i != 15)) {
+                continue;
+            }
+        }
+
+        // LOWER RIGHT QUADRANT
+        if (gPlayer[0].pos.x > maxDistX && gPlayer[0].pos.z > maxDistZ) {
+            // lower right corner piece : 4
+            // // lower middle left piece : 5
+            // lower middle right piece : 6
+            // side upper right piece: 14
+            // side lower right piece : 15
+            if ((i > 3) && ((i != 4) && (i != 6) && (i != 15) && (i != 14) && (i != 5))) {
+                continue;
+            }
+        }
+
+        Matrix_Push(&gGfxMatrix);
+
+        // Fixes floor weirdness during the fortuna explosion cutscene
+        if ((gCurrentLevel == LEVEL_FORTUNA) && (gPlayer[0].state != PLAYERSTATE_ACTIVE) &&
+            (gPlayer[0].state != PLAYERSTATE_U_TURN)) {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        } else {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE | i << 16, G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+        }
+
+        Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i], MTXF_APPLY);
+
+        if (gCurrentLevel == LEVEL_TRAINING) {
+            Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
+        }
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        switch (gCurrentLevel) {
+            case LEVEL_FORTUNA:
+                gSPDisplayList(gMasterDisp++, aFoGroundDL);
+                break;
+            case LEVEL_KATINA:
+                gSPDisplayList(gMasterDisp++, aKaGroundDL);
+                break;
+            case LEVEL_BOLSE:
+                gSPDisplayList(gMasterDisp++, aBoGroundDL);
+                break;
+            case LEVEL_VENOM_2:
+                gSPDisplayList(gMasterDisp++, aVe2GroundDL);
+                break;
+            case LEVEL_CORNERIA:
+                gSPDisplayList(gMasterDisp++, aCoGroundAllRangeDL);
+                break;
+            case LEVEL_TRAINING:
+                gSPDisplayList(gMasterDisp++, aTrGroundDL);
+                break;
+            case LEVEL_VERSUS:
+                if (gVersusStage == VS_STAGE_CORNERIA) {
+                    gSPDisplayList(gMasterDisp++, aVsCorneriaGroundDL);
+                } else {
+                    gSPDisplayList(gMasterDisp++, aVsKatinaGroundDL);
+                }
+                break;
+        }
+        Matrix_Pop(&gGfxMatrix);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+}
 
 #if 1
 RECOMP_PATCH void Background_DrawGround(void) {
@@ -61,6 +198,9 @@ RECOMP_PATCH void Background_DrawGround(void) {
         Matrix_RotateY(gCalcMatrix, -gPlayer[gPlayerNum].camYaw, MTXF_NEW);
         Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp1B4, &sp1A8);
 
+        // @recomp: We no longer warp the floor.
+#if 0
+
         temp_fv1 = gPlayer[gPlayerNum].cam.eye.x + sp1A8.x;
         temp_fa0 = gPlayer[gPlayerNum].cam.eye.z + sp1A8.z;
 
@@ -89,6 +229,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
         if (temp_fa0 < -18000.0f) {
             sp1D4 = -24000.0f;
         }
+#endif
     }
 
     Matrix_Push(&gGfxMatrix);
@@ -113,7 +254,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
                                                G_EX_EDIT_ALLOW);
 
-                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(aCoGroundGrassTex));
+                gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1,
+                                   SEGMENTED_TO_VIRTUAL(aCoGroundGrassTex));
                 temp_s0 = fabsf(Math_ModF(2.0f * (gPathTexScroll * 0.2133333f), 128.0f)); // 0.64f / 3.0f
                 temp_fv0 = Math_ModF((10000.0f - gPlayer[gPlayerNum].xPath) * 0.32f, 128.0f);
                 gDPSetupTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, temp_fv0, temp_s0,
@@ -189,23 +331,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gGroundSurface = SURFACE_GRASS;
                 gBgColor = 0x845; // 8, 8, 32
 
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
-
-                for (i = 0; i < ARRAY_COUNT(sGroundPositions360x); i++) {
-                    Matrix_Push(&gGfxMatrix);
-                    Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
-                                     MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, aCoGroundAllRangeDL);
-                    Matrix_Pop(&gGfxMatrix);
-                }
-
-                // @recomp Pop the transform id.
-                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+                // @recomp: Use custom AllRangeGround draw function
+                AllRangeGround_Draw();
             }
             break;
 
@@ -397,24 +524,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 
             } else {
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
-
-                for (i = 0; i < ARRAY_COUNT(sGroundPositions360x_FIX); i++) {
-                    Matrix_Push(&gGfxMatrix);
-                    Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
-                                     MTXF_APPLY);
-                    Matrix_Scale(gGfxMatrix, 1.5f, 1.0f, 1.0f, MTXF_APPLY);
-                    Matrix_SetGfxMtx(&gMasterDisp);
-                    gSPDisplayList(gMasterDisp++, aTrGroundDL);
-                    Matrix_Pop(&gGfxMatrix);
-                }
-
-                // @recomp Pop the transform id.
-                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+                // @recomp: Use custom AllRangeGround draw function
+                AllRangeGround_Draw();
             }
             break;
 
@@ -503,8 +614,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) && (gPlayer[0].csState < 2)) {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
                 } else if (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) {
-                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, gAquasSurfaceColorR, gAquasSurfaceColorG, gAquasSurfaceColorB,
-                                    gAquasSurfaceAlpha2);
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, gAquasSurfaceColorR, gAquasSurfaceColorG,
+                                    gAquasSurfaceColorB, gAquasSurfaceAlpha2);
                 } else {
                     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, (s32) gAquasSurfaceAlpha);
                 }
@@ -607,34 +718,8 @@ RECOMP_PATCH void Background_DrawGround(void) {
                 RCP_SetupDL_20(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             }
 
-            if ((gCurrentLevel == LEVEL_FORTUNA) && !(gPlayer[0].state == PLAYERSTATE_ACTIVE)) {
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ON_RAILS, G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
-            } else {
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
-            }
-
-            for (i = 0; i < ARRAY_COUNT(sGroundPositions360x_FIX); i++) {
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, sGroundPositions360x_FIX[i], 0.0f, sGroundPositions360z_FIX[i],
-                                 MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                if (gCurrentLevel == LEVEL_FORTUNA) {
-                    gSPDisplayList(gMasterDisp++, aFoGroundDL);
-                } else if (gCurrentLevel == LEVEL_KATINA) {
-                    gSPDisplayList(gMasterDisp++, aKaGroundDL);
-                } else if (gCurrentLevel == LEVEL_BOLSE) {
-                    gSPDisplayList(gMasterDisp++, aBoGroundDL);
-                } else if (gCurrentLevel == LEVEL_VENOM_2) {
-                    gSPDisplayList(gMasterDisp++, aVe2GroundDL);
-                }
-                Matrix_Pop(&gGfxMatrix);
-            }
+            // @recomp: Use custom AllRangeGround draw function
+            AllRangeGround_Draw();
 
             // @recomp Pop the transform id.
             gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
@@ -642,32 +727,14 @@ RECOMP_PATCH void Background_DrawGround(void) {
             break;
 
         case LEVEL_VERSUS:
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
-
             if (gGroundClipMode != 0) {
                 RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             } else {
                 RCP_SetupDL_20(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
             }
 
-            for (i = 0; i < ARRAY_COUNT(sGroundPositions360x); i++) {
-                Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, sGroundPositions360x[i], 0.0f, sGroundPositions360z[i], MTXF_APPLY);
-                Matrix_SetGfxMtx(&gMasterDisp);
-                if (gVersusStage == VS_STAGE_CORNERIA) {
-                    gSPDisplayList(gMasterDisp++, aVsCorneriaGroundDL);
-                } else {
-                    gSPDisplayList(gMasterDisp++, aVsKatinaGroundDL);
-                }
-                Matrix_Pop(&gGfxMatrix);
-            }
-
-            // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+            // @recomp: Use custom AllRangeGround draw function
+            AllRangeGround_Draw();
 
             break;
 
@@ -1096,25 +1163,25 @@ RECOMP_PATCH void Play_UpdateDynaFloor(void) {
             }
             break;
 
-            case LEVEL_ZONESS:
-                if ((gGameFrameCount % 2) != 0) {
-                    spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_6009ED0);
-                    spB4_copy = D_ZO_6009ED0_copy;
-                } else {
-                    spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_600C780);
-                    spB4_copy = D_ZO_600C780_copy;
-                }
-                spB0 = SEGMENTED_TO_VIRTUAL(D_ZO_602AC50);
+        case LEVEL_ZONESS:
+            if ((gGameFrameCount % 2) != 0) {
+                spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_6009ED0);
+                spB4_copy = D_ZO_6009ED0_copy;
+            } else {
+                spB4 = SEGMENTED_TO_VIRTUAL(D_ZO_600C780);
+                spB4_copy = D_ZO_600C780_copy;
+            }
+            spB0 = SEGMENTED_TO_VIRTUAL(D_ZO_602AC50);
 
-                memcpy2(spB4_copy, spB4, 17 * 17 * sizeof(Vtx));
+            memcpy2(spB4_copy, spB4, 17 * 17 * sizeof(Vtx));
 
-                for (i = 0; (i < 17 * 17); i++, spB0++) {
-                    // spB4_copy[*spB0] = spB4[*spB0];
-                    spB4_copy[*spB0].n.n[0] *= -1.0f; // Disable to fix mirror
-                    // spB4_copy[*spB0].n.n[1] *= -1.0f;
-                    // spB4_copy[*spB0].n.n[2] *= -1.0f;
-                }
-                break;
+            for (i = 0; (i < 17 * 17); i++, spB0++) {
+                // spB4_copy[*spB0] = spB4[*spB0];
+                spB4_copy[*spB0].n.n[0] *= -1.0f; // Disable to fix mirror
+                // spB4_copy[*spB0].n.n[1] *= -1.0f;
+                // spB4_copy[*spB0].n.n[2] *= -1.0f;
+            }
+            break;
     }
 }
 #endif
