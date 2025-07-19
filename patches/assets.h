@@ -373,6 +373,13 @@ extern Gfx aMaRailroadSwitch5DL[];
 extern Gfx aMaRailroadSwitch6DL[];
 extern Gfx aMaRailroadSwitch7DL[];
 extern Gfx aMaRailroadSwitch8DL[];
+extern Gfx aMetalDebrisDL[];
+extern Gfx aBoSatelliteDL[];
+extern Gfx aBoSatelliteLightsDL[];
+extern Gfx aLaserShotRedDL[];
+extern Gfx aBoFighterDL[];
+extern Gfx aSyShogunPlatformDL[];
+extern Gfx aSyRobotLaserDL[];
 
 extern u16 aSoLavaTex[1024];
 extern u16 aZoWaterTex[];
@@ -380,6 +387,7 @@ extern u16 aZoWaterTex[];
 extern Limb* aAwArwingSkel[19];
 extern Limb* aVe2AndrossGateSkel[];
 extern Limb* D_SY_602D140[];
+extern Animation aAqSeaweedAnim1; // frames: 119, limbs: 18
 extern Animation aAwWingsHalfOpenAnim;
 extern Animation aAwWingsClosedAnim;
 extern Animation aVe2AndrossGateAnim;
