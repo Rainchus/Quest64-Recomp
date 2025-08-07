@@ -313,8 +313,10 @@ RECOMP_PATCH void Map_Prologue_Update(void) {
             break;
     }
 
-    if (gControllerPress[gMainController].button & START_BUTTON || gBackToMap) {
-        gBackToMap = false;
+    // @recomp: "|| gBackToMap" and "gBackToMap = false;"
+    // Skip prologue if we're coming back from a level.
+    if (gControllerPress[gMainController].button & START_BUTTON || gBackToMap) { // @recomp
+        gBackToMap = false;                                                      // @recomp
         AUDIO_PLAY_BGM(NA_BGM_MAP);
         AUDIO_PLAY_SFX(NA_SE_MAP_MOVE_STOP, gDefaultSfxSource, 4);
 
@@ -364,7 +366,7 @@ RECOMP_PATCH void Map_Idle_Update(void) {
             D_menu_801CD94C = 0;
         } else {
 #if DEBUG_LEVEL_SELECT == 1
-            loadLevel:
+        loadLevel:
 #endif
             for (i = 0; i < TEAM_ID_MAX; i++) {
                 D_ctx_80177C58[i] = gTeamShields[i];
