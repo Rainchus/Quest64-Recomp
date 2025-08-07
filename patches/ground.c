@@ -721,9 +721,6 @@ RECOMP_PATCH void Background_DrawGround(void) {
             // @recomp: Use custom AllRangeGround draw function
             AllRangeGround_Draw();
 
-            // @recomp Pop the transform id.
-            gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
-
             break;
 
         case LEVEL_VERSUS:
@@ -742,8 +739,11 @@ RECOMP_PATCH void Background_DrawGround(void) {
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
             // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
             // Render the object at the center (No mirroring)
             Matrix_Push(&gGfxMatrix);
             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -2000.0f, MTXF_APPLY);
@@ -758,9 +758,16 @@ RECOMP_PATCH void Background_DrawGround(void) {
             // Render mirrored objects on both sides (Left: -1, Right: 1)
             for (s32 i = -1; i <= 1; i += 2) {
                 Matrix_Push(&gGfxMatrix);
-                Matrix_Translate(gGfxMatrix, i * 4800.0f, 0.0f, -2000.0f,
-                                 MTXF_APPLY);                            // Translate left (-) or right (+)
+                Matrix_Translate(gGfxMatrix, i * 4800.0f, 0.0f, -2000.0f, MTXF_APPLY);
                 Matrix_Scale(gGfxMatrix, -3.0f, 2.0f, 3.0f, MTXF_APPLY); // Mirror geometry (negative X scale)
+
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
                 Matrix_SetGfxMtx(&gMasterDisp);
 
                 // Disable backface culling for mirrored geometry
@@ -782,10 +789,6 @@ RECOMP_PATCH void Background_DrawGround(void) {
 
                 gDPSetTile(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_RENDERTILE, 0, G_TX_WRAP, 5,
                            G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD);
-
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
 
                 /*
                 memcpy2(dynaFloor1, SEGMENTED_TO_VIRTUAL(aSoLava2DL), 724 * sizeof(Gfx));
@@ -810,14 +813,17 @@ RECOMP_PATCH void Background_DrawGround(void) {
         case LEVEL_ZONESS:
             RCP_SetupDL_29(gFogRed, gFogGreen, gFogBlue, gFogAlpha, gFogNear, gFogFar);
 
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
-
             // Center Further (main object)
             Matrix_Push(&gGfxMatrix);
             Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -3000.0f, MTXF_APPLY); // Center Further
             Matrix_Scale(gGfxMatrix, 3.0f, 2.0f, 3.0f, MTXF_APPLY);
+
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
             Matrix_SetGfxMtx(&gMasterDisp);
 
             if ((gGameFrameCount % 2) != 0) {
