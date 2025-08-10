@@ -3,9 +3,9 @@
 [input]
 entrypoint = 0x80000400
 # Paths are relative to the location of this config file.
-elf_path = "quest64.elf"
-#symbols_file_path = "Quest64Syms/dump.toml"
-#rom_file_path = "quest64.us.z64"
+#elf_path = "quest64.elf"
+symbols_file_path = "Quest64Syms/dump.toml"
+rom_file_path = "baserom.us.z64"
 output_func_path = "RecompiledFuncs"
 
 [patches]
@@ -33,30 +33,3 @@ before_vram = 0x80024690
 func = "dma_write"
 text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
 before_vram = 0x80024260
-
-#Hook the controller pak save file read
-[[patches.hook]]
-func = "func_800319E0"
-text = "ReadSaveData(rdram, ctx);"
-before_vram = 0x800319E0
-
-#Hook the controller pak save file write
-[[patches.hook]]
-func = "func_80031A44"
-text = """ctx->r1 = S32(0X8009 << 16);
-    ctx->r1 = MEM_B(ctx->r1, -0X2D6);
-    WriteSaveData(rdram, ctx);"""
-before_vram = 0x80031A48
-
-
-#8002D8BC
-[[patches.hook]]
-func = "func_80031A44"
-text = "ctx->r2 = 0;"
-before_vram = 0x80031AC4
-
-#return 0, says controller pak is in
-[[patches.hook]]
-func = "func_80031574"
-text = "ctx->r2 = 0;"
-before_vram = 0x800317F8

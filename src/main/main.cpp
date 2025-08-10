@@ -332,8 +332,7 @@ std::vector<recomp::GameEntry> supported_games = {
         .rom_hash = 0x35335bf69fc6515cULL,
         .internal_name = "Quest 64",
         .game_id = u8"quest64_us",
-        .save_type = recomp::SaveType::Custom,
-        .custom_save_size = 0x8000,
+        .save_type = recomp::SaveType::AllowAll,
         .is_enabled = true,
         .entrypoint_address = get_entrypoint_address(),
         .entrypoint = recomp_entrypoint,
@@ -655,7 +654,7 @@ int main(int argc, char** argv) {
     recomp::mods::register_mod_container_type("rtz", std::vector{ texture_pack_content_type_id }, false);
 
     recomp::mods::scan_mods();
-
+    /*
     printf("Found mods:\n");
     for (const auto& mod : recomp::mods::get_mod_details("mm")) {
         printf("  %s(%s)\n", mod.mod_id.c_str(), mod.version.to_string().c_str());
@@ -680,6 +679,7 @@ int main(int argc, char** argv) {
         recomp::mods::enable_mod(mod.mod_id, true);
     }
     printf("\n");
+    */
 
     recomp::start(
         project_version,
@@ -701,57 +701,4 @@ int main(int argc, char** argv) {
     }
 
     return EXIT_SUCCESS;
-}
-
-extern "C" void recomp_save_write(uint8_t* rdram, recomp_context* ctx);
-extern "C" void recomp_save_read(uint8_t* rdram, recomp_context* ctx);
-
-extern "C" void WriteSaveData(uint8_t* rdram, recomp_context* ctx) {
-    //u32 file_no = ctx->r5;
-    u32 file_no = ctx->r1;
-    //u32 offset = ctx->r6;
-    u32 nBytes = ctx->r7;
-    u32 newOffset = file_no * 512;
-    PTR(void) data_buffer = MEM_W(ctx->r29, 0X10);
-
-    //printf("file_no: %08X, offset: %08X, nBytes: %08X, newOffset: %08X\n", file_no, offset, nBytes, newOffset);
-
-    // Make a temporary recomp context to hold the arguments.
-    recomp_context temp_ctx = *ctx;
-    temp_ctx.r4 = data_buffer;
-    temp_ctx.r5 = newOffset;
-    temp_ctx.r6 = nBytes;
-
-    recomp_save_write(rdram, &temp_ctx);
-}
-
-extern "C" void  ReadSaveData(uint8_t* rdram, recomp_context* ctx) {
-    u32 file_no = ctx->r5;
-    //u32 offset = ctx->r6;
-    u32 nBytes = ctx->r7;
-    u32 newOffset = file_no * 512;
-    //printf("file_no: %08X, offset: %08X, nBytes: %08X, newOffset: %08X\n", file_no, offset, nBytes, newOffset);
-    PTR(void) data_buffer = MEM_W(ctx->r29, 0X10);
-
-    // Make a temporary recomp context to hold the arguments.
-    recomp_context temp_ctx = *ctx;
-    temp_ctx.r4 = data_buffer;
-    temp_ctx.r5 = newOffset;
-    temp_ctx.r6 = nBytes;
-
-    recomp_save_read(rdram, &temp_ctx);
-}
-
-extern "C" void ReadSaveDataByte(uint8_t* rdram, recomp_context* ctx) {
-    u32 data_buffer = ctx->r4;
-    u32 newOffset = ctx->r5;
-    u32 nBytes = ctx->r6;
-
-    // Make a temporary recomp context to hold the arguments.
-    recomp_context temp_ctx = *ctx;
-    temp_ctx.r4 = data_buffer;
-    temp_ctx.r5 = newOffset;
-    temp_ctx.r6 = nBytes;
-
-    recomp_save_read(rdram, &temp_ctx);
 }
