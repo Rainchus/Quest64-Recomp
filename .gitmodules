@@ -19,3 +19,6 @@
 [submodule "lib/Quest64-Decomp"]
 	path = lib/Quest64-Decomp
 	url = https://github.com/Rainchus/Quest64-Decomp.git
+[submodule "Quest64Syms"]
+	path = Quest64Syms
+	url = https://github.com/YourName/Quest64Syms.git
