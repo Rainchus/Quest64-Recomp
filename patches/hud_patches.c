@@ -191,23 +191,7 @@ RECOMP_PATCH void HUD_Score_Draw(f32 x, f32 y) {
 #endif
 
 #if 1 // Hud_GoldRings_Draw
-extern Gfx aGoldRingFrame1DL[];
-extern Gfx aGoldRingFrame2DL[];
-extern Gfx aGoldRingFrame3DL[];
-extern Gfx aGoldRingFrame4DL[];
-extern Gfx aGoldRingFrame5DL[];
-extern Gfx aGoldRingFrame6DL[];
-extern Gfx aGoldRingFrame7DL[];
-extern Gfx aGoldRingFrame8DL[];
-extern Gfx aGoldRingFrame9DL[];
-extern Gfx aGoldRingFrame10DL[];
-extern Gfx aGoldRingFrame11DL[];
-extern Gfx aGoldRingFrame12DL[];
-extern f32 sGoldRingsFwork[20];
-extern s32 D_80161900[20];
-extern s32 sGoldRingsIwork[20];
-extern Gfx aGoldRingEmptySlotDL[];
-extern Gfx aStarDL[];
+
 
 static f32 tempx = 0;
 static f32 tempy = 0;
@@ -224,8 +208,8 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
     f32 x;
     f32 y;
     s32 temp;
-
-    Game_InitFullViewport();
+    
+    // @recomp
     gEXViewport(gMasterDisp++, G_EX_ORIGIN_LEFT, gViewport); // Force the viewport update
 
     sGoldRingsFwork[6] += 0.7f;

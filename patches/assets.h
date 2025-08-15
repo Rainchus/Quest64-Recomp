@@ -1,3 +1,6 @@
+#ifndef SF64_RECOMP_ASSETS
+#define SF64_RECOMP_ASSETS
+
 #include "patches.h"
 #include "fox_map.h"
 
@@ -1549,3 +1552,22 @@ extern u16 gMsg_ID_23030[];
 extern u16 gMsg_ID_23031[];
 extern u16 gMsg_ID_23032[];
 extern MsgLookup gMsgLookup[];
+extern Gfx aGoldRingFrame1DL[];
+extern Gfx aGoldRingFrame2DL[];
+extern Gfx aGoldRingFrame3DL[];
+extern Gfx aGoldRingFrame4DL[];
+extern Gfx aGoldRingFrame5DL[];
+extern Gfx aGoldRingFrame6DL[];
+extern Gfx aGoldRingFrame7DL[];
+extern Gfx aGoldRingFrame8DL[];
+extern Gfx aGoldRingFrame9DL[];
+extern Gfx aGoldRingFrame10DL[];
+extern Gfx aGoldRingFrame11DL[];
+extern Gfx aGoldRingFrame12DL[];
+extern f32 sGoldRingsFwork[20];
+extern s32 D_80161900[20];
+extern s32 sGoldRingsIwork[20];
+extern Gfx aGoldRingEmptySlotDL[];
+extern Gfx aStarDL[];
+
+#endif
