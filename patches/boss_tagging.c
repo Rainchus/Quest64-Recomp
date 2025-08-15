@@ -475,6 +475,136 @@ RECOMP_PATCH void Area6_8018BCD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, s
     }
 }
 
+// TODO Tag Vertices
+#if 0
+RECOMP_PATCH void Aquas_AqBacoonMuscle_Draw(AqBacoonMuscle* this) {
+    f32 var_fv0;
+    u8 var_t1;
+    u8 i;
+    Vtx* var_t5;
+    Vtx* temp_v1_2;
+
+    if ((this->timer_0C6 != 0) && (this->state == 0) && (gPlayState != PLAY_PAUSE)) {
+        this->iwork[1]++;
+        this->iwork[1] %= 8;
+    }
+
+    temp_v1_2 = SEGMENTED_TO_VIRTUAL(D_AQ_6019078);
+    if (this->iwork[1] < 4) {
+        var_t5 = SEGMENTED_TO_VIRTUAL(D_AQ_6018C78);
+    } else {
+        var_t5 = SEGMENTED_TO_VIRTUAL(D_AQ_6018878);
+    }
+
+    var_t1 = this->iwork[1] % 4;
+    if (var_t1 >= 3) {
+        var_t1 = 4 - var_t1;
+    }
+
+    var_fv0 = this->timer_0C6 / 60.0f;
+    if (var_fv0 < 0.1f) {
+        var_fv0 = 0.1f;
+    }
+
+    for (i = 0; i < 28; i += 1) {
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.ob[0] =
+            temp_v1_2[i].n.ob[0] + (s16) ((((var_t5[i].n.ob[0] - temp_v1_2[i].n.ob[0]) * var_t1) / 2) * var_fv0);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.ob[1] =
+            temp_v1_2[i].n.ob[1] + (((var_t5[i].n.ob[1] - temp_v1_2[i].n.ob[1]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.ob[2] =
+            temp_v1_2[i].n.ob[2] + (((var_t5[i].n.ob[2] - temp_v1_2[i].n.ob[2]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.flag = temp_v1_2[i].n.flag;
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.tc[0] =
+            temp_v1_2[i].n.tc[0] + (((var_t5[i].n.tc[0] - temp_v1_2[i].n.tc[0]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.tc[1] =
+            temp_v1_2[i].n.tc[1] + (((var_t5[i].n.tc[1] - temp_v1_2[i].n.tc[1]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.n[0] =
+            temp_v1_2[i].n.n[0] + (((var_t5[i].n.n[0] - temp_v1_2[i].n.n[0]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.n[1] =
+            temp_v1_2[i].n.n[1] + (((var_t5[i].n.n[1] - temp_v1_2[i].n.n[1]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.n[2] =
+            temp_v1_2[i].n.n[2] + (((var_t5[i].n.n[2] - temp_v1_2[i].n.n[2]) * var_t1) / 2);
+        D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][i].n.a = temp_v1_2[i].n.a;
+    }
+
+    Matrix_Scale(gGfxMatrix, this->fwork[1] - 0.25f + ((1.5f - this->scale) * 0.5f), this->scale, this->fwork[1],
+                 MTXF_APPLY);
+
+    if (this->state != 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_32);
+    } else if (gBosses[0].swork[0] == 1) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_4);
+    } else if ((this->timer_0C6 % 2) == 0) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_29);
+    } else {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_22);
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 0, 0, 255);
+    }
+
+    // @recomp Tag the transform.
+            gEXMatrixGroupDecomposed(gMasterDisp++, 0x50123458, G_EX_PUSH, G_MTX_MODELVIEW,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+
+    Matrix_SetGfxMtx(&gMasterDisp);
+
+    gDPSetTextureLUT(gMasterDisp++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(gMasterDisp++, D_AQ_6008FC8);
+    gDPLoadTextureBlock(gMasterDisp++, D_AQ_6008EC8, G_IM_FMT_CI, G_IM_SIZ_8b, 16, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                        G_TX_NOMIRROR | G_TX_WRAP, 4, 4, G_TX_NOLOD, G_TX_NOLOD);
+    gSPVertex(gMasterDisp++, D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2], 14, 0);
+    gSP1Triangle(gMasterDisp++, 0, 1, 2, 0);
+    gSP1Triangle(gMasterDisp++, 3, 1, 0, 0);
+    gSP1Triangle(gMasterDisp++, 4, 5, 0, 0);
+    gSP1Triangle(gMasterDisp++, 0, 6, 7, 0);
+    gSP1Triangle(gMasterDisp++, 2, 6, 0, 0);
+    gSP1Triangle(gMasterDisp++, 0, 5, 3, 0);
+    gSP1Triangle(gMasterDisp++, 0, 8, 4, 0);
+    gSP1Triangle(gMasterDisp++, 7, 8, 0, 0);
+    gSP1Triangle(gMasterDisp++, 9, 4, 8, 0);
+    gSP1Triangle(gMasterDisp++, 8, 7, 10, 0);
+    gSP1Triangle(gMasterDisp++, 8, 11, 9, 0);
+    gSP1Triangle(gMasterDisp++, 10, 11, 8, 0);
+    gSP1Triangle(gMasterDisp++, 12, 4, 9, 0);
+    gSP1Triangle(gMasterDisp++, 13, 5, 4, 0);
+    gSP1Triangle(gMasterDisp++, 4, 12, 13, 0);
+    gSP1Triangle(gMasterDisp++, 3, 5, 13, 0);
+    gSP1Triangle(gMasterDisp++, 13, 6, 2, 0);
+    gSP1Triangle(gMasterDisp++, 7, 6, 13, 0);
+    gSP1Triangle(gMasterDisp++, 13, 12, 7, 0);
+    gSP1Triangle(gMasterDisp++, 10, 7, 12, 0);
+    gSPVertex(gMasterDisp++, &D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][1], 3, 0);
+    gSPVertex(gMasterDisp++, &D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][9], 2, 3);
+    gSPVertex(gMasterDisp++, &D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][12], 8, 5);
+    gSP1Triangle(gMasterDisp++, 0, 2, 7, 0);
+    gSP1Triangle(gMasterDisp++, 7, 2, 8, 0);
+    gSP1Triangle(gMasterDisp++, 6, 8, 2, 0);
+    gSP1Triangle(gMasterDisp++, 8, 1, 9, 0);
+    gSP1Triangle(gMasterDisp++, 1, 8, 6, 0);
+    gSP1Triangle(gMasterDisp++, 5, 10, 4, 0);
+    gSP1Triangle(gMasterDisp++, 3, 10, 5, 0);
+    gSP1Triangle(gMasterDisp++, 8, 12, 7, 0);
+    gSP1Triangle(gMasterDisp++, 7, 11, 0, 0);
+    gSP1Triangle(gMasterDisp++, 0, 11, 9, 0);
+    gSP1Triangle(gMasterDisp++, 9, 1, 0, 0);
+    gSP1Triangle(gMasterDisp++, 9, 12, 8, 0);
+    gDPLoadTLUT_pal256(gMasterDisp++, D_AQ_6019338);
+    gDPLoadTextureBlock(gMasterDisp++, D_AQ_6019238, G_IM_FMT_CI, G_IM_SIZ_8b, 16, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                        G_TX_NOMIRROR | G_TX_WRAP, 4, 4, G_TX_NOLOD, G_TX_NOLOD);
+    gSPVertex(gMasterDisp++, &D_i3_801C3A88[this->iwork[0]][gSysFrameCount % 2][20], 8, 0);
+    gSP1Triangle(gMasterDisp++, 0, 1, 2, 0);
+    gSP1Triangle(gMasterDisp++, 2, 3, 0, 0);
+    gSP1Triangle(gMasterDisp++, 4, 5, 6, 0);
+    gSP1Triangle(gMasterDisp++, 6, 7, 4, 0);
+    gDPPipeSync(gMasterDisp++);
+    gDPSetTextureLUT(gMasterDisp++, G_TT_NONE);
+
+    // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+}
+#endif
+
 #if 0
 
 RECOMP_PATCH void Katina_KaFrontlineBase_Draw(KaFrontlineBase* this) {
