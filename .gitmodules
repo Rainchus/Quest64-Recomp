@@ -22,6 +22,3 @@
 [submodule "lib/rt64"]
 	path = lib/rt64
 	url = https://github.com/rt64/rt64
-[submodule "lib/slot_map"]
-	path = lib/slot_map
-	url = https://github.com/SergeyMakeev/slot_map
