@@ -23,7 +23,7 @@ RECOMP_PATCH int Title_CheckControllers(void) {
 
     gControllerPlugged[0] = 1;
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 1; i++) {
         if (gControllerPlugged[i] == 1) {
             ret = i;
             break;
