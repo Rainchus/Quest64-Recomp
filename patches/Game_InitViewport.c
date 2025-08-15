@@ -47,11 +47,9 @@ RECOMP_PATCH void Game_InitViewport(Gfx** dList, u8 camCount, u8 camIndex) {
                     gViewport->vp.vtrans[1] = SCREEN_HEIGHT * (2.0f - gVsViewScale) * 2;
                     gViewport->vp.vtrans[2] = G_MAXZ / 2;
                     gViewport->vp.vtrans[3] = 0;
-                    ulx = gViewport->vp.vtrans[0] - gViewport->vp.vscale[0];
-                    ulx /=2;
-                    lrx = gViewport->vp.vtrans[0] + gViewport->vp.vscale[0];
-                    lrx /=2;
-                    recomp_printf("ulx : %d\n", ulx);
+                    ulx = (gViewport->vp.vtrans[0] - gViewport->vp.vscale[0]) / 4;
+                    lrx = (gViewport->vp.vtrans[0] + gViewport->vp.vscale[0]) / 4;
+                    recomp_printf("ulx : %d lrx : %d\n", ulx, lrx);
                     recomp_printf("vtrans : %d\n", vtrans);
                     // gDPSetScissor((*dList)++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH / 2,
                     //                SCREEN_HEIGHT / 2);
