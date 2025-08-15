@@ -634,7 +634,7 @@ int main(int argc, char** argv) {
     //recomp::mods::register_embedded_mod("mm_recomp_dpad_builtin", { (const uint8_t*)(mm_recomp_dpad_builtin), std::size(mm_recomp_dpad_builtin)});
 
     //REGISTER_FUNC(recomp_get_window_resolution);
-    //REGISTER_FUNC(recomp_get_target_aspect_ratio);
+    REGISTER_FUNC(recomp_get_target_aspect_ratio);
     REGISTER_FUNC(recomp_get_target_framerate);
     // REGISTER_FUNC(recomp_get_autosave_enabled);
     // REGISTER_FUNC(recomp_get_analog_cam_enabled);

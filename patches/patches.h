@@ -111,7 +111,7 @@ void* memcpy2(void* s1, const void* s2, size_t n);
 
 //void set_camera_skipped(bool skipped);
 void clear_camera_skipped();
-float recomp_get_aspect_ratio(float);
+float recomp_get_target_aspect_ratio(float);
 //bool camera_was_skipped();
 
 void recomp_crash(const char* err);
