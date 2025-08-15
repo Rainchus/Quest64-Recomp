@@ -18,6 +18,10 @@ void HUD_ShieldGaugeEdgeLeft_Draw(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void HUD_ShieldGaugeEdgeRight_Draw(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void HUD_ShieldGaugeFrame_Draw(f32 x, f32 y, f32 arg2, f32 arg3);
 void HUD_BoostGaugeFrame_Draw(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+void HUD_RadarMarks_Setup(void);
+void HUD_RadarMark_Draw(s32 type);
+void HUD_RadarWindow_Draw(f32 x, f32 y);
+void HUD_RadarMissileAlarm_Draw(void);
 
 RECOMP_PATCH void HUD_PlayerShieldGauge_Draw(f32 x, f32 y) {
 
@@ -192,7 +196,6 @@ RECOMP_PATCH void HUD_Score_Draw(f32 x, f32 y) {
 
 #if 1 // Hud_GoldRings_Draw
 
-
 static f32 tempx = 0;
 static f32 tempy = 0;
 
@@ -208,7 +211,7 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
     f32 x;
     f32 y;
     s32 temp;
-    
+
     // @recomp
     gEXViewport(gMasterDisp++, G_EX_ORIGIN_LEFT, gViewport); // Force the viewport update
 
@@ -827,8 +830,8 @@ RECOMP_PATCH void HUD_BombCounter_Draw(f32 x, f32 y) {
         case 6:
             RCP_SetupDL(&gMasterDisp, SETUPDL_78);
             gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
-            Lib_TextureRect_CI4(&gMasterDisp, aBlueMarineBombCountTex, aBlueMarineBombCountTLUT, 32, 9, x + 1.0f, y, 1.0f,
-                                1.0f);
+            Lib_TextureRect_CI4(&gMasterDisp, aBlueMarineBombCountTex, aBlueMarineBombCountTLUT, 32, 9, x + 1.0f, y,
+                                1.0f, 1.0f);
             break;
     }
     gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
@@ -894,23 +897,200 @@ RECOMP_PATCH void HUD_EdgeArrows_Draw(s32 idx, bool arg1) {
 #if 1 // Radar
 
 void HUD_VS_DrawHUD(void);
-void HUD_RadarMarks_Update(void);
+s32 HUD_RadarMarks_Update(void);
 
 RECOMP_PATCH void HUD_Radar(void) {
-
-    Game_InitFullViewport();
-    gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0, -(SCREEN_WIDTH) * 4,
-                    0);
-    gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, 0);
-    gSPViewport(gMasterDisp++, gViewport);
+    if (!gVersusMode) {
+        gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, -(SCREEN_WIDTH) * 4, 0,
+                        -(SCREEN_WIDTH) * 4, 0);
+        gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_RIGHT, -SCREEN_WIDTH * 4, 0);
+        gSPViewport(gMasterDisp++, gViewport);
+    }
 
     if (gVersusMode) {
         HUD_VS_DrawHUD();
     }
     HUD_RadarMarks_Update();
 
-    gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_NONE, SCREEN_WIDTH, SCREEN_HEIGHT);
-    gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
+    if (!gVersusMode) {
+        gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_NONE, SCREEN_WIDTH, SCREEN_HEIGHT);
+        gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
+    }
+}
+#endif
+
+#if 0
+RECOMP_PATCH s32 HUD_RadarMarks_Update(void) {
+    s32 i;
+    f32 scale;
+    f32 x1 = 0;
+    f32 y1 = 0;
+    f32 z1 = 0;
+    f32 x = 0;
+    f32 y = 0;
+    s32 pad;
+    f32 temp;
+    f32 temp2;
+    f32 temp3;
+
+    if (!gVersusMode) {
+        if (gLevelMode != LEVELMODE_ALL_RANGE) {
+            return 0;
+        }
+
+        if (gDrawBackdrop >= 5) {
+            return 0;
+        }
+
+        if (gLevelStartStatusScreenTimer != 0) {
+            D_800D1E10 = 60.0f;
+        } else {
+            Math_SmoothStepToF(&D_800D1E10, 0.0f, 0.3f, 10.0f, 0.1f);
+        }
+
+        if (D_800D1E10 == 60.0f) {
+            return 0;
+        }
+
+        switch (gCurrentLevel) {
+            case LEVEL_SECTOR_Z:
+                temp2 = 20000.0f;
+                y1 = -360.0f;
+                x1 = 542.0f;
+                z1 = -1584.0f;
+                temp3 = 7.5f;
+                scale = 0.02f;
+                break;
+
+            case LEVEL_CORNERIA:
+                temp2 = 8000.0f;
+                y1 = -142.0f;
+                x1 = 214.0f;
+                z1 = -626.0f;
+                temp3 = 3.0f;
+                scale = 0.008f;
+                break;
+
+            case LEVEL_BOLSE:
+                temp2 = 10000.0f;
+                y1 = -178.0f;
+                x1 = 268.0f;
+                z1 = -784.0f;
+                temp3 = 3.7f;
+                scale = 0.01f;
+                break;
+
+            default:
+                temp2 = 12500.0f;
+                y1 = -220.0f;
+                x1 = 330.0f;
+                z1 = -970.0f;
+                temp3 = 4.7f;
+                scale = 0.013f;
+                break;
+        }
+
+        x = 254.000f + D_800D1E10;
+        y = 162.000f;
+        x1 += D_800D1E10 * temp3;
+    } else { // Versus mode
+        if (!gVsMatchStart || gVsMatchOver) {
+            return 0;
+        }
+        temp2 = 13000.00f;
+
+        scale = 0.03f;
+        z1 = -885.00f;
+        x1 = -274.00f;
+        y1 = -166.00f;
+    }
+
+    HUD_RadarMarks_Setup();
+    HUD_RadarWindow_Draw(x, y);
+
+    if (!gVersusMode &&
+        ((gCurrentLevel == LEVEL_SECTOR_Z) || (gCurrentLevel == LEVEL_FORTUNA) || (gCurrentLevel == LEVEL_VENOM_2) ||
+         (gCurrentLevel == LEVEL_BOLSE) || (gCurrentLevel == LEVEL_SECTOR_Y) || (gCurrentLevel == LEVEL_KATINA))) {
+
+        RCP_SetupDL(&gMasterDisp, SETUPDL_76);
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 128, 128, 128, 255);
+
+        switch (gCurrentLevel) {
+            case LEVEL_SECTOR_Z:
+                Lib_TextureRect_IA8(&gMasterDisp, D_SZ_60012D0, 16, 9, 251.0f + D_800D1E10, 181.0f, 1.00f, 1.00f);
+                break;
+
+            case LEVEL_FORTUNA:
+                Lib_TextureRect_IA8(&gMasterDisp, D_FO_6001260, 16, 16, 251.0f + D_800D1E10, 178.0f, 1.00f, 1.00f);
+                break;
+
+            case LEVEL_BOLSE:
+                Lib_TextureRect_IA8(&gMasterDisp, D_BO_6000C80, 16, 16, 251.0f + D_800D1E10, 178.0f, 1.00f, 1.00f);
+                break;
+
+            case LEVEL_SECTOR_Y:
+                if ((fabsf(gScenery360[0].obj.pos.x) < temp2 + 1000.0f) &&
+                    (fabsf(gScenery360[0].obj.pos.z) < temp2 + 1000.0f)) {
+                    temp = 150.0f + ((12500.0f + gScenery360[0].obj.pos.z) / 446.42f);
+
+                    if ((y < 150.0f) || (y > 206.0f)) {
+                        break;
+                    }
+                    Lib_TextureRect_IA8(&gMasterDisp, D_SY_6000840, 64, 64, 250.0f + D_800D1E10, temp, 0.25f, 0.25f);
+                }
+                break;
+
+            case LEVEL_KATINA:
+                Lib_TextureRect_IA8(&gMasterDisp, D_KA_6001260, 8, 8, 254.0f + D_800D1E10, 182.0f, 1.00f, 1.00f);
+                break;
+
+            case LEVEL_VENOM_2:
+                Lib_TextureRect_IA8(&gMasterDisp, D_VE2_6002890, 16, 16, 251.0f + D_800D1E10, 178.0f, 1.00f, 1.00f);
+                break;
+        }
+    }
+
+    Matrix_Push(&gGfxMatrix);
+
+    if (gVersusMode) {
+        Matrix_Translate(gGfxMatrix, x1, y1, z1, MTXF_APPLY);
+        recomp_printf("X1 pos: %f\n", x1);
+    } else {
+        Matrix_Translate(gGfxMatrix, x1, y1, z1, MTXF_APPLY);
+    }
+
+    if ((gCurrentLevel == LEVEL_SECTOR_Z) && (gRadarMissileAlarmTimer != 0)) {
+        Matrix_Push(&gGfxMatrix);
+        HUD_RadarMissileAlarm_Draw();
+        Matrix_Pop(&gGfxMatrix);
+        gRadarMissileAlarmTimer--;
+    }
+
+    for (i = ARRAY_COUNT(gRadarMarks) - 1; i >= 0; i--) {
+        if ((gRadarMarks[i].enabled == 0) || (fabsf(gRadarMarks[i].pos.x) >= (temp2 + 1000.0f)) ||
+            (fabsf(gRadarMarks[i].pos.z) >= (temp2 + 1000.0f))) {
+            continue;
+        }
+
+        Matrix_Push(&gGfxMatrix);
+        Matrix_Translate(gGfxMatrix, gRadarMarks[i].pos.x * 0.008f, -gRadarMarks[i].pos.z * 0.008f, 0.0f, MTXF_APPLY);
+
+        if (gRadarMarks[i].type == 103) {
+            gRadarMarks[i].yRot = 45.0f;
+        }
+
+        Matrix_RotateZ(gGfxMatrix, M_DTOR * gRadarMarks[i].yRot, MTXF_APPLY);
+        Matrix_Scale(gGfxMatrix, scale, scale, 1.0f, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+
+        HUD_RadarMark_Draw(gRadarMarks[i].type);
+        Matrix_Pop(&gGfxMatrix);
+
+        gRadarMarks[i].enabled = false;
+    }
+
+    Matrix_Pop(&gGfxMatrix);
+    return 0;
 }
 #endif
 

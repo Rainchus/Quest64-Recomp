@@ -170,3 +170,52 @@ RECOMP_PATCH void Game_InitViewport(Gfx** dList, u8 camCount, u8 camIndex) {
     // gSPViewport((*dList)++, gViewport++);
 }
 #endif
+
+#if 0
+extern s32 sVsSavedBombCount[4];
+extern s32 sVsBombCountFlashTimer[4];
+extern f32 D_800D21A4;
+extern f32 D_800D21A0;
+void HUD_VS_BombIcon_Draw(f32 xPos, f32 yPos, f32 xScale, f32 yScale);
+
+RECOMP_PATCH void HUD_VS_BombCount_Draw(void) {
+    s32 bombIconXpos[] = { 146, 165, 146, 165 };
+    s32 bombIconYpos[] = { 94, 94, 137, 137 };
+
+    gBombCount[0] = 4;
+
+    if (gBombCount[gPlayerNum] != sVsSavedBombCount[gPlayerNum]) {
+        sVsSavedBombCount[gPlayerNum] = gBombCount[gPlayerNum];
+        if (gBombCount[gPlayerNum] == 0) {
+            sVsBombCountFlashTimer[gPlayerNum] = 0;
+        } else {
+            sVsBombCountFlashTimer[gPlayerNum] = 30;
+        }
+    }
+
+    if (sVsBombCountFlashTimer[gPlayerNum] != 0) {
+        sVsBombCountFlashTimer[gPlayerNum]--;
+    }
+
+    if (((sVsBombCountFlashTimer[gPlayerNum] & 2) != 0) ||
+        ((sVsBombCountFlashTimer[gPlayerNum] == 0) && (gBombCount[gPlayerNum] != 0))) {
+        RCP_SetupDL_78();
+        if (gBombCount[gPlayerNum] >= 2) {
+            if (Math_SmoothStepToF(&D_800D21A4, D_800D21A0, 0.4f, 100.0f, 0.1f) == 0.0f) {
+                if (D_800D21A0 == 255.0f) {
+                    D_800D21A0 = 96.0f;
+                } else {
+                    D_800D21A0 = 255.0f;
+                }
+            }
+        } else {
+            D_800D21A4 = 255.0f;
+        }
+        gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, D_800D21A4);
+
+        f32 xPos = bombIconXpos[gPlayerNum];// * -recomp_get_target_aspect_ratio(4.0f/3.0f);
+
+        HUD_VS_BombIcon_Draw(xPos, bombIconYpos[gPlayerNum], 1.0f, 1.0f);
+    }
+}
+#endif

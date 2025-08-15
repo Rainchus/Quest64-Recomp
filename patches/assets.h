@@ -1569,5 +1569,11 @@ extern s32 D_80161900[20];
 extern s32 sGoldRingsIwork[20];
 extern Gfx aGoldRingEmptySlotDL[];
 extern Gfx aStarDL[];
-
+extern f32 D_800D1E10;
+extern u8 D_SZ_60012D0[];
+extern u8 D_FO_6001260[];
+extern u8 D_BO_6000C80[];
+extern u8 D_SY_6000840[];
+extern u8 D_KA_6001260[];
+extern u8 D_VE2_6002890[];
 #endif
