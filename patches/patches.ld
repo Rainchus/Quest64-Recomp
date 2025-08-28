@@ -1,5 +1,5 @@
 RAMBASE  = 0x80801000; /* Used to hold any new symbols */
-PATCH_RAM_END = 0x82000000; /* Amount of extra ram allocated by recomp */
+PATCH_RAM_END = 0x81000000; /* Amount of extra ram allocated by recomp */
 
 MEMORY {
     extram : ORIGIN = RAMBASE, LENGTH = 64M
