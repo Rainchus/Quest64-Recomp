@@ -10,9 +10,9 @@ void Solar_801A0DF8(f32 xPos, f32 zPos, f32 yRot, s32 index, f32 yPos);
 void Solar_801A7750(void);
 void Audio_FadeOutAll(u8 fadeoutTime);
 
-void* memcpy2(void* s1, const void* s2, size_t n) {
-    unsigned char* su1 = (unsigned char*) s1;
-    const unsigned char* su2 = (const unsigned char*) s2;
+void* memcpy2(void* dest, const void* src, size_t n) {
+    unsigned char* su1 = (unsigned char*) dest;
+    const unsigned char* su2 = (const unsigned char*) src;
 
     while (n > 0) {
         *su1 = *su2;
@@ -21,7 +21,7 @@ void* memcpy2(void* s1, const void* s2, size_t n) {
         n--;
     }
 
-    return s1;
+    return dest;
 }
 
 // @recomp: Fix Pigma's voice line being cut out

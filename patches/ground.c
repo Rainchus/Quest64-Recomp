@@ -1244,3 +1244,241 @@ RECOMP_PATCH void Bolse_DrawDynamicGround(void) {
     }
     Matrix_Pop(&gGfxMatrix);
 }
+
+// Texture scrolling in Solar
+#if 1
+void Andross_8018BDD8(void);
+void Training_SpawnEnemies(void);
+void Play_UpdateDynaFloor(void);
+void Andross_80189214(void);
+void Solar_SoFlare_Spawn3(f32, f32, f32, f32);
+
+extern Gfx aSoLava1DL_copy[];
+extern Gfx aSoLava2DL_copy[];
+
+u32 sol_ult = 0, sol_lrt = 127;
+
+RECOMP_PATCH void Play_UpdateLevel(void) {
+    s32 cycleMask;
+    s32 sp40;
+    f32 sp3C;
+    u8 shields;
+    u8 heightParam;
+
+    switch (gCurrentLevel) {
+        case LEVEL_TRAINING:
+            if (gLevelMode == LEVELMODE_ALL_RANGE) {
+                Training_SpawnEnemies();
+            }
+            break;
+
+        case LEVEL_VERSUS:
+            func_versus_800C26C8();
+            gVsItemSpawnTimer++;
+            if ((gVsItemSpawnTimer == 200) && (gLaserStrength[0] == LASERS_SINGLE) &&
+                (gLaserStrength[1] == LASERS_SINGLE) && (gLaserStrength[2] == LASERS_SINGLE) &&
+                (gLaserStrength[3] == LASERS_SINGLE)) {
+                Play_SpawnVsItem(OBJ_ITEM_LASERS, &gItems[0]);
+            }
+            if ((gVsItemSpawnTimer == 400) && (gBombCount[0] == 0) && (gBombCount[1] == 0) && (gBombCount[2] == 0) &&
+                (gBombCount[3] == 0)) {
+                Play_SpawnVsItem(OBJ_ITEM_BOMB, &gItems[1]);
+            }
+            if (gVsItemSpawnTimer == 500) {
+                gVsItemSpawnTimer = 0;
+            }
+            break;
+
+        case LEVEL_VENOM_2:
+            if ((gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) && (gLevelPhase == 2)) {
+                gPlayer[0].state = PLAYERSTATE_LEVEL_COMPLETE;
+                gPlayer[0].csState = 0;
+                gPlayer[0].draw = true;
+                gPlayer[0].pos.z = 15000.0f;
+                Camera_Update360(&gPlayer[0], true);
+                gFillScreenAlpha = 255;
+                gFillScreenAlphaStep = 255;
+                gFillScreenAlphaTarget = 255;
+
+                gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 255;
+            }
+            break;
+
+        case LEVEL_VENOM_ANDROSS:
+            Andross_8018BDD8();
+            gGroundHeight = -25000.0f;
+            gPlayer[0].pathHeight = 612.0f;
+            gPlayer[0].pathFloor = -544.0f;
+            if (gStartAndrossFightTimer != 0) {
+                gStartAndrossFightTimer--;
+                if (gStartAndrossFightTimer == 0) {
+                    Andross_80189214();
+                }
+            }
+            break;
+
+        case LEVEL_METEO:
+            Lib_Texture_Scroll(aMeteoWarpTex, 8, 8, 1);
+            /* fallthrough */
+        case LEVEL_SECTOR_X:
+            if (gLevelPhase == 1) {
+                gBlurAlpha = 128;
+                if (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) {
+                    Math_SmoothStepToF(&gWarpZoneBgAlpha, 0.0f, 1.0f, 1.0f, 0.0f);
+                } else {
+                    Math_SmoothStepToF(&gWarpZoneBgAlpha, 128.0f, 1.0f, 1.0f, 0.0f);
+                }
+            }
+
+            if ((gCurrentLevel == LEVEL_SECTOR_X) && (gLevelPhase == 0) && (gRingPassCount == 4)) {
+                gRingPassCount++;
+                gPlayer[0].state = PLAYERSTATE_ENTER_WARP_ZONE;
+                gPlayer[0].csState = 0;
+                gSceneSetup = 1;
+                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+                gMissionStatus = MISSION_WARP;
+                gLeveLClearStatus[gCurrentLevel] = 1;
+            }
+            break;
+
+        case LEVEL_CORNERIA:
+            HUD_Texture_Wave(D_CO_603EB38, D_CO_6028A60);
+            if ((gGameFrameCount % 2) != 0) {
+                Lib_Texture_Scroll(D_CO_600CBD8, 64, 32, 3);
+            }
+            break;
+
+        case LEVEL_AQUAS:
+            HUD_Texture_Wave(D_AQ_603158C, aAqWaterTex);
+            break;
+
+        case LEVEL_SOLAR:
+            Play_UpdateDynaFloor();
+
+            for (gPathTexScroll; gPathTexScroll >= 10.0f; gPathTexScroll -= 10.0f) {
+                sol_ult += 2;
+                // Lib_Texture_Scroll(aSoLavaTex, 32, 32, 1);
+            }
+            if (gPlayer[0].state == PLAYERSTATE_NEXT) {
+                sol_ult += 2;
+                // Lib_Texture_Scroll(aSoLavaTex, 32, 32, 1);
+            }
+
+            {
+                sol_ult = (sol_ult + 4) & 0x7F;
+                sol_lrt = (sol_ult + 127) & 0xFFF;
+                Gfx* cmd1 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aSoLava1DL + 2)));
+                Gfx* cmd2 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aSoLava2DL + 2)));
+                u32 words_w0 = (G_SETTILESIZE << 24) | sol_ult;
+                u32 words_w1 = (cmd1->words.w1 & 0x0707F000) | sol_lrt;
+                cmd1->words.w0 = words_w0;
+                cmd1->words.w1 = words_w1;
+                cmd2->words.w0 = words_w0;
+                cmd2->words.w1 = words_w1;
+            }
+            {
+                sol_ult = (sol_ult + 4) & 0x7F;
+                sol_lrt = (sol_ult + 127) & 0xFFF;
+                Gfx* cmd1 = (Gfx*) ((void*) ((Gfx*) (aSoLava1DL_copy + 2)));
+                Gfx* cmd2 = (Gfx*) ((void*) ((Gfx*) (aSoLava2DL_copy + 2)));
+                u32 words_w0 = (G_SETTILESIZE << 24) | sol_ult;
+                u32 words_w1 = (cmd1->words.w1 & 0x0707F000) | sol_lrt;
+                cmd1->words.w0 = words_w0;
+                cmd1->words.w1 = words_w1;
+                cmd2->words.w0 = words_w0;
+                cmd2->words.w1 = words_w1;
+            }
+
+            Lib_Texture_Mottle(aSoBackdropTex, D_SO_6020F60, 3);
+
+            if (gPlayer[0].pos.y > 600.0f) {
+                cycleMask = 8 - 1;
+                heightParam = 5;
+            } else if (gPlayer[0].pos.y > 500.0f) {
+                cycleMask = 8 - 1;
+                heightParam = 4;
+            } else if (gPlayer[0].pos.y > 400.0f) {
+                cycleMask = 4 - 1;
+                heightParam = 3;
+            } else if (gPlayer[0].pos.y > 300.0f) {
+                cycleMask = 4 - 1;
+                heightParam = 2;
+            } else if (gPlayer[0].pos.y > 200.0f) {
+                cycleMask = 2 - 1;
+                heightParam = 1;
+            } else if (gPlayer[0].pos.y > 100.0f) {
+                cycleMask = 1 - 1;
+                heightParam = 0;
+            } else {
+                cycleMask = 1 - 1;
+#if 1 //def AVOID_UB
+                heightParam = 0;
+#endif
+            }
+
+            if ((gPlayer[0].state == PLAYERSTATE_ACTIVE) && ((gGameFrameCount & cycleMask) == 0)) {
+                gPlayer[0].shields--;
+                if (gPlayer[0].shields <= 0) {
+                    gPlayer[0].shields = 0;
+                }
+                if (gPlayer[0].heal == 0) {
+                    if (gPlayer[0].shields == 50) {
+                        AUDIO_PLAY_SFX(NA_SE_SHIELD_WARNING1, gDefaultSfxSource, 4);
+                    } else if (gPlayer[0].shields == 100) {
+                        AUDIO_PLAY_SFX(NA_SE_SHIELD_WARNING0, gDefaultSfxSource, 4);
+                    }
+                }
+            }
+
+            shields = MIN(gPlayer[0].shields, 255);
+
+            Audio_SetHeatAlarmParams(shields, heightParam);
+
+            if (((gGameFrameCount % 8) == 0) && (gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE)) {
+                Solar_SoFlare_Spawn3(RAND_FLOAT_CENTERED(6000.0f), -80.0f,
+                                     gPlayer[0].trueZpos + (RAND_FLOAT(2000.0f) + -6000.0f),
+                                     RAND_FLOAT(10.0f) + 20.0f); // check
+            }
+
+            HUD_Texture_Wave(D_SO_60229A4, D_SO_6010198);
+
+            if (gPlayer[0].shields == 0) {
+                gSoShieldsEmpty = 1;
+            }
+            break;
+
+        case LEVEL_ZONESS:
+            Play_UpdateDynaFloor();
+            for (gPathTexScroll; gPathTexScroll >= 20.0f; gPathTexScroll -= 20.0f) {
+                Lib_Texture_Scroll(D_ZO_602C2CC, 32, 32, 1);
+            }
+            if (gPlayer[0].state == PLAYERSTATE_NEXT) {
+                Lib_Texture_Scroll(D_ZO_602C2CC, 32, 32, 1);
+            }
+
+            HUD_Texture_Wave(D_ZO_602C2CC, aZoWaterTex);
+
+            if (Play_CheckDynaFloorCollision(&sp3C, &sp40, gPlayer[0].cam.eye.x, gPlayer[0].cam.eye.y,
+                                             gPlayer[0].cam.eye.z - gPathProgress)) {
+                gLight1R = 0;
+                gLight1G = 7;
+                gLight1B = 10;
+                gAmbientR = gAmbientG = gAmbientB = 0;
+                gFogNear = 990;
+                gFogFar = 994;
+                gBgColor = 0x43; // 0, 8, 8
+            } else {
+                gBgColor = 0x4107; // 64, 32, 24
+                gLight1R = 90;
+                gLight1G = 100;
+                gLight1B = 50;
+                gAmbientR = 10;
+                gAmbientG = 20;
+                gAmbientB = 0;
+                gFogNear = 996;
+                gFogFar = 1000;
+            }
+            break;
+    }
+}
+#endif

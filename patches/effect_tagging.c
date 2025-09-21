@@ -1493,3 +1493,42 @@ RECOMP_PATCH void Effect_ElectricArc_Draw(EffectElectricArc* this) {
     }
 }
 #endif
+
+// Texture scrolling for explosions
+#if 1
+u32 e383_ult = 0, e383_lrt = 127;
+RECOMP_PATCH void Effect_Effect383_Update(Effect383* this) {
+    //    Lib_Texture_Scroll(D_10190C0, 16, 32, 0);
+    e383_ult = (e383_ult - 4) & 0x7F;
+    e383_lrt = (e383_ult + 127) & 0xFFF;
+    Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (D_10182C0 + 6)));
+    cmd->words.w0 = (G_SETTILESIZE << 24) | e383_ult;
+    cmd->words.w1 = (cmd->words.w1 & 0x0703F000) | e383_lrt;
+
+    gGroundClipMode = 2;
+    this->obj.rot.y += 1.0f;
+    Math_SmoothStepToF(&this->scale2, this->scale1, 0.05f, 1.5f, 0.001f);
+
+    if (this->timer_50 > 10) {
+        D_ctx_801779A8[0] = 60.0f;
+    }
+    if (this->timer_50 == 48) {
+        gFillScreenAlpha = 150;
+    }
+    if (this->timer_50 > 45) {
+        gFillScreenAlphaTarget = 0;
+        gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 255;
+    }
+
+    gFillScreenAlphaStep = 3;
+
+    if (this->timer_50 == 0) {
+        this->alpha -= 2;
+        if (this->alpha < 0) {
+            this->alpha = 0;
+            Object_Kill(&this->obj, this->sfxSource);
+            gGroundClipMode = 0;
+        }
+    }
+}
+#endif

@@ -1576,4 +1576,15 @@ extern u8 D_BO_6000C80[];
 extern u8 D_SY_6000840[];
 extern u8 D_KA_6001260[];
 extern u8 D_VE2_6002890[];
+extern u16 D_ZO_602C2CC[];
+extern u16 D_SO_60229A4[];
+extern u16 D_SO_6010198[];
+extern u16 aSoBackdropTex[];
+extern u16 D_SO_6020F60[];
+extern u16 D_AQ_603158C[];
+extern u16 aAqWaterTex1[];
+extern u16 D_CO_603EB38[];
+extern u16 D_CO_600CBD8[];
+extern u16 aMeteoWarpTex[];
+
 #endif

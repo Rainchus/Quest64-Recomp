@@ -15,7 +15,7 @@ extern int yTemp;
 extern int xTest;
 #endif
 
-void* memcpy2(void* s1, const void* s2, size_t n);
+void* memcpy2(void* dest, const void* src, size_t n);
 
 #if 1 // Background_DrawBackdrop
 RECOMP_PATCH void Background_DrawBackdrop(void) {
