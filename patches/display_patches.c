@@ -874,3 +874,63 @@ RECOMP_PATCH void Aquas_BlueMarineReticle_Draw(void) {
         Matrix_Pop(&gGfxMatrix);
     }
 }
+
+#if 0
+u32 bolse_ult=0,bolse_lrt=63,bolse_uls=0,bolse_lrs=63;
+
+RECOMP_PATCH void Bolse_BoBaseShield_Update(BoBaseShield* this) {
+    D_i4_801A0530 = 0;
+
+    Math_SmoothStepToF(&this->fwork[0], D_BO_801A03DC * 9.0f + 10.0f, 1.0f, 10.0f, 0.0f);
+
+    //Lib_Texture_Scroll(aBoBaseShieldTex, 16, 16, 0);
+    bolse_ult = (bolse_ult + 4) & 0x3F;
+    //Lib_Texture_Scroll(aBoBaseShieldTex, 16, 16, 0);
+    bolse_ult = (bolse_ult + 4) & 0x3F;
+
+    bolse_lrt = (bolse_ult + 63) & 0xFFF;
+    // pointer to the SetTileSize cmd
+    Gfx *cmd = (Gfx *)SEGMENTED_TO_VIRTUAL((void *)((Gfx*)(aBoBaseShieldDL + 2)));
+    // upper left coords
+    cmd->words.w0 = (G_SETTILESIZE << 24)        | (bolse_uls << 12) | bolse_ult;
+    // lower right coords
+    cmd->words.w1 = (cmd->words.w1 & 0x07000000) | (bolse_lrs << 12) | bolse_lrt;
+
+    switch (this->state) {
+        case 2:
+            break;
+
+        case 0:
+            if (D_BO_801A03DC == 0) {
+                this->timer_052 = 130;
+                this->state = 1;
+                Radio_PlayMessage(gMsg_ID_11050, RCID_FOX);
+                SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM, 1);
+                SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 1);
+            }
+            break;
+
+        case 1:
+            Math_SmoothStepToF(&gBosses[0].fwork[1], 0.0f, 1.0f, 0.01f, 0.001f);
+            if (this->timer_052 == 0) {
+                this->state = 2;
+                AUDIO_PLAY_SFX(NA_SE_OB_BARRIER_RELEASE, this->sfxSource, 0);
+            }
+            break;
+    }
+
+    if (gGroundClipMode == 0) {
+        if ((gGameFrameCount % 2) == 0) {
+            gLight3Brightness = 0.0f;
+        } else {
+            gLight3Brightness = 0.5f;
+        }
+        gLight3x = this->obj.pos.x;
+        gLight3y = this->obj.pos.y;
+        gLight3z = this->obj.pos.z;
+        gLight3R = 255;
+        gLight3G = 128;
+        gLight3B = 128;
+    }
+}
+#endif

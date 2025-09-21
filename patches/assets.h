@@ -1569,6 +1569,7 @@ extern s32 D_80161900[20];
 extern s32 sGoldRingsIwork[20];
 extern Gfx aGoldRingEmptySlotDL[];
 extern Gfx aStarDL[];
+extern Gfx aCoBuilding1DL[];
 extern f32 D_800D1E10;
 extern u8 D_SZ_60012D0[];
 extern u8 D_FO_6001260[];
@@ -1586,5 +1587,8 @@ extern u16 aAqWaterTex1[];
 extern u16 D_CO_603EB38[];
 extern u16 D_CO_600CBD8[];
 extern u16 aMeteoWarpTex[];
+extern s32 D_i4_801A0530;
+extern s32 D_BO_801A03DC;
+extern u16 aBoBaseShieldTex[];
 
 #endif

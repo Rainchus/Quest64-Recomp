@@ -1256,6 +1256,7 @@ void Solar_SoFlare_Spawn3(f32, f32, f32, f32);
 extern Gfx aSoLava1DL_copy[];
 extern Gfx aSoLava2DL_copy[];
 
+u32 cob1_uls = 0, cob1_lrs = 255;
 u32 sol_ult = 0, sol_lrt = 127;
 
 RECOMP_PATCH void Play_UpdateLevel(void) {
@@ -1344,6 +1345,12 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
         case LEVEL_CORNERIA:
             HUD_Texture_Wave(D_CO_603EB38, D_CO_6028A60);
             if ((gGameFrameCount % 2) != 0) {
+                // "GOODLUCK!" with UV scrolling
+                // cob1_uls = (cob1_uls - 4) & 0xFF;
+                // cob1_lrs = (cob1_uls + 255) & 0xFFF;
+                // Gfx* cmd = (Gfx *)SEGMENTED_TO_VIRTUAL((void *)((Gfx*)(aCoBuilding1DL + 36)));
+                // cmd->words.w0 = (G_SETTILESIZE << 24)        | (cob1_uls << 12);
+                // cmd->words.w1 = (cmd->words.w1 & 0x0700007F) | (cob1_lrs << 12);
                 Lib_Texture_Scroll(D_CO_600CBD8, 64, 32, 3);
             }
             break;
@@ -1411,7 +1418,7 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
                 heightParam = 0;
             } else {
                 cycleMask = 1 - 1;
-#if 1 //def AVOID_UB
+#if 1 // def AVOID_UB
                 heightParam = 0;
 #endif
             }
