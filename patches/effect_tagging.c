@@ -1509,6 +1509,7 @@ RECOMP_PATCH void Effect_ElectricArc_Draw(EffectElectricArc* this) {
 u32 e383_ult = 0, e383_lrt = 127;
 RECOMP_PATCH void Effect_Effect383_Update(Effect383* this) {
     //    Lib_Texture_Scroll(D_10190C0, 16, 32, 0);
+    // @Recomp use UV tex scrolling instead
     e383_ult = (e383_ult - 4) & 0x7F;
     e383_lrt = (e383_ult + 127) & 0xFFF;
     Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (D_10182C0 + 6)));
@@ -1539,6 +1540,39 @@ RECOMP_PATCH void Effect_Effect383_Update(Effect383* this) {
             Object_Kill(&this->obj, this->sfxSource);
             gGroundClipMode = 0;
         }
+    }
+}
+#endif
+
+// Texture scrolling for Corneria's waterfall
+#if 1
+void Obj54_8006AA3C(f32 xPos, f32 yPos, f32 zPos);
+
+u32 wf_ult = 0, wf_lrt = 127;
+
+RECOMP_PATCH void CoWaterfall_Update(CoWaterfall* this) {
+    Vec3f dest;
+    Vec3f src;
+
+    // Lib_Texture_Scroll(aCoWaterfallTex2, 32, 32, 1);
+    // @Recomp use UV tex scrolling instead
+    wf_ult = (wf_ult + 4) & 0x7F;
+    wf_lrt = (wf_ult + 127) & 0xFFF;
+    Gfx* cmd1 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aCoWaterfallDL + 26)));
+    u32 words_w0 = (G_SETTILESIZE << 24) | wf_ult;
+    u32 words_w1 = (cmd1->words.w1 & 0x0707F000) | wf_lrt;
+    cmd1->words.w0 = words_w0;
+    cmd1->words.w1 = words_w1;
+
+    if ((gGameFrameCount % 4) == 0) {
+        Matrix_RotateY(gCalcMatrix, this->obj.rot.y * M_DTOR, MTXF_NEW);
+
+        src.x = RAND_FLOAT_CENTERED(700.0f);
+        src.y = RAND_FLOAT(50.0f);
+        src.z = 700.0f;
+
+        Matrix_MultVec3fNoTranslate(gCalcMatrix, &src, &dest);
+        Obj54_8006AA3C(this->obj.pos.x + dest.x, this->obj.pos.y + dest.y + 50.0f, this->obj.pos.z + dest.z);
     }
 }
 #endif
