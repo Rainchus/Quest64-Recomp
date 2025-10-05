@@ -1590,5 +1590,7 @@ extern u16 aMeteoWarpTex[];
 extern s32 D_i4_801A0530;
 extern s32 D_BO_801A03DC;
 extern u16 aBoBaseShieldTex[];
-
+extern u8 D_OPT_80079F0[];
+extern u16 aMapWhiteSquareTex[];
+extern Gfx aCoWaterfallDL[];
 #endif
