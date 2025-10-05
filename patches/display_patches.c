@@ -51,6 +51,11 @@ int yTemp;
 int xTest = 0;
 #endif
 
+// for texture scroll debugging
+#if 0
+int gUvOn = 0;
+#endif
+
 RECOMP_PATCH void Display_Update(void) {
     s32 i;
     Vec3f tempVec;
@@ -229,8 +234,7 @@ RECOMP_PATCH void Display_Update(void) {
 
     if ((gCurrentLevel != LEVEL_AQUAS) &&
         (((gCurrentLevel != LEVEL_CORNERIA) && (gCurrentLevel != LEVEL_VENOM_ANDROSS)) ||
-         ((gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) &&
-          (gPlayer[0].state != PLAYERSTATE_LEVEL_INTRO)))) {
+         ((gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) && (gPlayer[0].state != PLAYERSTATE_LEVEL_INTRO)))) {
         Effect_Draw(0);
     }
 
@@ -249,8 +253,7 @@ RECOMP_PATCH void Display_Update(void) {
     }
 
     if (((gCurrentLevel == LEVEL_CORNERIA) || (gCurrentLevel == LEVEL_VENOM_ANDROSS)) &&
-        ((gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) ||
-         (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO))) {
+        ((gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE) || (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO))) {
         Effect_Draw(0);
     }
 
@@ -282,8 +285,7 @@ RECOMP_PATCH void Display_Update(void) {
 
     Background_DrawLensFlare();
 
-    if ((gCamCount != 1) &&
-        ((camPlayer->state == PLAYERSTATE_ACTIVE) || (camPlayer->state == PLAYERSTATE_U_TURN))) {
+    if ((gCamCount != 1) && ((camPlayer->state == PLAYERSTATE_ACTIVE) || (camPlayer->state == PLAYERSTATE_U_TURN))) {
         HUD_Draw();
         HUD_EdgeArrows_Update();
     }
@@ -510,6 +512,17 @@ RECOMP_PATCH void Display_Update(void) {
     if (gInputPress->stick_x < 0) Graphics_DisplaySmallText(110, 210, 1.0f, 1.0f, "NEG:");
     if (gInputPress->stick_y < 0) Graphics_DisplaySmallText(110, 220, 1.0f, 1.0f, "NEG:");
 #endif
+
+// For texture scroll debugging
+#if 0
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+    Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "UV:");
+    Graphics_DisplaySmallNumber(80, 210, (int)gUvOn);
+    if (gControllerPress[0].button & L_TRIG) {
+        gUvOn ^= 1;
+    }
+#endif
 }
 
 // for draw distance tests
@@ -554,8 +567,7 @@ RECOMP_PATCH void Display_Reticle(Player* player) {
 
     if ((gPlayerNum == player->num) && ((player->form == FORM_ARWING) || (player->form == FORM_LANDMASTER)) &&
         player->draw &&
-        (((gGameState == GSTATE_PLAY) && (player->state == PLAYERSTATE_ACTIVE)) ||
-         (gGameState == GSTATE_MENU))) {
+        (((gGameState == GSTATE_PLAY) && (player->state == PLAYERSTATE_ACTIVE)) || (gGameState == GSTATE_MENU))) {
         for (i = 0; i < 2; i++) {
             translate = &D_display_801613E0[i];
             Matrix_Push(&gGfxMatrix);
