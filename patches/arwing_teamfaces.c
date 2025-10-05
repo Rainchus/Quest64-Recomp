@@ -633,6 +633,7 @@ RECOMP_PATCH void Cutscene_WarpZoneComplete_TeamSetup(ActorCutscene* this, s32 i
         this->animFrame = ACTOR_CS_GREAT_FOX;
     } else {
         this->iwork[11] = 1;
+        // @recomp: Setup team faces
         this->iwork[14] = index + 2;
         AUDIO_PLAY_SFX(NA_SE_ARWING_ENGINE_FG, this->sfxSource, 4);
     }
