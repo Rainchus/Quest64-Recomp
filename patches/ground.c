@@ -1329,8 +1329,8 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
             // Lib_Texture_Scroll(aMeteoWarpTex, 8, 8, 1);
             met_ult = (met_ult + 4) & 0x1F;
             met_lrt = (met_ult + 31) & 0xFFF;
-            Gfx* cmd = (Gfx *)SEGMENTED_TO_VIRTUAL((void *)((Gfx*)(aMeteoWarpDL + 2)));
-            cmd->words.w0 = (G_SETTILESIZE << 24)        | met_ult;
+            Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aMeteoWarpDL + 2)));
+            cmd->words.w0 = (G_SETTILESIZE << 24) | met_ult;
             cmd->words.w1 = (cmd->words.w1 & 0x0701F000) | met_lrt;
 
             /* fallthrough */
@@ -1358,13 +1358,16 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
         case LEVEL_CORNERIA:
             HUD_Texture_Wave(D_CO_603EB38, D_CO_6028A60);
             if ((gGameFrameCount % 2) != 0) {
+#if 0
                 // @recomp: "GOODLUCK!" with UV scrolling
                 cob1_uls = (cob1_uls - 4) & 0xFF;
                 cob1_lrs = (cob1_uls + 255) & 0xFFF;
                 Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aCoBuilding1DL + 36)));
                 cmd->words.w0 = (G_SETTILESIZE << 24) | (cob1_uls << 12);
                 cmd->words.w1 = (cmd->words.w1 & 0x0700007F) | (cob1_lrs << 12);
-                // Lib_Texture_Scroll(D_CO_600CBD8, 64, 32, 3);
+#else
+                Lib_Texture_Scroll(D_CO_600CBD8, 64, 32, 3);
+#endif
             }
             break;
 
