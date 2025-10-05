@@ -1576,3 +1576,224 @@ RECOMP_PATCH void CoWaterfall_Update(CoWaterfall* this) {
     }
 }
 #endif
+
+// Tank tracks UV Scrolling
+#if 1
+void func_tank_80043280(u16* text0, u16* text1, f32 zRot);
+void func_tank_80043B18(Player* player);
+u32 lm6_ult = 0, lm6_lrt = 0;
+
+#if 0
+extern int gUvOn;
+#endif
+
+RECOMP_PATCH void func_tank_80044868(Player* player) {
+    f32 pad;
+    f32 stickTilt;
+    f32 sp2C;
+
+    stickTilt = (gInputPress->stick_y * 0.7f) - 8.0f;
+    if (stickTilt < -40.0f) {
+        stickTilt = -40.0f;
+    }
+    if (stickTilt > 0.0f) {
+        stickTilt = 0.0f;
+    }
+
+    if (player->unk_17C < stickTilt) {
+        player->unk_17C += 3.0f;
+    }
+
+    if (stickTilt < player->unk_17C) {
+        player->unk_17C -= 3.0f;
+    }
+
+    if (player->unk_180 < 0.0f) {
+        player->unk_180 += 3.0f;
+    }
+    if (player->unk_180 > 0.0f) {
+        player->unk_180 -= 3.0f;
+    }
+
+    gPlayerTurnRate = 3.0f;
+    gPlayerTurnStickMod = 0.66f;
+
+    stickTilt = gInputPress->stick_x;
+    if (stickTilt == 0.0f) {
+        Math_SmoothStepToF(&player->rot.y, -stickTilt * gPlayerTurnStickMod, 0.1f, gPlayerTurnRate * 0.5f, 0.1f);
+    } else {
+        Math_SmoothStepToF(&player->rot.y, -stickTilt * gPlayerTurnStickMod, 0.1f, gPlayerTurnRate, 0.1f);
+    }
+
+    player->rot_104.y = player->rot.y;
+    sp2C = player->baseSpeed;
+
+    if ((gCurrentLevel == LEVEL_MACBETH) && (sp2C < 3.0f)) {
+        sp2C = 3.0f;
+    }
+
+    if (player->unk_16C > 0.2f) {
+        Math_SmoothStepToF(&player->unk_184, player->baseSpeed * 0.5f, 1.0f, 1.0f, 0.0f);
+    }
+
+    if (player->unk_170 > 0.2f) {
+        Math_SmoothStepToF(&player->unk_184, -player->baseSpeed * 0.5f, 1.0f, 1.0f, 0.0f);
+    }
+    if (!(player->unk_170 > 0.2f) && !(player->unk_16C > 0.2f) && player->grounded) {
+        Math_SmoothStepToF(&player->unk_184, 0.0f, 1.0f, 0.75f, 0.0f);
+    }
+
+    if (player->rollState != 0) {
+        if (player->rollRate < 0) {
+            player->unk_184 = 15.0f;
+        }
+        if (player->rollRate > 0) {
+            player->unk_184 = -15.0f;
+        }
+    }
+
+    player->vel.z = -(COS_DEG(player->rot_104.y) * COS_DEG(player->rot_104.x) * sp2C);
+    if ((player->vel.x < 20.0f) && (player->rot_104.z < -30.0f)) {
+        Math_SmoothStepToF(&player->vel.x, -player->rot_104.z * 0.5f, 0.2f, 3.0f, 0.0f);
+        player->unk_184 = 0.0f;
+    } else if ((player->vel.x > -20.0f) && (player->rot_104.z > 30.0f)) {
+        Math_SmoothStepToF(&player->vel.x, -player->rot_104.z * 0.5f, 0.2f, 3.0f, 0.0f);
+        player->unk_184 = 0.0f;
+    } else {
+        Math_SmoothStepToF(&player->vel.x, player->unk_184 - (SIN_DEG(player->rot_104.y) * sp2C), 0.5f, 5.0f, 0.0f);
+    }
+
+    player->vel.z += fabsf((player->unk_184 * 0.4f * player->baseSpeed) / 15.0f);
+
+    if (player->unk_000 == 0) {
+        player->vel.z += SIN_DEG(player->rot.x) * player->boostSpeed;
+    }
+
+    if (D_800C9F00 != 0) {
+        player->vel.z = 2.0f * D_800C9F00;
+    }
+
+    player->pos.x += player->vel.x;
+
+    if ((player->xPath + (player->pathWidth - 100.0f)) < player->pos.x) {
+        player->flags_228 = PFLAG_228_0;
+    }
+
+    if (player->pos.x < (player->xPath - (player->pathWidth - 100.0f))) {
+        player->flags_228 = PFLAG_228_1;
+    }
+
+    if (player->pathWidth + player->xPath < player->pos.x) {
+        player->pos.x = player->pathWidth + player->xPath;
+        player->vel.x = 0.0f;
+    }
+
+    if (player->pos.x < player->xPath - player->pathWidth) {
+        player->pos.x = player->xPath - player->pathWidth;
+        player->vel.x = 0.0f;
+    }
+
+    player->pos.y += player->vel.y;
+    player->vel.y -= player->gravity;
+
+    if (player->vel.y < -50.0f) {
+        player->vel.y = -50.0f;
+    }
+    if (player->vel.y > 20.0f) {
+        player->vel.y = 20.0f;
+    }
+
+    player->pos.z += player->vel.z;
+
+    if (player->grounded) {
+        player->pathHeight = 0.0f;
+        player->rockPhase += player->baseSpeed * 5.0f;
+        player->rockAngle = SIN_DEG(player->rockPhase) * 0.7f;
+
+        if (D_800C9F04 == 0) {
+            if (player->baseSpeed != 0.0f) {
+                func_tank_80043B18(player);
+            }
+            if (player->rollState != 0.0f) {
+                func_tank_80043B18(player);
+            }
+        }
+    }
+
+    if (player->baseSpeed > 0.0f) {
+        // Lib_Texture_Scroll(aLandmasterModelTex6, 32, 32, 0);
+        // @recomp: UV Scrolling
+        lm6_ult = (lm6_ult - 4) & 0x7F;
+        lm6_lrt = (lm6_ult + 127) & 0xFFF;
+        // aLandmasterModelDL
+        // + 92
+        // + 141
+        // + 150
+        // + 177
+        Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 92)));
+        u32 cmd_words_w0, cmd_words_w1;
+        // upper left coords
+        cmd_words_w0 = (G_SETTILESIZE << 24) | lm6_ult;
+        // lower right coords
+        cmd_words_w1 = (cmd->words.w1 & 0x0707F000) | lm6_lrt;
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 141)));
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 150)));
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 177)));
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+        if ((gCurrentLevel == LEVEL_TITANIA) && !gBossActive) {
+            func_tank_80043280(aLandmasterModelTex4, D_TI_6009BB8, gGameFrameCount * -55.0f);
+        }
+        if ((gCurrentLevel == LEVEL_MACBETH) && (player->state == PLAYERSTATE_LEVEL_COMPLETE)) {
+            func_tank_80043280(aLandmasterModelTex4, D_Tex_800DACB8, gGameFrameCount * -55.0f);
+        }
+    }
+
+    if (player->baseSpeed > 10.0f) {
+        // Lib_Texture_Scroll(aLandmasterModelTex6, 32, 32, 0);
+        // @recomp: UV Scrolling
+        lm6_ult = (lm6_ult - 4) & 0x7F;
+        lm6_lrt = (lm6_ult + 127) & 0xFFF;
+        // aLandmasterModelDL
+        // + 92
+        // + 141
+        // + 150
+        // + 177
+        Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 92)));
+        u32 cmd_words_w0, cmd_words_w1;
+        // upper left coords
+        cmd_words_w0 = (G_SETTILESIZE << 24) | lm6_ult;
+        // lower right coords
+        cmd_words_w1 = (cmd->words.w1 & 0x0707F000) | lm6_lrt;
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 141)));
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 150)));
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aLandmasterModelDL + 177)));
+        cmd->words.w0 = cmd_words_w0;
+        cmd->words.w1 = cmd_words_w1;
+
+        if ((gCurrentLevel == LEVEL_TITANIA) && !gBossActive) {
+            func_tank_80043280(aLandmasterModelTex4, D_TI_6009BB8, gGameFrameCount * -55.0f);
+        }
+    }
+
+    Player_DamageEffects(player);
+}
+#endif
