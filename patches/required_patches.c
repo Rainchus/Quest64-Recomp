@@ -51,16 +51,11 @@ RECOMP_PATCH void Load_RomFile(void* vRomAddress, void* dest, signed long size) 
     }
 };
 
-
-// Doesn't work
-// Failed to find event function with vram 2156315508.
-#if 0
 RECOMP_DECLARE_EVENT(recomp_on_init());
-#endif
 
-// TODO: recomp_on_init() should be here
+// TODO
 // Doesn't work for some reason, crashes at osCreateThread
-#if 0
+#if 1
 void Audio_ThreadEntry(void *arg0);
 void Graphics_ThreadEntry(void *arg0);
 void Timer_ThreadEntry(void *arg0);
@@ -79,6 +74,12 @@ extern OSThread gTimerThread;           // 800DFC50
 extern u8 gTimerThreadStack[0x1000];    // 800DFE00
 extern OSThread gSerialThread;          // 800E0E00
 extern u8 gSerialThreadStack[0x1000];   // 800E0FB0
+
+#define osCreateThread osCreateThread_recomp
+#define osStartThread osStartThread_recomp
+
+extern void osCreateThread(OSThread *, OSId, void (*)(void *), void *, void *, OSPri);
+extern void osStartThread(OSThread* t);
 
 RECOMP_PATCH void Main_ThreadEntry(void* arg0) {
     OSMesg osMesg;
