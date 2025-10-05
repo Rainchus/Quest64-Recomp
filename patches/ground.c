@@ -1369,16 +1369,15 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
 
             // @recomp: Use UV texture scrolling
             for (gPathTexScroll; gPathTexScroll >= 10.0f; gPathTexScroll -= 10.0f) {
-                sol_ult += 2;
+                sol_ult = (sol_ult + 4) & 0x7F;
                 // Lib_Texture_Scroll(aSoLavaTex, 32, 32, 1);
             }
             if (gPlayer[0].state == PLAYERSTATE_NEXT) {
-                sol_ult += 2;
+                sol_ult = (sol_ult + 4) & 0x7F;
                 // Lib_Texture_Scroll(aSoLavaTex, 32, 32, 1);
             }
 
             {
-                sol_ult = (sol_ult + 4) & 0x7F;
                 sol_lrt = (sol_ult + 127) & 0xFFF;
                 Gfx* cmd1 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aSoLava1DL + 2)));
                 Gfx* cmd2 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aSoLava2DL + 2)));
@@ -1390,7 +1389,6 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
                 cmd2->words.w1 = words_w1;
             }
             {
-                sol_ult = (sol_ult + 4) & 0x7F;
                 sol_lrt = (sol_ult + 127) & 0xFFF;
                 Gfx* cmd1 = (Gfx*) ((void*) ((Gfx*) (aSoLava1DL_copy + 2)));
                 Gfx* cmd2 = (Gfx*) ((void*) ((Gfx*) (aSoLava2DL_copy + 2)));
