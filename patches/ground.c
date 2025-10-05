@@ -1259,6 +1259,11 @@ extern Gfx aSoLava2DL_copy[];
 u32 cob1_uls = 0, cob1_lrs = 255;
 u32 sol_ult = 0, sol_lrt = 127;
 
+// for Texture scroll debugging
+#if 0
+extern int gUvOn;
+#endif
+
 RECOMP_PATCH void Play_UpdateLevel(void) {
     s32 cycleMask;
     s32 sp40;
@@ -1362,6 +1367,7 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
         case LEVEL_SOLAR:
             Play_UpdateDynaFloor();
 
+            // @recomp: Use UV texture scrolling
             for (gPathTexScroll; gPathTexScroll >= 10.0f; gPathTexScroll -= 10.0f) {
                 sol_ult += 2;
                 // Lib_Texture_Scroll(aSoLavaTex, 32, 32, 1);
