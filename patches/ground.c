@@ -1258,6 +1258,7 @@ extern Gfx aSoLava2DL_copy[];
 
 u32 cob1_uls = 0, cob1_lrs = 255;
 u32 sol_ult = 0, sol_lrt = 127;
+u32 met_ult = 0, met_lrt = 127;
 
 // for Texture scroll debugging
 #if 0
@@ -1324,7 +1325,14 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
             break;
 
         case LEVEL_METEO:
-            Lib_Texture_Scroll(aMeteoWarpTex, 8, 8, 1);
+            // @recomp: use UV Scrolling
+            // Lib_Texture_Scroll(aMeteoWarpTex, 8, 8, 1);
+            met_ult = (met_ult + 4) & 0x1F;
+            met_lrt = (met_ult + 31) & 0xFFF;
+            Gfx* cmd = (Gfx *)SEGMENTED_TO_VIRTUAL((void *)((Gfx*)(aMeteoWarpDL + 2)));
+            cmd->words.w0 = (G_SETTILESIZE << 24)        | met_ult;
+            cmd->words.w1 = (cmd->words.w1 & 0x0701F000) | met_lrt;
+
             /* fallthrough */
         case LEVEL_SECTOR_X:
             if (gLevelPhase == 1) {
