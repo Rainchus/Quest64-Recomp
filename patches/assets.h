@@ -1600,4 +1600,9 @@ extern u16 aLandmasterModelTex6[];
 extern u16 aLandmasterModelTex4[];
 extern u16 D_Tex_800DACB8[];
 extern u16 D_TI_6009BB8[];
+extern Animation aCoGaruda1Anim;
+extern Animation aCoGaruda3Anim;
+extern Animation D_CO_602AA04;
+extern u16 aCoGarudaTracksTex[];
+extern Gfx ast_corneria_seg6_gfx_31ED0[];
 #endif

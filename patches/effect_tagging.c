@@ -1797,3 +1797,234 @@ RECOMP_PATCH void func_tank_80044868(Player* player) {
     Player_DamageEffects(player);
 }
 #endif
+
+void Corneria_Garuda_HandleDamage(Actor* this);
+
+// Garuda 1 texture scrolling
+#if 1
+s32 Corneria_CoGaruda1_CheckCollision(CoGaruda1* this);
+
+u32 garuda1_ult = 0, garuda1_lrt = 63;
+
+RECOMP_PATCH void Corneria_CoGaruda1_Update(CoGaruda1* this) {
+    Vec3f frameTable[20];
+    f32 sin;
+    f32 cos;
+
+    Corneria_Garuda_HandleDamage(this);
+
+    Math_SmoothStepToVec3fArray(frameTable, this->vwork, 0,
+                                Animation_GetFrameData(&aCoGaruda1Anim, this->animFrame, frameTable), 1.0f, 1.0f, 1.0f);
+
+    sin = SIN_DEG(this->obj.rot.y);
+    this->vel.x = this->fwork[0] * sin;
+    cos = COS_DEG(this->obj.rot.y);
+    this->vel.z = this->fwork[0] * cos;
+
+    switch (this->state) {
+        case 0:
+            this->fwork[1] += 20.0f;
+
+            // @recomp: UV texture scrolling
+            // Lib_Texture_Scroll(aCoGarudaTracksTex, 16, 16, 1);
+            garuda1_ult = (garuda1_ult + 4) & 0x3F;
+            garuda1_lrt = (garuda1_ult + 63) & 0xFFF;
+            // gfx+59
+            Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (ast_corneria_seg6_gfx_31ED0 + 59)));
+            // upper left coords
+            cmd->words.w0 = (G_SETTILESIZE << 24) | garuda1_ult;
+            // lower right coords
+            cmd->words.w1 = (cmd->words.w1 & 0x0703F000) | garuda1_lrt;
+
+            this->animFrame = 0;
+
+            this->fwork[0] += 1.0f;
+            if (this->fwork[0] > 10.0f) {
+                this->fwork[0] = 10.0f;
+            }
+
+            this->iwork[0] = Corneria_CoGaruda1_CheckCollision(this);
+            if (this->iwork[0] != 0) {
+                this->state++;
+            }
+            break;
+
+        case 1:
+            this->animFrame++;
+            this->fwork[1] += 20.0f;
+            this->fwork[0] = 0.0f;
+
+            if (this->animFrame == 50) {
+                gScenery[this->iwork[0] - 1].state = 1;
+            }
+            if (this->animFrame >= Animation_GetFrameCount(&aCoGaruda1Anim)) {
+                this->state++;
+            }
+            break;
+
+        case 2:
+            this->animFrame = 0;
+            this->fwork[1] += 20.0f;
+            break;
+    }
+}
+#endif
+
+#if 1
+u32 garuda2_ult = 0, garuda2_lrt = 63;
+
+RECOMP_PATCH void Corneria_CoGaruda2_Update(CoGaruda2* this) {
+    Vec3f frameTable[20];
+    Vec3f src;
+    Vec3f dest;
+    Scenery* scenery;
+    f32 sin;
+    f32 cos;
+
+    Corneria_Garuda_HandleDamage(this);
+
+    scenery = &gScenery[this->iwork[0]];
+
+    sin = SIN_DEG(this->obj.rot.y);
+    this->vel.x = this->fwork[0] * sin;
+    cos = COS_DEG(this->obj.rot.y);
+    this->vel.z = this->fwork[0] * cos;
+
+    Matrix_RotateY(gCalcMatrix, this->obj.rot.y * M_DTOR, MTXF_NEW);
+
+    switch (this->state) {
+        case 0:
+            this->timer_0BC = 40;
+            this->state = 1;
+            this->animFrame = 0;
+            break;
+
+        case 1:
+            this->fwork[0] = -10.0f;
+
+            {
+                // Lib_Texture_Scroll(aCoGarudaTracksTex, 16, 16, 1);
+                garuda2_ult = (garuda2_ult - 4) & 0x3F;
+                garuda2_lrt = (garuda2_ult + 63) & 0xFFF;
+                // gfx+59
+                Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (ast_corneria_seg6_gfx_31ED0 + 59)));
+                // upper left coords
+                cmd->words.w0 = (G_SETTILESIZE << 24) | garuda2_ult;
+                // lower right coords
+                cmd->words.w1 = (cmd->words.w1 & 0x0703F000) | garuda2_lrt;
+            }
+
+            if (this->timer_0BC == 0) {
+                this->state = 2;
+                this->iwork[2] = RAND_INT(10.0f) + 10;
+            }
+            break;
+
+        case 2:
+            this->fwork[0] = -10.0f;
+
+            {
+                // Lib_Texture_Scroll(aCoGarudaTracksTex, 16, 16, 1);
+                garuda2_ult = (garuda2_ult - 4) & 0x3F;
+                garuda2_lrt = (garuda2_ult + 63) & 0xFFF;
+                // gfx+59
+                Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (ast_corneria_seg6_gfx_31ED0 + 59)));
+                // upper left coords
+                cmd->words.w0 = (G_SETTILESIZE << 24) | garuda2_ult;
+                // lower right coords
+                cmd->words.w1 = (cmd->words.w1 & 0x0703F000) | garuda2_lrt;
+            }
+
+            this->animFrame++;
+
+            if (this->animFrame >= Animation_GetFrameCount(&D_CO_602AA04)) {
+                this->state = 3;
+            }
+            if (this->animFrame == (Animation_GetFrameCount(&D_CO_602AA04) - this->iwork[2])) {
+                this->iwork[1] = 1;
+                scenery->state = 1; // I beam rotating
+                src.x = 0.0f;
+                src.y = 0.0f;
+                src.z = 30.0f; // Ibeam flying towards the camera.
+                Matrix_MultVec3fNoTranslate(gCalcMatrix, &src, &dest);
+                scenery->vel.x = dest.x;
+                scenery->vel.y = dest.y;
+                scenery->vel.z = dest.z;
+                AUDIO_PLAY_SFX(NA_SE_EN_THROW, this->sfxSource, 4);
+            }
+            break;
+
+        case 3:
+            break;
+    }
+
+    if (this->iwork[1] == 0) {
+        scenery->obj.pos.x = this->fwork[2];
+        scenery->obj.pos.y = this->fwork[6];
+        scenery->obj.pos.z = this->fwork[10];
+        scenery->obj.rot.y = this->obj.rot.y;
+        scenery->vel.y = 0.0f;
+    }
+
+    Math_SmoothStepToVec3fArray(frameTable, this->vwork, 0,
+                                Animation_GetFrameData(&D_CO_602AA04, this->animFrame, frameTable), 1.0f, 1.0f, 1.0f);
+}
+#endif
+
+#if 1
+u32 garuda3_ult = 0, garuda3_lrt = 63;
+
+RECOMP_PATCH void Corneria_CoGaruda3_Update(CoGaruda3* this) {
+    s32 pad;
+    Vec3f frameTable[20];
+    Scenery* scenery;
+    f32 sin;
+    f32 cos;
+    s32 pad2[4];
+
+    Corneria_Garuda_HandleDamage(this);
+
+    sin = SIN_DEG(this->obj.rot.y);
+    this->vel.x = this->fwork[0] * sin;
+    cos = COS_DEG(this->obj.rot.y);
+    this->vel.z = this->fwork[0] * cos;
+
+    switch (this->state) {
+        case 0:
+            this->state = 1;
+            break;
+
+        case 1:
+            this->fwork[0] = 5.0f;
+            this->fwork[1] += 5.0f;
+            {
+                // Lib_Texture_Scroll(aCoGarudaTracksTex, 16, 16, 1);
+                garuda3_ult = (garuda3_ult - 4) & 0x3F;
+                garuda3_lrt = (garuda3_ult + 63) & 0xFFF;
+                // gfx+59
+                Gfx* cmd = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (ast_corneria_seg6_gfx_31ED0 + 59)));
+                // upper left coords
+                cmd->words.w0 = (G_SETTILESIZE << 24) | garuda3_ult;
+                // lower right coords
+                cmd->words.w1 = (cmd->words.w1 & 0x0703F000) | garuda3_lrt;
+            }
+            this->animFrame++;
+            if (this->animFrame >= Animation_GetFrameCount(&aCoGaruda3Anim)) {
+                this->animFrame = 0;
+            }
+            break;
+    }
+
+    if (this->iwork[1] == 0) {
+        scenery = &gScenery[this->iwork[0]];
+        scenery->obj.pos.x = this->fwork[2];
+        scenery->obj.pos.y = this->fwork[6];
+        scenery->obj.pos.z = this->fwork[10];
+        scenery->obj.rot.y = this->fwork[1];
+        scenery->vel.y = 0.0f;
+    }
+
+    Math_SmoothStepToVec3fArray(frameTable, this->vwork, 0,
+                                Animation_GetFrameData(&aCoGaruda3Anim, this->animFrame, frameTable), 1.0f, 1.0f, 1.0f);
+}
+#endif
