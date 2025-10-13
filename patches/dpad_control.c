@@ -109,7 +109,7 @@ RECOMP_PATCH bool Option_Input_MoveCursor_Y(s32* arg0, s32 arg1, bool arg2, s32 
             stick->unk_0 -= arg6;
         }
     } else if (((gControllerPress[0].button & L_JPAD) || (gControllerPress[0].button & R_JPAD)) && (arg2 == false)) {
-        if (gControllerPress[0].button & L_JPAD) {
+        if (gControllerPress[0].button & R_JPAD) {
             (*arg0)++;
             if (*arg0 > arg1) {
                 if (arg3 == 0) {
@@ -120,7 +120,7 @@ RECOMP_PATCH bool Option_Input_MoveCursor_Y(s32* arg0, s32 arg1, bool arg2, s32 
             }
         }
 
-        if (gControllerPress[0].button & R_JPAD) {
+        if (gControllerPress[0].button & L_JPAD) {
             (*arg0)--;
             if (*arg0 < 0) {
                 if (arg3 == 0) {
