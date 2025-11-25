@@ -16,3 +16,17 @@ ignored = [
     
 ]
 
+renamed = [
+    "__lround",
+    "__lroundf",
+    "__ceil",
+    "__ceilf",
+    "__floor",
+    "__floorf",
+    "__trunc",
+    "__truncf",
+    "__round",
+    "__roundf",
+    "__nearbyint",
+    "__nearbyintf"
+]
