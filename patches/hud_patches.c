@@ -920,6 +920,48 @@ RECOMP_PATCH void HUD_Radar(void) {
 #endif
 
 #if 0
+void HUD_MsgWindowBg_Draw(f32 xPos, f32 yPos, f32 xScale, f32 yScale);
+void HUD_RadarWindowFrame_Draw(f32 xPos, f32 yPos, f32 xScale, f32 yScale);
+
+RECOMP_PATCH void HUD_RadarWindow_Draw(f32 x, f32 y) {
+    f32 sVsRadarWindowXpos[] = { 20.0f, 180.0f, 20.0f, 180.0f };
+    f32 sVsRadarWindowYpos[] = { 72.0f, 72.0f, 192.0f, 192.0f };
+    f32 xPos;
+    f32 yPos;
+    f32 xScale;
+    f32 yScale;
+    f32 xScale1;
+    f32 yScale1;
+
+    if (gCamCount != 1) { // Versus mode
+        xPos = sVsRadarWindowXpos[gPlayerNum];
+        yPos = sVsRadarWindowYpos[gPlayerNum];
+        xScale = 1.21f;
+        yScale = 1.69f;
+        xScale1 = 0.70f;
+        yScale1 = 0.70f;
+    } else { // Simple player mode
+        xPos = x - 32.0f;
+        yPos = y - 14.0f;
+        xScale = 2.98f;
+        yScale = 4.24f;
+        xScale1 = 1.70f;
+        yScale1 = 1.70f;
+    }
+    recomp_printf("Orig xPos: %f\n", xPos);
+    f32 vpAspect = ((f32) gViewport->vp.vscale[0] / 2.0f) / ((f32) gViewport->vp.vscale[1] / 2.0f);
+    recomp_printf("viewport aspect ratio: %f\n", vpAspect);
+    xPos = xPos * vpAspect;
+    recomp_printf("xPos: %f\n", xPos);
+    RCP_SetupDL(&gMasterDisp, SETUPDL_78);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 60, 60, 255, 170);
+    HUD_MsgWindowBg_Draw(xPos + 1.0f, yPos + 1.0f, xScale, yScale);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
+    HUD_RadarWindowFrame_Draw(xPos, yPos, xScale1, yScale1);
+}
+#endif
+
+#if 0
 RECOMP_PATCH s32 HUD_RadarMarks_Update(void) {
     s32 i;
     f32 scale;
@@ -1053,8 +1095,11 @@ RECOMP_PATCH s32 HUD_RadarMarks_Update(void) {
     Matrix_Push(&gGfxMatrix);
 
     if (gVersusMode) {
+        f32 tempX = ((f32) gViewport->vp.vscale[0] / 2.0f) / ((f32) gViewport->vp.vscale[1] / 2.0f);
+        // recomp_printf("Orig X1 pos: %f\n", x1);
+        // x1 = x1 * +tempX;
         Matrix_Translate(gGfxMatrix, x1, y1, z1, MTXF_APPLY);
-        recomp_printf("X1 pos: %f\n", x1);
+        // recomp_printf("X1 pos: %f\n", x1);
     } else {
         Matrix_Translate(gGfxMatrix, x1, y1, z1, MTXF_APPLY);
     }
