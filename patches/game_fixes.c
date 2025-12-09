@@ -417,7 +417,7 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
             gFillScreenAlphaStep = 4;
 
             if (gMsgCharIsPrinting) {
-                player->arwing.teamFaceXrot = (s32) (gGameFrameCount & 2) * 5.0f;
+                player->arwing.teamFaceXrot = (s32) (gGameFrameCount & 2) * 2.5f;
             }
 
             switch (gCsFrameCount) {
