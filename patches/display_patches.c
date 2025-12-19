@@ -139,7 +139,7 @@ RECOMP_PATCH void Display_Update(void) {
 
     static int camSkipTimes = 0;
     bool bigJump = !should_interpolate_perspective(&gPlayCamEye, &gPlayCamAt);
-    
+
     if (bigJump) {
         // Skip interpolation for this frame.
         gEXMatrixGroupSimple(gMasterDisp++, 0xFFFFAAAA, G_EX_NOPUSH, G_MTX_PROJECTION, G_EX_COMPONENT_SKIP,
@@ -151,7 +151,8 @@ RECOMP_PATCH void Display_Update(void) {
         // Simple interpolation works much better for cameras because they orbit around a focus.
         gEXMatrixGroupSimple(gMasterDisp++, 0xFFFFAAAA, G_EX_NOPUSH, G_MTX_PROJECTION, G_EX_COMPONENT_INTERPOLATE,
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP,
+                             G_EX_COMPONENT_SKIP);
         gCamera1Skipped = false;
     }
 
@@ -550,7 +551,7 @@ RECOMP_PATCH void Display_Update(void) {
     }
 #endif
 
-// D_display_800CA220 = 2;
+    // D_display_800CA220 = 2;
 }
 
 // for draw distance tests
@@ -925,9 +926,6 @@ RECOMP_PATCH void Bolse_BoBaseShield_Update(BoBaseShield* this) {
 
     // Lib_Texture_Scroll(aBoBaseShieldTex, 16, 16, 0);
     bolse_ult = (bolse_ult - 4) & 0x3F;
-    // Lib_Texture_Scroll(aBoBaseShieldTex, 16, 16, 0);
-    bolse_ult = (bolse_ult - 4) & 0x3F;
-
     bolse_lrt = (bolse_ult - 63) & 0xFFF;
     bolse_lrt = (bolse_ult - 63) & 0xFFF;
     // pointer to the SetTileSize cmd
@@ -1000,12 +998,12 @@ RECOMP_PATCH void Display_ArwingLaserCharge(Player* player) {
         if (gCamera1Skipped) {
             // Skip
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT, G_EX_PUSH, G_MTX_MODELVIEW,
-                                            G_EX_EDIT_NONE);
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32) player << 16) | TAG_CHARGED_SHOT, G_EX_PUSH,
+                                            G_MTX_MODELVIEW, G_EX_EDIT_NONE);
         } else {
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32) player << 16) | TAG_CHARGED_SHOT, G_EX_PUSH,
+                                           G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
         }
 
         Matrix_Push(&gGfxMatrix);
@@ -1058,12 +1056,12 @@ RECOMP_PATCH void Display_ArwingLaserCharge(Player* player) {
         if (gCamera1Skipped) {
             // Skip
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 1, G_EX_PUSH, G_MTX_MODELVIEW,
-                                            G_EX_EDIT_NONE);
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32) player << 16) | TAG_CHARGED_SHOT + 1, G_EX_PUSH,
+                                            G_MTX_MODELVIEW, G_EX_EDIT_NONE);
         } else {
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 1, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32) player << 16) | TAG_CHARGED_SHOT + 1, G_EX_PUSH,
+                                           G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
         }
 
         if (player->alternateView && (gLevelMode == LEVELMODE_ON_RAILS)) {
@@ -1090,12 +1088,12 @@ RECOMP_PATCH void Display_ArwingLaserCharge(Player* player) {
         if (gCamera1Skipped) {
             // Skip
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 2, G_EX_PUSH, G_MTX_MODELVIEW,
-                                            G_EX_EDIT_NONE);
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32) player << 16) | TAG_CHARGED_SHOT + 2, G_EX_PUSH,
+                                            G_MTX_MODELVIEW, G_EX_EDIT_NONE);
         } else {
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 2, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32) player << 16) | TAG_CHARGED_SHOT + 2, G_EX_PUSH,
+                                           G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
         }
 
         Matrix_Push(&gGfxMatrix);
@@ -1197,12 +1195,12 @@ RECOMP_PATCH void Display_BarrelRollShield(Player* player) {
         if (gCamera1Skipped) {
             // Skip
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_BARREL_ROLL, G_EX_PUSH, G_MTX_MODELVIEW,
-                                            G_EX_EDIT_NONE);
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32) player << 16) | TAG_BARREL_ROLL, G_EX_PUSH,
+                                            G_MTX_MODELVIEW, G_EX_EDIT_NONE);
         } else {
             // @recomp Tag the transform
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_BARREL_ROLL, G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32) player << 16) | TAG_BARREL_ROLL, G_EX_PUSH,
+                                           G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
         }
 
         Matrix_Push(&gGfxMatrix);
@@ -1228,6 +1226,85 @@ RECOMP_PATCH void Display_BarrelRollShield(Player* player) {
         gDPSetEnvColor(gMasterDisp++, 0, 0, 160, player->barrelRollAlpha);
         gSPDisplayList(gMasterDisp++, aBarrelRollTex);
         Matrix_Pop(&gGfxMatrix);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+}
+#endif
+
+#if 1
+RECOMP_PATCH void Display_ArwingWingTrail_Draw(Player* player) {
+    f32 sp5C = 70.0f;
+    f32 sp58 = -18.0f;
+    f32 sp54;
+    f32 sp50;
+    f32 yRot;
+
+    if (player->wingPosition == 2) {
+        sp5C = 108.0f;
+        sp58 = -22.0f;
+    }
+
+    if (player->contrailScale != 0.0f) {
+        sp54 = 0.0f;
+        if ((gGameFrameCount % 2) != 0) {
+            sp54 = 180.0f;
+        }
+
+        yRot = player->rot.y;
+        if (yRot > 90.0f) {
+            yRot -= 180.0f;
+        }
+
+        yRot *= 0.25f;
+        sp50 = player->rot.x * 0.25f;
+
+        if (player->state == PLAYERSTATE_LEVEL_COMPLETE) {
+            yRot = 0.0f;
+            sp50 = 0.0f;
+        }
+
+        RCP_SetupDL_64();
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 100);
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_TRAIL, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+        if (player->arwing.leftWingState == WINGSTATE_INTACT) {
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, sp5C, sp58, -100.0f, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, M_DTOR * sp50, MTXF_APPLY);
+            Matrix_RotateY(gGfxMatrix, -(M_DTOR * yRot), MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, player->contrailScale, 1.0f, 50.0f, MTXF_APPLY);
+            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -17.5f, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+            Matrix_RotateY(gGfxMatrix, M_DTOR * sp54, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aBallDL);
+            Matrix_Pop(&gGfxMatrix);
+        }
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_TRAIL + 1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
+        if (player->arwing.rightWingState == WINGSTATE_INTACT) {
+            Matrix_Push(&gGfxMatrix);
+            Matrix_Translate(gGfxMatrix, -sp5C, sp58, -100.0f, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, M_DTOR * sp50, MTXF_APPLY);
+            Matrix_RotateY(gGfxMatrix, -(M_DTOR * yRot), MTXF_APPLY);
+            Matrix_Scale(gGfxMatrix, player->contrailScale, 1.0f, 50.0f, MTXF_APPLY);
+            Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -17.5f, MTXF_APPLY);
+            Matrix_RotateX(gGfxMatrix, M_PI / 2, MTXF_APPLY);
+            Matrix_RotateY(gGfxMatrix, M_DTOR * sp54, MTXF_APPLY);
+            Matrix_SetGfxMtx(&gMasterDisp);
+            gSPDisplayList(gMasterDisp++, aBallDL);
+            Matrix_Pop(&gGfxMatrix);
+        }
 
         // @recomp Pop the transform id.
         gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
