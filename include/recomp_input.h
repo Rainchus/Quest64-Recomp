@@ -23,7 +23,6 @@ namespace recomp {
         DEFINE_INPUT(Z, 0x2000, "Tilt Left") \
         DEFINE_INPUT(R, 0x0010, "Tilt Right") \
         DEFINE_INPUT(START, 0x1000, "Pause") \
-        DEFINE_INPUT(L, 0x0020, "Crosshair") \
         DEFINE_INPUT(C_UP, 0x0008, "Camera") \
         DEFINE_INPUT(C_LEFT, 0x0002, "Turbo") \
         DEFINE_INPUT(C_DOWN, 0x0004, "Brake") \
@@ -31,7 +30,8 @@ namespace recomp {
         DEFINE_INPUT(DPAD_UP, 0x0800, "Menu Up") \
         DEFINE_INPUT(DPAD_RIGHT, 0x0100, "Menu Right") \
         DEFINE_INPUT(DPAD_DOWN, 0x0400, "Menu Down") \
-        DEFINE_INPUT(DPAD_LEFT, 0x0200, "Menu Left")
+        DEFINE_INPUT(DPAD_LEFT, 0x0200, "Menu Left") \
+        DEFINE_INPUT(L, 0x0020, "L (debug)")
 
     #define DEFINE_N64_AXIS_INPUTS() \
         DEFINE_INPUT(Y_AXIS_POS, 0, "Up") \
