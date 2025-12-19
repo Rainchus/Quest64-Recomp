@@ -1052,7 +1052,7 @@ void Game_SetScene(void);
 bool Game_ChangeScene(void);
 void Game_InitViewport(Gfx **dList, u8 camCount, u8 camIndex);
 void Game_Draw(s32 playerNum);
-extern u16 gNintendoLogo[];
+extern u8 aNintendoLogoTex[];
 extern s32 sVsCameraULx[];
 extern s32 sVsCameraLRx[];
 extern s32 sVsCameraULy[];
@@ -1060,27 +1060,27 @@ extern s32 sVsCameraLRy[];
 
 #define uint64_t u64
 
-uint64_t __udivdi3(uint64_t n_hi, uint64_t n_lo, uint64_t d) {
-    if (d == 0) {
-        // Division by zero; handle as appropriate.
-        return 0;
-    }
-
-    uint64_t quotient = 0;
-    uint64_t remainder = n_hi; // Start remainder with high 64-bits of dividend
-
-    for (int i = 63; i >= 0; i--) {
-        // Shift remainder and bring down the next bit from the low part of dividend
-        remainder = (remainder << 1) | ((n_lo >> i) & 1);
-
-        if (remainder >= d) {
-            remainder -= d;
-            quotient |= (uint64_t)1 << i;
-        }
-    }
-
-    return quotient;
-}
+// uint64_t __udivdi3(uint64_t n_hi, uint64_t n_lo, uint64_t d) {
+//     if (d == 0) {
+//         // Division by zero; handle as appropriate.
+//         return 0;
+//     }
+// 
+//     uint64_t quotient = 0;
+//     uint64_t remainder = n_hi; // Start remainder with high 64-bits of dividend
+// 
+//     for (int i = 63; i >= 0; i--) {
+//         // Shift remainder and bring down the next bit from the low part of dividend
+//         remainder = (remainder << 1) | ((n_lo >> i) & 1);
+// 
+//         if (remainder >= d) {
+//             remainder -= d;
+//             quotient |= (uint64_t)1 << i;
+//         }
+//     }
+// 
+//     return quotient;
+// }
 
 RECOMP_PATCH void Game_Update(void) {
     s32 i;
@@ -1121,35 +1121,36 @@ RECOMP_PATCH void Game_Update(void) {
             case GSTATE_SHOW_LOGO:
                 RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
                 gGameState++;
                 break;
 
             case GSTATE_CHECK_SAVE:
                 if (Save_Read() != 0) {
-#ifdef AVOID_UB
-                    gSaveFile.save = gDefaultSave;
-                    gSaveFile.backup = gDefaultSave;
-#else
-                    gSaveFile = *((SaveFile*) &gDefaultSave);
-#endif
+// #ifdef AVOID_UB
+//                     gSaveFile.save = gDefaultSave;
+//                     gSaveFile.backup = gDefaultSave;
+// #else
+//                     gSaveFile = *((SaveFile*) &gDefaultSave);
+// #endif
+                    memcpy2(&gSaveFile, &gDefaultSave, sizeof(SaveFile));
                     Save_Write();
                 }
                 gGameState++;
-                Timer_CreateTask(MSEC_TO_CYCLES(1000), Timer_Increment, (s32*) &gGameState, 1);
+                Timer_CreateTask(((((u64)((1000) * 1000LL)*(OS_CLOCK_RATE/15625LL))/(1000000LL/15625LL))), Timer_Increment, (s32*) &gGameState, 1);
                 /* fallthrough */
             case GSTATE_LOGO_WAIT:
                 RCP_SetupDL(&gMasterDisp, SETUPDL_76);
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 255);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
-                Lib_TextureRect_IA8(&gMasterDisp, &gNintendoLogo[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 0], 128, 16, 100.0f, 86.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 1], 128, 16, 100.0f, 102.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 2], 128, 16, 100.0f, 118.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 3], 128, 16, 100.0f, 134.0f, 1.0f, 1.0f);
+                Lib_TextureRect_IA8(&gMasterDisp, &aNintendoLogoTex[128 * 16 * 4], 128, 10, 100.0f, 150.0f, 1.0f, 1.0f);
                 break;
 
             case GSTATE_START:
@@ -1267,16 +1268,20 @@ RECOMP_PATCH void Game_Update(void) {
         if (gCamCount == 2) {
             Game_InitViewport(&gMasterDisp, gCamCount, 1);
             Game_Draw(1);
+
             gDPPipeSync(gMasterDisp++);
             gDPSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH - SCREEN_MARGIN,
                           SCREEN_HEIGHT - SCREEN_MARGIN);
         } else if ((gCamCount == 4) && (gDrawMode != DRAW_NONE)) {
             Game_InitViewport(&gMasterDisp, gCamCount, 3);
             Game_Draw(3);
+
             Game_InitViewport(&gMasterDisp, gCamCount, 2);
             Game_Draw(2);
+
             Game_InitViewport(&gMasterDisp, gCamCount, 1);
             Game_Draw(1);
+
             gDPPipeSync(gMasterDisp++);
             gDPSetScissor(gMasterDisp++, G_SC_NON_INTERLACE, SCREEN_MARGIN, SCREEN_MARGIN, SCREEN_WIDTH - SCREEN_MARGIN,
                           SCREEN_HEIGHT - SCREEN_MARGIN);
@@ -1296,6 +1301,7 @@ RECOMP_PATCH void Game_Update(void) {
             } else {
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 100, 100, 255, 255);
             }
+
             gDPFillRectangle(gMasterDisp++, SCREEN_WIDTH / 2 - 1 - 1, SCREEN_MARGIN, SCREEN_WIDTH / 2 + 1,
                              SCREEN_HEIGHT - SCREEN_MARGIN);
             gDPFillRectangle(gMasterDisp++, SCREEN_MARGIN, SCREEN_HEIGHT / 2 - 1 - 1, SCREEN_WIDTH - SCREEN_MARGIN,
