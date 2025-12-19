@@ -60,12 +60,13 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         }
 
         // @recomp draw no matter what
-        goto render;
+        // goto render;
 
         if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
-            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * 0.5f) + 500.0f)) {
+            // @recomp: Extend Actor visibility to widescreen.
+            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * /*0.5f*/ 1.5f) + 500.0f)) {
                 if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * 0.5f) + 500.0f)) {
-                render:
+                    // render:
                     Matrix_RotateY(gCalcMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gCalcMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
                     Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
@@ -82,8 +83,7 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         Matrix_Translate(gGfxMatrix, this->obj.pos.x, this->obj.pos.y, this->obj.pos.z, MTXF_APPLY);
         Matrix_MultVec3f(gGfxMatrix, &srcViewPos, &sViewPos);
 
-        if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) ||
-            (gPlayer[0].state == PLAYERSTATE_STANDBY) ||
+        if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) || (gPlayer[0].state == PLAYERSTATE_STANDBY) ||
             ((this->obj.id == OBJ_ACTOR_ALLRANGE) && (this->aiType >= AI360_GREAT_FOX)) ||
             ((this->obj.id == OBJ_ACTOR_CUTSCENE) && (this->info.bonus != 0))) {
             var_ft5 = var_fv0 = 3000.0f;
@@ -97,12 +97,12 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         }
 
         // @recomp draw no matter what
-        goto render2;
+        // goto render2;
 
         if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
-            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
+            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1 + 1.0f) + var_ft5)) {
                 if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
-                render2:
+                    // render2:
                     if (this->info.draw != NULL) {
                         Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                         Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -192,13 +192,13 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     // @recomp draw no matter what
     if ((gCurrentLevel != LEVEL_KATINA) &&
         (gCurrentLevel != LEVEL_SECTOR_Y)) { // Excepting Katina because of KaSaucerer's bug
-        goto render;
+        // goto render;
     }
 
     if ((D_edisplay_801615D0.z < var_fv0) && (var_fv1 < D_edisplay_801615D0.z)) {
-        if (fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
+        if (fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * (var_ft5 + 1.0f)) + var_fa1)) {
             if (fabsf(D_edisplay_801615D0.y) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
-            render:
+                // render:
                 sp3C = 1.0f;
                 if (this->obj.id != OBJ_BOSS_BO_BASE) {
                     if (this->obj.id != OBJ_BOSS_KA_SAUCERER) {
@@ -262,28 +262,24 @@ RECOMP_PATCH void Scenery360_Draw(Scenery360* this) {
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    if (gCurrentLevel == LEVEL_SECTOR_Z) {
-        behindZdist = 6000.0f;
-        frontZdist = -20000.0f * 2;
-        xyOffsetBounds = 6000.0f * 2;
-        xyObjDistBoundMod = 0.9f;
-        goto check;
-    }
+    // if (gCurrentLevel == LEVEL_SECTOR_Z) {
+    //     behindZdist = 6000.0f;
+    //     frontZdist = -20000.0f * 2;
+    //     xyOffsetBounds = 6000.0f * 2;
+    //     xyObjDistBoundMod = 0.9f;
+    //     goto check;
+    // }
 
-    if ((gCurrentLevel != LEVEL_SECTOR_Y) && (gCurrentLevel != LEVEL_VENOM_ANDROSS)) {
-        goto render;
-    }
-
-check:
+    //     if ((gCurrentLevel != LEVEL_SECTOR_Y) && (gCurrentLevel != LEVEL_VENOM_ANDROSS)) {
+    //         goto render;
+    //     }
+    //
+    // check:
     if ((dest.z < behindZdist) && (frontZdist < dest.z)) {
         if (fabsf(dest.y) < (fabsf(dest.z * xyObjDistBoundMod) + xyOffsetBounds)) {
-            if (fabsf(dest.x) < (fabsf(dest.z * xyObjDistBoundMod) + xyOffsetBounds)) {
-            render:
+            if (fabsf(dest.x) < (fabsf(dest.z * xyObjDistBoundMod + 1.0f) + xyOffsetBounds)) {
+                // render:
                 Display_SetSecondLight(&this->obj.pos);
-
-                // @recomp Tag the transform.
-                // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY_360(this), G_EX_PUSH, G_MTX_MODELVIEW,
-                //                                G_EX_EDIT_ALLOW);
 
                 if (this->obj.id == OBJ_SCENERY_AND_PASSAGE) {
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
@@ -297,12 +293,8 @@ check:
                     Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
 
-                    // u32 cur_transform_id = scenery360_transform_id(this);
                     gSPDisplayList(gMasterDisp++, this->info.dList);
                 }
-
-                // @recomp Pop the transform id.
-                // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
         }
     }
@@ -1334,7 +1326,7 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
 
             if ((gGameFrameCount % 2) == 0) {
                 Effect_FireSmoke1_SpawnMoving(11000.0f, 200.0f, -139000.0f, D_ctx_80177A48[4], 4.0f, D_ctx_80177A48[5],
-                                        20.0f);
+                                              20.0f);
             }
 
             if (gCsFrameCount == 710) {
@@ -1359,28 +1351,33 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
                 gActors[58].scale = 0.8f;
 
                 Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x + 500.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.y + 500.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.z + 3000.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
+                                         gActors[D_i5_801BE314].obj.pos.y + 500.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         gActors[D_i5_801BE314].obj.pos.z + 3000.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         30.0f);
             }
             if ((gCsFrameCount > 710) && ((gGameFrameCount % 8) == 0)) {
                 Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x + 500.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.y + 500.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.z + 3000.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
+                                         gActors[D_i5_801BE314].obj.pos.y + 500.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         gActors[D_i5_801BE314].obj.pos.z + 3000.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         30.0f);
             }
             if ((gCsFrameCount > 725) && ((gGameFrameCount % 8) == 0)) {
                 Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x - 1500.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.y + 1000.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.z + 1700.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
+                                         gActors[D_i5_801BE314].obj.pos.y + 1000.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         gActors[D_i5_801BE314].obj.pos.z + 1700.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         30.0f);
             }
             if ((gCsFrameCount > 740) && ((gGameFrameCount % 8) == 0)) {
                 Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x - 3500.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.y + 600.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.z + 1200.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
+                                         gActors[D_i5_801BE314].obj.pos.y + 600.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         gActors[D_i5_801BE314].obj.pos.z + 1200.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         30.0f);
             }
             if ((gCsFrameCount > 755) && ((gGameFrameCount % 8) == 0)) {
                 Effect_FireSmoke1_Spawn4(gActors[D_i5_801BE314].obj.pos.x - 3000.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.y + 400.0f + RAND_FLOAT_CENTERED(700.0f),
-                                     gActors[D_i5_801BE314].obj.pos.z + 1300.0f + RAND_FLOAT_CENTERED(700.0f), 30.0f);
+                                         gActors[D_i5_801BE314].obj.pos.y + 400.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         gActors[D_i5_801BE314].obj.pos.z + 1300.0f + RAND_FLOAT_CENTERED(700.0f),
+                                         30.0f);
             }
             if (gCsFrameCount == 800) {
                 Effect_Effect383_Spawn(gActors[D_i5_801BE314].obj.pos.x - 3000.0f,
@@ -1524,7 +1521,7 @@ RECOMP_PATCH void Macbeth_LevelComplete2(Player* player) {
         case 7:
             if ((gGameFrameCount % 4) == 0) {
                 Effect_FireSmoke1_Spawn4(player->pos.x - 1750.0f + RAND_FLOAT_CENTERED(700.0f), 10.0f,
-                                     player->pos.z + 5000.0f + RAND_FLOAT_CENTERED(700.0f), 5.0f);
+                                         player->pos.z + 5000.0f + RAND_FLOAT_CENTERED(700.0f), 5.0f);
                 Effect_Effect343_Spawn(player->pos.x - 1800.0f + RAND_FLOAT_CENTERED(40.0f), -100.0f,
                                        player->pos.z + 5000.0f + RAND_FLOAT_CENTERED(40.0f), 9.0f);
             }
