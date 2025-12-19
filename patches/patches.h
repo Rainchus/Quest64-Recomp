@@ -52,6 +52,26 @@
 #include "assets.h"
 #include "bgm.h"
 
+typedef struct ArwingInfoRecomp {
+    u8 rightWingState;
+    u8 leftWingState;
+    f32 upperRightFlapYrot;
+    f32 bottomRightFlapYrot;
+    f32 upperLeftFlapYrot;
+    f32 bottomLeftFlapYrot;
+    f32 laserGunsYpos;
+    f32 laserGunsXpos;
+    f32 wingsXrot;
+    f32 wingsYrot;
+    f32 wingsZrot;
+    f32 unk_28;
+    u8 drawFace;
+    f32 teamFaceXrot;
+    f32 teamFaceYrot;
+    f32 cockpitGlassXrot;
+    void* actorPtr;
+} ArwingInfoRecomp; // size = 0x40
+
 extern s32 gCamera1Skipped;
 
 #ifndef gEXFillRectangle

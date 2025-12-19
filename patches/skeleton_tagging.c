@@ -2,10 +2,11 @@
 
 /**
  * There are three versions of each function, the last two are used to solve specific problems:
- * 
+ *
  * Animation_DrawSkeleton + peers: Tags interpolated matrices, used for most skeletons.
- * Animation_DrawSkeletonOriginal: Original function without tagging, RT64 handles matching, currently used in Andross_AndPassage_Draw .
- * Animation_DrawSkeleton_SkipInterpolation: Interpolation is skipped, currently used for the ending running characters.
+ * Animation_DrawSkeletonOriginal: Original function without tagging, RT64 handles matching, currently used in
+ * Andross_AndPassage_Draw . Animation_DrawSkeleton_SkipInterpolation: Interpolation is skipped, currently used for the
+ * ending running characters.
  */
 
 #if 1 // Global Scope
@@ -14,6 +15,7 @@ static s32 transform = 0;
 
 bool Andross_801935B4(s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3f* rot, void* thisx);
 bool Display_ArwingOverrideLimbDraw(s32 limbIndex, Gfx** gfxPtr, Vec3f* pos, Vec3f* rot, void* wingData);
+extern ArwingInfoRecomp gActorTeamArwing_recomp;
 
 RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
                                          OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
@@ -27,8 +29,17 @@ RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f
     Vec3f baseRot;
     s32 overrideLimbIndex;
     s32 postLimbIndex;
-    s32 tagOverride;
-    s32 tagPost;
+
+    ArwingInfoRecomp* teamArwing = (ArwingInfoRecomp*) data;
+    void* extraPtrData = NULL;
+
+    // @recomp: Check if the incoming actor is an ActorTeamArwing
+    // If it is, include it's actor address in the tag
+    if (data == &gActorTeamArwing_recomp) {
+        extraPtrData = teamArwing->actorPtr;
+        // recomp_printf("Animation_DrawSkeleton\n");
+        // recomp_printf("Team Arwing detected\n");
+    }
 
     Matrix_Push(&gCalcMatrix);
     Matrix_Copy(gCalcMatrix, transform);
@@ -57,11 +68,11 @@ RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f
     if (gCamera1Skipped) {
         // Skip
         // @recomp Tag the transform of the rootLimb
-        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex | (u32) extraPtrData, G_EX_PUSH, G_MTX_MODELVIEW,
                                         G_EX_EDIT_NONE);
     } else {
         // @recomp Tag the transform of the rootLimb
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex| (u32) extraPtrData, G_EX_PUSH, G_MTX_MODELVIEW,
                                        G_EX_EDIT_ALLOW);
     }
 
@@ -114,6 +125,17 @@ RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3
     Vec3f origin = { 0.0f, 0.0f, 0.0f };
     Actor* actor = data;
 
+    ArwingInfoRecomp* teamArwing = (ArwingInfoRecomp*) data;
+    void* extraPtrData = NULL;
+
+    // @recomp: Check if the incoming actor is an ActorTeamArwing
+    // If it is, include it's actor address in the tag
+    if (data == &gActorTeamArwing_recomp) {
+        extraPtrData = teamArwing->actorPtr;
+        // recomp_printf("Animation_DrawSkeleton\n");
+        // recomp_printf("Team Arwing detected\n");
+    }
+
     Matrix_Push(&gCalcMatrix);
 
     limbIndex = Animation_GetLimbIndex(limb, skeleton);
@@ -129,11 +151,11 @@ RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3
     if (gCamera1Skipped) {
         // Skip
         // @recomp Tag the transform
-        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex | (u32) extraPtrData, G_EX_PUSH, G_MTX_MODELVIEW,
                                         G_EX_EDIT_NONE);
     } else {
         // @recomp Tag the transform
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex | (u32) extraPtrData, G_EX_PUSH, G_MTX_MODELVIEW,
                                        G_EX_EDIT_ALLOW);
     }
 
@@ -376,8 +398,6 @@ void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, 
     Vec3f baseRot;
     s32 overrideLimbIndex;
     s32 postLimbIndex;
-    s32 tagOverride;
-    s32 tagPost;
     Actor* actor = (Actor*) data;
 
     Matrix_Push(&gCalcMatrix);
@@ -537,7 +557,6 @@ RECOMP_PATCH void Display_Arwing_Skel(ArwingInfo* arwing) {
 #endif
 
 #if 1
-
 RECOMP_PATCH void Andross_AndPassage_Draw(AndPassage* this) {
     Vec3f frameTable[20];
 

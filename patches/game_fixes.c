@@ -90,8 +90,7 @@ RECOMP_PATCH void Bolse_UpdateEventHandler(ActorEvent* this) {
             if (gBosses[2].state == 10) {
                 SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM, 1);
                 SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 1);
-                if ((gPlayer[0].state == PLAYERSTATE_ACTIVE) ||
-                    (gPlayer[0].state == PLAYERSTATE_U_TURN)) {
+                if ((gPlayer[0].state == PLAYERSTATE_ACTIVE) || (gPlayer[0].state == PLAYERSTATE_U_TURN)) {
                     gPlayer[0].state = PLAYERSTATE_LEVEL_COMPLETE;
                     gPlayer[0].csTimer = 30;
                     gPlayer[0].csState = 0;
@@ -667,13 +666,16 @@ RECOMP_PATCH void Solar_LevelComplete(Player* player) {
 }
 
 #if 1
+
+ArwingInfoRecomp gActorTeamArwing_recomp = { 0 };
+
 RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
     Vec3f src = { 0.0f, 0.0f, 0.0f };
     Vec3f dest;
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    if (((/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */ !gBossActive) ||
+    if ((/* ((fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && !gBossActive)  || */
          (gPlayer[0].state == PLAYERSTATE_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
          (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE)) &&
         (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
@@ -684,55 +686,44 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
                  (gCurrentLevel == LEVEL_KATINA) && (this->index == 1)) ||
                 ((gCurrentLevel == LEVEL_SECTOR_Y) && (gPlayer[0].state == PLAYERSTATE_STANDBY) &&
                  (this->state == 5))) {
-                gActorTeamArwing.rightWingState = gPlayer[0].arwing.rightWingState;
-                gActorTeamArwing.leftWingState = gPlayer[0].arwing.leftWingState;
+                gActorTeamArwing_recomp.rightWingState = gPlayer[0].arwing.rightWingState;
+                gActorTeamArwing_recomp.leftWingState = gPlayer[0].arwing.leftWingState;
             } else {
-                gActorTeamArwing.rightWingState = gActorTeamArwing.leftWingState = WINGSTATE_INTACT;
+                gActorTeamArwing_recomp.rightWingState = gActorTeamArwing_recomp.leftWingState = WINGSTATE_INTACT;
             }
         } else {
-            gActorTeamArwing.rightWingState = gActorTeamArwing.leftWingState = WINGSTATE_INTACT;
+            gActorTeamArwing_recomp.rightWingState = gActorTeamArwing_recomp.leftWingState = WINGSTATE_INTACT;
         }
 
-        gActorTeamArwing.upperRightFlapYrot = this->fwork[15];
-        gActorTeamArwing.upperLeftFlapYrot = this->fwork[16];
-        gActorTeamArwing.bottomRightFlapYrot = this->fwork[26];
-        gActorTeamArwing.bottomLeftFlapYrot = this->fwork[27];
-        gActorTeamArwing.laserGunsYpos = gActorTeamArwing.laserGunsXpos = gActorTeamArwing.wingsXrot =
-            gActorTeamArwing.wingsYrot = gActorTeamArwing.cockpitGlassXrot = gActorTeamArwing.wingsZrot = 0.0f;
-        gActorTeamArwing.unk_28 = this->fwork[17];
-        gActorTeamArwing.drawFace = this->iwork[14];
-        gActorTeamArwing.teamFaceXrot = this->fwork[20];
-        gActorTeamArwing.teamFaceYrot = this->fwork[19];
+        gActorTeamArwing_recomp.upperRightFlapYrot = this->fwork[15];
+        gActorTeamArwing_recomp.upperLeftFlapYrot = this->fwork[16];
+        gActorTeamArwing_recomp.bottomRightFlapYrot = this->fwork[26];
+        gActorTeamArwing_recomp.bottomLeftFlapYrot = this->fwork[27];
+        gActorTeamArwing_recomp.laserGunsYpos = gActorTeamArwing_recomp.laserGunsXpos =
+            gActorTeamArwing_recomp.wingsXrot = gActorTeamArwing_recomp.wingsYrot =
+                gActorTeamArwing_recomp.cockpitGlassXrot = gActorTeamArwing_recomp.wingsZrot = 0.0f;
+        gActorTeamArwing_recomp.unk_28 = this->fwork[17];
+        gActorTeamArwing_recomp.drawFace = this->iwork[14];
+        gActorTeamArwing_recomp.teamFaceXrot = this->fwork[20];
+        gActorTeamArwing_recomp.teamFaceYrot = this->fwork[19];
+
+        // @recomp: store the actor address so we can use it later for matrix tagging
+        gActorTeamArwing_recomp.actorPtr = this;
 
         if (gLevelType == LEVELTYPE_SPACE) {
-            gActorTeamArwing.upperRightFlapYrot = gActorTeamArwing.bottomRightFlapYrot =
-                gActorTeamArwing.upperLeftFlapYrot = gActorTeamArwing.bottomLeftFlapYrot = 0.0f;
+            gActorTeamArwing_recomp.upperRightFlapYrot = gActorTeamArwing_recomp.bottomRightFlapYrot =
+                gActorTeamArwing_recomp.upperLeftFlapYrot = gActorTeamArwing_recomp.bottomLeftFlapYrot = 0.0f;
         }
-        Display_Arwing_Skel(&gActorTeamArwing);
+        // @recomp: pass custom gActorTeamArwing_recomp which contains an extra member with the actor address
+        // We use that address to tag different team arwings inside the Animation_DrawSkeleton and Animation_DrawLimb
+        // functions.
+        Display_Arwing_Skel((ArwingInfo*) &gActorTeamArwing_recomp);
     } else if (gLevelType == LEVELTYPE_PLANET) {
-        // @recomp Tag the transform.
-        //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
         gSPDisplayList(gMasterDisp++, aPlanetArwingAllRangeDL);
-
-        // @recomp Pop the transform id.
-        //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     } else if (gPlayer[0].wingPosition == 2) {
-        // @recomp Tag the transform.
-        //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
         gSPDisplayList(gMasterDisp++, aSpaceArwingAllRangeDL);
-
-        // @recomp Pop the transform id.
-        //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     } else {
-        // @recomp Tag the transform.
-        //gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
         gSPDisplayList(gMasterDisp++, aSpaceArwingOnRailsDL);
-
-        // @recomp Pop the transform id.
-        //gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
     Actor_DrawEngineAndContrails(this);
 }
