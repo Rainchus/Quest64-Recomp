@@ -61,9 +61,17 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
                     Matrix_MultVec3fNoTranslate(&D_BO_8019EE80, &spAC, &scenery360->obj.pos);
                     scenery360->obj.rot.y = scenery360->unk_54 + gBosses->obj.rot.y;
                 }
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY_360(scenery360), G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
+
+                if (gCamera1Skipped) {
+                    // Skip
+                    // @recomp Tag the transform
+                    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_SCENERY_360(scenery360), G_EX_PUSH,
+                                                    G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                } else {
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY_360(scenery360), G_EX_PUSH,
+                                                   G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+                }
 
                 Matrix_Push(&gGfxMatrix);
                 Scenery360_Draw(scenery360);
@@ -81,9 +89,17 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
                 if (cullDirection > 0) {
                     Display_SetSecondLight(&scenery->obj.pos);
                 }
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(scenery), G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
+
+                if (gCamera1Skipped) {
+                    // Skip
+                    // @recomp Tag the transform
+                    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_SCENERY(scenery), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                    G_EX_EDIT_NONE);
+                } else {
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(scenery), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
+                }
 
                 Matrix_Push(&gGfxMatrix);
                 Scenery_Draw(scenery, cullDirection);
@@ -108,8 +124,16 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
 
             Object_SetCullDirection(cullDirection);
 
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(boss), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BOSS(boss), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(boss), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+            }
 
             Matrix_Push(&gGfxMatrix);
             Boss_Draw(boss, cullDirection);
@@ -131,9 +155,17 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
 
     for (i = 0, sprite = &gSprites[0]; i < ARRAY_COUNT(gSprites); i++, sprite++) {
         if ((sprite->obj.status >= OBJ_ACTIVE) && func_enmy_80060FE4(&sprite->obj.pos, -12000.0f)) {
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ADDRESS(sprite), G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_ADDRESS(sprite), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ADDRESS(sprite), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+            }
 
             Matrix_Push(&gGfxMatrix);
 
@@ -153,9 +185,17 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
 
     for (i = 0, actor = &gActors[0]; i < ARRAY_COUNT(gActors); i++, actor++) {
         if (actor->obj.status >= OBJ_ACTIVE) {
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(actor), G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_ACTOR(actor), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ACTOR(actor), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+            }
 
             if ((actor->timer_0C6 % 2) == 0) {
                 if (gCurrentLevel == LEVEL_UNK_15) {
@@ -218,8 +258,16 @@ RECOMP_PATCH void Object_DrawAll(s32 cullDirection) {
 
     for (i = 0, item = &gItems[0]; i < ARRAY_COUNT(gItems); i++, item++) {
         if (item->obj.status >= OBJ_ACTIVE) {
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(item), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_ITEM(item), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ITEM(item), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+            }
 
             Matrix_Push(&gGfxMatrix);
             RCP_SetupDL(&gMasterDisp, SETUPDL_29);
@@ -260,9 +308,17 @@ RECOMP_PATCH void BonusText_DrawAll(void) {
 
     for (i = 0, bonus = gBonusText; i < ARRAY_COUNT(gBonusText); i++, bonus++) {
         if (bonus->hits != 0) {
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB_ADDRESS(bonus, bonus->hits), G_EX_PUSH,
-                                           G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB_ADDRESS(bonus, bonus->hits), G_EX_PUSH,
+                                                G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB_ADDRESS(bonus, bonus->hits), G_EX_PUSH,
+                                               G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+            }
 
             Matrix_Push(&gGfxMatrix);
             BonusText_Draw(bonus);
@@ -288,9 +344,16 @@ RECOMP_PATCH void Effect_DrawAll(s32 arg0) {
                 effect->obj.rot.x = RAD_TO_DEG(gPlayer[gPlayerNum].camPitch);
             }
 
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(effect), G_EX_PUSH, G_MTX_MODELVIEW,
-                                           G_EX_EDIT_ALLOW);
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_EFFECT(effect), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_EFFECT(effect), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+            }
 
             if (gLevelMode == LEVELMODE_ALL_RANGE) {
                 Matrix_Push(&gGfxMatrix);
@@ -321,8 +384,16 @@ RECOMP_PATCH void Effect_DrawAll(s32 arg0) {
                 gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 64, 64, 255, 255);
             }
 
-            // @recomp Tag the transform.
-            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(boss), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BOSS(boss), G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_BOSS(boss), G_EX_PUSH, G_MTX_MODELVIEW,
+                                               G_EX_EDIT_ALLOW);
+            }
 
             Matrix_Push(&gGfxMatrix);
             Boss_Draw(boss, arg0);
@@ -358,9 +429,17 @@ RECOMP_PATCH void PlayerShot_DrawShot(PlayerShot* shot) {
             Object_Kill(&shot->obj, shot->sfxSource);
         }
     } else {
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_SHOT(shot), G_EX_PUSH, G_MTX_MODELVIEW,
-                                       G_EX_EDIT_ALLOW);
+        if (gCamera1Skipped) {
+            // Skip
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_PLAYER_SHOT(shot), G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_NONE);
+        } else {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_PLAYER_SHOT(shot), G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        }
+
         if ((shot->obj.id == PLAYERSHOT_TANK) || (shot->obj.id == PLAYERSHOT_ON_FOOT) ||
             (shot->obj.id == PLAYERSHOT_7)) {
             shot->obj.rot.y = RAD_TO_DEG(-gPlayer[gPlayerNum].camYaw);

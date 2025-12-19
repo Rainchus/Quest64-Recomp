@@ -1,5 +1,13 @@
 #include "patches.h"
 
+/**
+ * There are three versions of each function, the last two are used to solve specific problems:
+ * 
+ * Animation_DrawSkeleton + peers: Tags interpolated matrices, used for most skeletons.
+ * Animation_DrawSkeletonOriginal: Original function without tagging, RT64 handles matching, currently used in Andross_AndPassage_Draw .
+ * Animation_DrawSkeleton_SkipInterpolation: Interpolation is skipped, currently used for the ending running characters.
+ */
+
 #if 1 // Global Scope
 
 static s32 transform = 0;
@@ -21,7 +29,6 @@ RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f
     s32 postLimbIndex;
     s32 tagOverride;
     s32 tagPost;
-    Actor* actor = (Actor*) data;
 
     Matrix_Push(&gCalcMatrix);
     Matrix_Copy(gCalcMatrix, transform);
@@ -47,9 +54,16 @@ RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f
     dList = rootLimb->dList;
     Matrix_Push(&gGfxMatrix);
 
-    // @recomp Tag the transform of the rootLimb
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
+    if (gCamera1Skipped) {
+        // Skip
+        // @recomp Tag the transform of the rootLimb
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+                                        G_EX_EDIT_NONE);
+    } else {
+        // @recomp Tag the transform of the rootLimb
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+    }
 
     if (overrideLimbDraw == NULL) {
         override = false;
@@ -89,7 +103,6 @@ RECOMP_PATCH void Animation_DrawSkeleton(s32 mode, Limb** skeletonSegment, Vec3f
 }
 
 #if 1
-
 RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
                                      OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data) {
     bool override;
@@ -113,9 +126,16 @@ RECOMP_PATCH void Animation_DrawLimb(s32 mode, Limb* limb, Limb** skeleton, Vec3
     dList = limb->dList;
     Matrix_Push(&gGfxMatrix);
 
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
+    if (gCamera1Skipped) {
+        // Skip
+        // @recomp Tag the transform
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+                                        G_EX_EDIT_NONE);
+    } else {
+        // @recomp Tag the transform
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+    }
 
     if (overrideLimbDraw == NULL) {
         override = false;
@@ -278,7 +298,7 @@ void Animation_DrawLimbOriginal(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jo
 }
 
 void Animation_DrawLimb_SkipInterpolation(s32 mode, Limb* limb, Limb** skeleton, Vec3f* jointTable,
-                                     OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data) {
+                                          OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data) {
     bool override;
     s32 limbIndex;
     Gfx* dList;
@@ -302,7 +322,7 @@ void Animation_DrawLimb_SkipInterpolation(s32 mode, Limb* limb, Limb** skeleton,
 
     // @recomp Tag the transform.
     gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
+                                    G_EX_EDIT_ALLOW);
 
     if (overrideLimbDraw == NULL) {
         override = false;
@@ -334,17 +354,19 @@ void Animation_DrawLimb_SkipInterpolation(s32 mode, Limb* limb, Limb** skeleton,
     }
     Matrix_Pop(&gGfxMatrix);
     if (limb->child != NULL) {
-        Animation_DrawLimb_SkipInterpolation(mode, limb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
+        Animation_DrawLimb_SkipInterpolation(mode, limb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw,
+                                             data);
     }
     Matrix_Pop(&gCalcMatrix);
     if (limb->sibling != NULL) {
-        Animation_DrawLimb_SkipInterpolation(mode, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
+        Animation_DrawLimb_SkipInterpolation(mode, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw,
+                                             data);
     }
 }
 
 void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
-                                         OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
-                                         Matrix* transform) {
+                                              OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                              Matrix* transform) {
     bool override;
     Limb** skeleton;
     Limb* rootLimb;
@@ -384,7 +406,7 @@ void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, 
 
     // @recomp Tag the transform of the rootLimb
     gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
+                                    G_EX_EDIT_ALLOW);
 
     if (overrideLimbDraw == NULL) {
         override = false;
@@ -413,7 +435,8 @@ void Animation_DrawSkeleton_SkipInterpolation(s32 mode, Limb** skeletonSegment, 
     Matrix_Pop(&gGfxMatrix);
 
     if (rootLimb->child != NULL) {
-        Animation_DrawLimb_SkipInterpolation(mode, rootLimb->child, skeleton, jointTable, overrideLimbDraw, postLimbDraw, data);
+        Animation_DrawLimb_SkipInterpolation(mode, rootLimb->child, skeleton, jointTable, overrideLimbDraw,
+                                             postLimbDraw, data);
     }
 
     Matrix_Pop(&gCalcMatrix);
@@ -436,8 +459,8 @@ RECOMP_PATCH void Display_Arwing_Skel(ArwingInfo* arwing) {
     }
 
     if (gGameState == GSTATE_PLAY) {
-        Animation_DrawSkeleton(1, aAwArwingSkel, gPlayer[0].jointTable, Display_ArwingOverrideLimbDraw, NULL,
-                               arwing, &gIdentityMatrix);
+        Animation_DrawSkeleton(1, aAwArwingSkel, gPlayer[0].jointTable, Display_ArwingOverrideLimbDraw, NULL, arwing,
+                               &gIdentityMatrix);
     } else {
         if (gGameState == GSTATE_MENU) {
             Animation_GetFrameData(&aAwWingsHalfOpenAnim, 0, frameTable);
@@ -455,8 +478,14 @@ RECOMP_PATCH void Display_Arwing_Skel(ArwingInfo* arwing) {
         drawFace = true;
     }
 
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_FACE + drawFace, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    if (gCamera1Skipped) {
+        // Skip
+        // @recomp Tag the transform
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_FACE + drawFace, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+    } else {
+        // @recomp Tag the transform
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_FACE + drawFace, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+    }
 
     if (drawFace != 0) {
         Matrix_Push(&gGfxMatrix);
@@ -516,6 +545,7 @@ RECOMP_PATCH void Andross_AndPassage_Draw(AndPassage* this) {
     if (gLevelMode == LEVELMODE_ALL_RANGE) {
         gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
     }
+    // @recomp: Call original function without matrix tagging for these doors so RT64 handles matching
     Animation_DrawSkeletonOriginal(1, aVe2AndrossGateSkel, frameTable, Andross_801935B4, NULL, NULL, &gIdentityMatrix);
 }
 

@@ -1,6 +1,5 @@
 #include "patches.h"
 
-
 u16 next_actor_transform = 0;
 
 void ActorAllRange_DrawBarrelRoll(ActorAllRange* this);
@@ -30,9 +29,16 @@ RECOMP_PATCH void Display_Landmaster(Player* player) {
 
     Matrix_Push(&gGfxMatrix);
 
-    // @recomp Tag the transform.
-    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
-                                   G_EX_EDIT_ALLOW);
+    if (gCamera1Skipped) {
+        // Skip
+        // @recomp Tag the transform
+        gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
+                                        G_EX_EDIT_NONE);
+    } else {
+        // @recomp Tag the transform.
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_VEHICLE + gPlayerNum, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+    }
 
     if (!gVersusMode) {
         gSPDisplayList(gMasterDisp++, aLandmasterModelDL);
@@ -317,7 +323,7 @@ RECOMP_PATCH void MeMora_Draw(MeMora* this) {
     gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
                              G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+                             G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
 
     for (i = this->work_04A; i < ARRAY_COUNT(D_800CFF94); i++) {
         j = (D_800CFF94[i] + this->counter_04E) % 100;

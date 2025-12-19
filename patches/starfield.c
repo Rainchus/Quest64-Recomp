@@ -9,8 +9,8 @@
 #define STARFIELD_HEIGHT_MULTIPLIER 1.0f
 
 // Declare global variables for screen dimensions
-float gCurrentScreenWidth = (float)SCREEN_WIDTH * 3;  // Default width
-float gCurrentScreenHeight = (float)SCREEN_HEIGHT * 3; // Default height
+float gCurrentScreenWidth = (float) SCREEN_WIDTH * 3;   // Default width
+float gCurrentScreenHeight = (float) SCREEN_HEIGHT * 3; // Default height
 
 // New global variables for storing the previoous positions
 f32 gStarPrevX[3000];
@@ -147,11 +147,20 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
                                        (fabsf(vy - gStarPrevY[i]) > starfieldHeight / 2.0f);
 
                 u8 interpolateComponent = skipInterpolation ? G_EX_COMPONENT_SKIP : G_EX_COMPONENT_INTERPOLATE;
-                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                         interpolateComponent, interpolateComponent, interpolateComponent,
-                                         interpolateComponent, interpolateComponent, G_EX_COMPONENT_SKIP,
-                                         interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
 
+                if (gCamera1Skipped) {
+                    // Skip
+                    // @recomp Tag the transform
+
+                    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                    G_EX_EDIT_NONE);
+                } else {
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                             interpolateComponent, interpolateComponent, interpolateComponent,
+                                             interpolateComponent, interpolateComponent, G_EX_COMPONENT_SKIP,
+                                             interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                }
 
                 // Translate to (vx, vy) in ortho coordinates
                 Matrix_Push(&gGfxMatrix);
@@ -411,10 +420,19 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
                                    (fabsf(vy - gStarPrevY[i]) > starfieldHeight / 2.0f);
 
             u8 interpolateComponent = skipInterpolation ? G_EX_COMPONENT_SKIP : G_EX_COMPONENT_INTERPOLATE;
-            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW, interpolateComponent,
-                                     interpolateComponent, interpolateComponent, interpolateComponent,
-                                     interpolateComponent, G_EX_COMPONENT_SKIP, interpolateComponent, G_EX_ORDER_LINEAR,
-                                     G_EX_EDIT_ALLOW);
+
+            if (gCamera1Skipped) {
+                // Skip
+                // @recomp Tag the transform
+                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                G_EX_EDIT_NONE);
+            } else {
+                // @recomp Tag the transform.
+                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                         interpolateComponent, interpolateComponent, interpolateComponent,
+                                         interpolateComponent, interpolateComponent, G_EX_COMPONENT_SKIP,
+                                         interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+            }
 
             // Translate to (vx, vy) in ortho coordinates
             Matrix_Push(&gGfxMatrix);

@@ -253,6 +253,11 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
     }
 
     for (i = 0; i < 3; i++) {
+
+        // @recomp Tag the transform
+        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_HUD_GOLD_RING + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                       G_EX_EDIT_ALLOW);
+
         switch (sGoldRingsIwork[i + 1]) {
             case 0: // transparent gold rings
 
@@ -293,6 +298,10 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
                     RCP_SetupDL(&gMasterDisp, SETUPDL_62);
                     gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 255, 255);
 
+                    // @recomp Tag the transform
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_HUD_GOLD_RING + i + 3, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
+
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, D_800D1AC4[i + 1], D_800D1AD8[i + 1], -100.0f, MTXF_NEW);
                     Matrix_RotateZ(gGfxMatrix, M_DTOR * sGoldRingsFwork[0], MTXF_APPLY);
@@ -302,6 +311,9 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
                     Matrix_SetGfxMtx(&gMasterDisp);
                     gSPDisplayList(gMasterDisp++, aStarDL);
                     Matrix_Pop(&gGfxMatrix);
+
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
 
                 if (D_80161900[i] < 7) {
@@ -310,6 +322,10 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
                     } else {
                         RCP_SetupDL(&gMasterDisp, SETUPDL_36);
                     }
+
+                    // @recomp Tag the transform
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_HUD_GOLD_RING + i + 6, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
 
                     Matrix_Push(&gGfxMatrix);
 
@@ -335,12 +351,18 @@ RECOMP_PATCH void HUD_GoldRings_Draw(void) {
                         gSPDisplayList(gMasterDisp++, sGoldRingDLs[temp]);
                     }
                     Matrix_Pop(&gGfxMatrix);
+
+                    // @recomp Pop the transform id.
+                    gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
                 }
                 break;
 
             default:
                 break;
         }
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 
     if ((gGoldRingCount[1] && ((gGoldRingCount[1] % 3) == 0)) && (D_80161900[4] == 1)) {

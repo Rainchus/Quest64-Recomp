@@ -73,12 +73,20 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                     // Render the textures across the screen (left to right)
                     for (int i = 0; i < 6; i++) {
-                        // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                 G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                 G_EX_EDIT_ALLOW);
+
+                        if (gCamera1Skipped) {
+                            // Skip
+                            // @recomp Tag the transform
+                            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH,
+                                                            G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                        } else {
+                            // @recomp Tag the transform
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                     G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                        }
 
                         switch (gCurrentLevel) {
                             case LEVEL_VERSUS:
@@ -155,21 +163,37 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     // Render the textures across a wider range to cover the screen
                     for (int i = 0; i < 6; i++) {
                         // @recomp Tag the transform.
-                        if ((gLevelMode == LEVELMODE_ON_RAILS) &&
-                            (gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) &&
+                        if ((gLevelMode == LEVELMODE_ON_RAILS) && (gPlayer[0].state != PLAYERSTATE_LEVEL_COMPLETE) &&
                             (gPlayer[0].state != PLAYERSTATE_START_360) &&
                             (gPlayer[0].state != PLAYERSTATE_LEVEL_INTRO)) {
-                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+
+                            if (gCamera1Skipped) {
+                                // Skip
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH,
+                                                                G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                            } else {
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposed(
+                                    gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                    G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                    G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                    G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                            }
                         } else {
-                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                     G_EX_EDIT_ALLOW);
+                            if (gCamera1Skipped) {
+                                // Skip
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH,
+                                                                G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                            } else {
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                            }
                         }
 
                         switch ((s32) gCurrentLevel) {
@@ -196,12 +220,21 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                 case LEVEL_VENOM_ANDROSS: // WIP
                     if (gDrawBackdrop != 6) {
-                        // @recomp Tag the transform.
-                        gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                 G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                                 G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                 G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                 G_EX_EDIT_ALLOW);
+
+                        if (gCamera1Skipped) {
+                            // Skip
+                            // @recomp Tag the transform
+                            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                            G_EX_EDIT_NONE);
+                        } else {
+                            // @recomp Tag the transform
+                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                                                     G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                        }
+
                         if ((gDrawBackdrop == 2) || (gDrawBackdrop == 7)) {
                             Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
                             Matrix_Translate(gGfxMatrix, 0.0f, -4000.0f, -7000.0f, MTXF_APPLY);
@@ -298,12 +331,20 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
                         // Render the textures across the screen (left to right)
                         for (int i = 0; i < 5; i++) {
-                            // @recomp Tag the transform.
-                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                     G_EX_EDIT_ALLOW);
+
+                            if (gCamera1Skipped) {
+                                // Skip
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH,
+                                                                G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                            } else {
+                                // @recomp Tag the transform.
+                                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                            }
 
                             if (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) {
                                 gSPDisplayList(gMasterDisp++, aAqBackdropIntroDL);
@@ -367,18 +408,33 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         // @recomp Tag the transform.
                         if ((gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) ||
                             (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE)) {
-                            // G_EX_COMPONENT_AUTO makes the warping less apparent.
-                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                     G_EX_EDIT_ALLOW);
+
+                            if (gCamera1Skipped) {
+                                // Skip
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH,
+                                                                G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                            } else {
+                                // G_EX_COMPONENT_AUTO makes the warping less apparent.
+                                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                         G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                            }
                         } else {
-                            gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+                            if (gCamera1Skipped) {
+                                // Skip
+                                // @recomp Tag the transform
+                                gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH,
+                                                                G_MTX_MODELVIEW, G_EX_EDIT_NONE);
+                            } else {
+                                gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                            }
                         }
 
                         if (gCurrentLevel == LEVEL_TITANIA) {
@@ -404,6 +460,20 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
 
         case LEVELTYPE_SPACE: // WIP Needed (space levels have textures that wrap around the screen)
             if (gPlayer[0].state != PLAYERSTATE_ENTER_WARP_ZONE) {
+
+                if (gCamera1Skipped) {
+                    // Skip
+                    // @recomp Tag the transform
+                    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                    G_EX_EDIT_NONE);
+                } else {
+                    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
+                                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                }
+
                 Matrix_Push(&gGfxMatrix);
                 camYawDeg = Math_RadToDeg(gPlayer[0].camYaw);
                 sp130 = Math_RadToDeg(gPlayer[0].camPitch);
@@ -570,6 +640,8 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                     }
                 }
                 Matrix_Pop(&gGfxMatrix);
+                // @recomp Pop the transform id.
+                gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
             }
 
             if (gStarWarpDistortion > 0.0f) {

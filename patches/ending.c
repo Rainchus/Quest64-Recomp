@@ -257,7 +257,7 @@ RECOMP_PATCH void Ending_Floor_Draw(u32 arg0, AssetInfo* asset) {
     // @recomp Skip interpolation on the floor.
     gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ADDRESS(aEndFloorDL), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_SKIP,
                              G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
 
     gDPLoadTextureBlock(gMasterDisp++, aEndFloorTex, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_WRAP | G_TX_NOMIRROR,
                         G_TX_WRAP | G_TX_NOMIRROR, 5, 5, G_TX_NOLOD, G_TX_NOLOD);

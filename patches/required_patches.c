@@ -53,8 +53,6 @@ RECOMP_PATCH void Load_RomFile(void* vRomAddress, void* dest, signed long size) 
 
 RECOMP_DECLARE_EVENT(recomp_on_init());
 
-// TODO
-// Doesn't work for some reason, crashes at osCreateThread
 #if 1
 void Audio_ThreadEntry(void *arg0);
 void Graphics_ThreadEntry(void *arg0);

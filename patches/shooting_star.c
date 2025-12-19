@@ -137,8 +137,8 @@ RECOMP_PATCH void Andross_LevelComplete(Player* player) {
 
             for (i = 0; i < sp90; i++) {
                 Effect_FireSmoke1_SpawnMoving(player->pos.x + sp68.x, player->pos.y + sp68.y,
-                                        player->pos.z - (D_ctx_80177A48[3] + D_ctx_80177A48[4]), 0.0f, 0.0f, 50.0f,
-                                        RAND_FLOAT(2.5f) + 2.5f);
+                                              player->pos.z - (D_ctx_80177A48[3] + D_ctx_80177A48[4]), 0.0f, 0.0f,
+                                              50.0f, RAND_FLOAT(2.5f) + 2.5f);
             }
 
             Math_SmoothStepToF(&player->cam.eye.x, D_ctx_80177A48[1] + player->pos.x, 0.1f, 15.0f, 0.0f);
@@ -240,9 +240,10 @@ RECOMP_PATCH void Andross_LevelComplete(Player* player) {
             }
             if (gCsFrameCount > 40) {
                 for (i = 0; i < 3; i++) {
-                    Effect_FireSmoke1_SpawnMoving(boss->obj.pos.x + RAND_FLOAT_CENTERED(150.0f), boss->obj.pos.y + 500.0f,
-                                            boss->obj.pos.z + RAND_FLOAT_CENTERED(150.0f), RAND_FLOAT_CENTERED(10.0f),
-                                            60.0f, RAND_FLOAT_CENTERED(10.0f), RAND_FLOAT(5.5f) + 5.5f);
+                    Effect_FireSmoke1_SpawnMoving(
+                        boss->obj.pos.x + RAND_FLOAT_CENTERED(150.0f), boss->obj.pos.y + 500.0f,
+                        boss->obj.pos.z + RAND_FLOAT_CENTERED(150.0f), RAND_FLOAT_CENTERED(10.0f), 60.0f,
+                        RAND_FLOAT_CENTERED(10.0f), RAND_FLOAT(5.5f) + 5.5f);
                 }
                 Math_SmoothStepToF(&gCsCamAtY, gActors[10].obj.pos.y, 1.0f, D_ctx_80177A48[1], 0.0f);
                 Math_SmoothStepToF(&D_ctx_80177A48[1], 1000.0f, 1.0f, 5.0f, 0.0f);
@@ -314,8 +315,8 @@ RECOMP_PATCH void Andross_LevelComplete(Player* player) {
 
             if (((gGameFrameCount % 4) == 0) && (gCsFrameCount < 215)) {
                 Effect_FireSmoke1_SpawnMoving(boss->obj.pos.x + RAND_FLOAT_CENTERED(350.0f), boss->obj.pos.y + 500.0f,
-                                        boss->obj.pos.z + RAND_FLOAT_CENTERED(350.0f), RAND_FLOAT_CENTERED(10.0f),
-                                        60.0f, RAND_FLOAT_CENTERED(10.0f), RAND_FLOAT(5.5f) + 15.5f);
+                                              boss->obj.pos.z + RAND_FLOAT_CENTERED(350.0f), RAND_FLOAT_CENTERED(10.0f),
+                                              60.0f, RAND_FLOAT_CENTERED(10.0f), RAND_FLOAT(5.5f) + 15.5f);
             }
             sp80 = RAND_FLOAT(40.0f);
             for (i = 0; i < 36; i += 4) {
@@ -477,6 +478,7 @@ RECOMP_PATCH void Andross_LevelComplete(Player* player) {
                 }
                 // Shooting Star. James? Is that you?
                 if (gCsFrameCount > 1300) {
+                    // @recomp: Reposition and tweak shooting star for extended starfield
                     rnd = RAND_INT(100.0f);
                     gStarFillColors[1155] = FILL_COLOR(gStarColors[rnd % 16U]);
                     gStarOffsetsX[1155] += 1.0f * 2.0f;
@@ -512,6 +514,11 @@ RECOMP_PATCH void Andross_LevelComplete(Player* player) {
                 gFillScreenAlphaTarget = 255;
                 if (gFillScreenAlpha == 255) {
                     gNextGameState = GSTATE_ENDING;
+                    
+                    //! @bug This references a variable in another overlay, causing undefined behavior.
+                    //! In US v1.1, that address contains the store instruction for player->vel.y = vel.y; in
+                    //! Venom2_LevelStart. Setting this to nop is harmless, as the overlay will be unloaded next frame.
+
                     // D_ending_80196D00 = 0; // bug
                     gLeveLClearStatus[LEVEL_VENOM_ANDROSS] = Play_CheckMedalStatus(200) + 1;
                     Audio_SetAudioSpec(0, ((0) << 8) | (27));

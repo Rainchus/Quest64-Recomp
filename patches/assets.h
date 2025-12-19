@@ -599,6 +599,7 @@ extern Gfx D_BO_6006910[];
 extern Gfx D_TI1_7007350[];
 extern Gfx D_TI1_700BB10[];
 extern Gfx aMeMeteoTunnelDL[];
+extern Gfx aBarrelRollTex[];
 extern Gfx aMapPlanetExplosionDL[];
 extern ArwingInfo gActorTeamArwing;
 extern f32 sZoFwork[150];

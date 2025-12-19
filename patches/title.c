@@ -402,7 +402,7 @@ RECOMP_PATCH void Title_Passage_Draw(void) {
     gEXMatrixGroupDecomposed(gMasterDisp++, TAG_TITLE_PASSAGE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
                              G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
+                             G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
 
     gSPDisplayList(gMasterDisp++, aTitleCsPassageWayDL);
 

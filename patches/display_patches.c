@@ -28,6 +28,9 @@ void Display_Reticle(Player* player);
 void Display_LandmasterMuzzleFlash(Player* player);
 void Display_OnFootMuzzleFlash(Player* player);
 void Display_DrawHelpAlert(void);
+
+bool should_interpolate_perspective(Vec3f* eye, Vec3f* at);
+
 #if DEBUG_SPAWNER == 1
 void Spawner(void);
 #endif
@@ -55,6 +58,11 @@ int xTest = 0;
 #if 0
 int gUvOn = 0;
 #endif
+
+s32 gCamera1Skipped = 0;
+s32 gCamera2Skipped = 0;
+s32 gCamera3Skipped = 0;
+s32 gCamera4Skipped = 0;
 
 RECOMP_PATCH void Display_Update(void) {
     s32 i;
@@ -127,6 +135,24 @@ RECOMP_PATCH void Display_Update(void) {
         gPlayCamAt.x = camPlayer->cam.at.x;
         gPlayCamAt.y = camPlayer->cam.at.y;
         gPlayCamAt.z = camPlayer->cam.at.z;
+    }
+
+    static int camSkipTimes = 0;
+    bool bigJump = !should_interpolate_perspective(&gPlayCamEye, &gPlayCamAt);
+    
+    if (bigJump) {
+        // Skip interpolation for this frame.
+        gEXMatrixGroupSimple(gMasterDisp++, 0xFFFFAAAA, G_EX_NOPUSH, G_MTX_PROJECTION, G_EX_COMPONENT_SKIP,
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
+                             G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+        recomp_printf("CAMERA 1 SKIPED: %d\n", camSkipTimes++);
+        gCamera1Skipped = true;
+    } else {
+        // Simple interpolation works much better for cameras because they orbit around a focus.
+        gEXMatrixGroupSimple(gMasterDisp++, 0xFFFFAAAA, G_EX_NOPUSH, G_MTX_PROJECTION, G_EX_COMPONENT_INTERPOLATE,
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+        gCamera1Skipped = false;
     }
 
     camPlayer->camYaw = -Math_Atan2F(gPlayCamEye.x - gPlayCamAt.x, gPlayCamEye.z - gPlayCamAt.z);
@@ -523,6 +549,8 @@ RECOMP_PATCH void Display_Update(void) {
         gUvOn ^= 1;
     }
 #endif
+
+// D_display_800CA220 = 2;
 }
 
 // for draw distance tests
@@ -944,6 +972,265 @@ RECOMP_PATCH void Bolse_BoBaseShield_Update(BoBaseShield* this) {
         gLight3R = 255;
         gLight3G = 128;
         gLight3B = 128;
+    }
+}
+#endif
+
+#if 1
+RECOMP_PATCH void Display_ArwingLaserCharge(Player* player) {
+    Vec3f spC4 = { 0.0f, -5.0f, 60.0f };
+    Vec3f spB8 = { 0.0f, -14.0f, 60.0f };
+    Vec3f spAC = { 30.0f, -10.0f, 30.0f };
+    Vec3f spA0 = { -30.0f, -10.0f, 30.0f };
+    Vec3f sp94;
+    Vec3f sp88;
+    u8 laserStrength;
+    f32 sp80;
+
+    if (gChargeTimers[player->num] > 10) {
+        RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+        Matrix_Copy(gCalcMatrix, &D_display_80161418[player->num]);
+
+        if (player->alternateView && (gLevelMode == LEVELMODE_ON_RAILS)) {
+            Matrix_MultVec3f(gCalcMatrix, &spB8, &sp94);
+        } else {
+            Matrix_MultVec3f(gCalcMatrix, &spC4, &sp94);
+        }
+
+        if (gCamera1Skipped) {
+            // Skip
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_NONE);
+        } else {
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        }
+
+        Matrix_Push(&gGfxMatrix);
+
+        sp80 = gChargeTimers[player->num] / 20.0f;
+
+        Matrix_Translate(gGfxMatrix, sp94.x, sp94.y, sp94.z, MTXF_NEW);
+        Matrix_Scale(gGfxMatrix, sp80, sp80, 1.0f, MTXF_APPLY);
+        Matrix_Push(&gGfxMatrix);
+
+        if (player->alternateView && (gLevelMode == LEVELMODE_ON_RAILS)) {
+            Matrix_Scale(gGfxMatrix, 3.0f, 3.0f, 3.0f, MTXF_APPLY);
+        } else {
+            Matrix_Scale(gGfxMatrix, 10.0f, 10.0f, 10.0f, MTXF_APPLY);
+        }
+
+        RCP_SetupDL(&gMasterDisp, SETUPDL_49);
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, 128);
+
+        if (gVersusMode) {
+            switch (player->num) {
+                case 0:
+                    gDPSetEnvColor(gMasterDisp++, 255, 255, 32, 128);
+                    break;
+                case 1:
+                    gDPSetEnvColor(gMasterDisp++, 255, 32, 32, 128);
+                    break;
+                case 2:
+                    gDPSetEnvColor(gMasterDisp++, 32, 255, 32, 128);
+                    break;
+                case 3:
+                    gDPSetEnvColor(gMasterDisp++, 32, 32, 255, 128);
+                    break;
+            }
+        } else {
+            gDPSetEnvColor(gMasterDisp++, 0, 255, 0, 128);
+        }
+
+        Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 53.0f * M_DTOR, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, aStarDL);
+        Matrix_RotateZ(gGfxMatrix, gGameFrameCount * -53.0f * 2.0f * M_DTOR, MTXF_APPLY);
+        Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, aStarDL);
+        Matrix_Pop(&gGfxMatrix);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+
+        if (gCamera1Skipped) {
+            // Skip
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_NONE);
+        } else {
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 1, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        }
+
+        if (player->alternateView && (gLevelMode == LEVELMODE_ON_RAILS)) {
+            Matrix_Scale(gGfxMatrix, 0.3f, 0.3f, 0.3f, MTXF_APPLY);
+        }
+
+        Matrix_Scale(gGfxMatrix, 0.5f, 0.5f, 1.0f, MTXF_APPLY);
+
+        if ((gGameFrameCount % 2) == 0) {
+            Matrix_Scale(gGfxMatrix, 1.7f, 1.7f, 1.0f, MTXF_APPLY);
+        } else {
+            Matrix_Scale(gGfxMatrix, 1.3f, 1.3f, 1.0f, MTXF_APPLY);
+        }
+        Matrix_SetGfxMtx(&gMasterDisp);
+        gSPDisplayList(gMasterDisp++, aOrbDL);
+        Matrix_Pop(&gGfxMatrix);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+
+    if (gMuzzleFlashScale[player->num] > 0.1f) {
+
+        if (gCamera1Skipped) {
+            // Skip
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 2, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_NONE);
+        } else {
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_CHARGED_SHOT + 2, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        }
+
+        Matrix_Push(&gGfxMatrix);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+        Matrix_Copy(gCalcMatrix, &D_display_80161418[player->num]);
+
+        laserStrength = gLaserStrength[player->num];
+        if (player->arwing.laserGunsYpos > -8.0f) {
+            laserStrength = LASERS_SINGLE;
+        }
+
+        switch (laserStrength) {
+            case LASERS_SINGLE:
+                gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 192, 255, 192, 128);
+                gDPSetEnvColor(gMasterDisp++, 64, 255, 64, 128);
+
+                if (player->alternateView && (gLevelMode == LEVELMODE_ON_RAILS)) {
+                    Matrix_MultVec3f(gCalcMatrix, &spB8, &sp94);
+                } else {
+                    Matrix_MultVec3f(gCalcMatrix, &spC4, &sp94);
+                }
+
+                Matrix_Push(&gGfxMatrix);
+
+                Matrix_Translate(gGfxMatrix, sp94.x, sp94.y, sp94.z, MTXF_NEW);
+                Matrix_Scale(gGfxMatrix, gMuzzleFlashScale[player->num], gMuzzleFlashScale[player->num], 1.0f,
+                             MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, aOrbDL);
+
+                Matrix_Pop(&gGfxMatrix);
+                break;
+
+            case LASERS_TWIN:
+            case LASERS_HYPER:
+                if (laserStrength == LASERS_TWIN) {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 192, 255, 192, 128);
+                    gDPSetEnvColor(gMasterDisp++, 64, 255, 64, 128);
+                } else {
+                    gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 128, 255, 255, 160);
+                    gDPSetEnvColor(gMasterDisp++, 128, 128, 255, 160);
+                }
+                Matrix_MultVec3f(gCalcMatrix, &spAC, &sp94);
+                Matrix_MultVec3f(gCalcMatrix, &spA0, &sp88);
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, sp94.x, sp94.y, sp94.z, MTXF_NEW);
+                Matrix_Scale(gGfxMatrix, gMuzzleFlashScale[player->num], gMuzzleFlashScale[player->num], 1.0f,
+                             MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, aOrbDL);
+                Matrix_Pop(&gGfxMatrix);
+
+                Matrix_Push(&gGfxMatrix);
+                Matrix_Translate(gGfxMatrix, sp88.x, sp88.y, sp88.z, MTXF_NEW);
+                Matrix_Scale(gGfxMatrix, gMuzzleFlashScale[player->num], gMuzzleFlashScale[player->num], 1.0f,
+                             MTXF_APPLY);
+                Matrix_SetGfxMtx(&gMasterDisp);
+                gSPDisplayList(gMasterDisp++, aOrbDL);
+
+                Matrix_Pop(&gGfxMatrix);
+                break;
+        }
+        Matrix_Pop(&gGfxMatrix);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
+    }
+}
+#endif
+
+#if 1
+RECOMP_PATCH void Display_BarrelRollShield(Player* player) {
+    f32 zRotDirection;
+    Vec3f src;
+    Vec3f dest;
+
+    if (player->barrelRollAlpha != 0) {
+        Matrix_RotateY(gCalcMatrix, (player->yRot_114 + player->rot.y + player->damageShake + 180.0f) * M_DTOR,
+                       MTXF_NEW);
+        Matrix_RotateX(gCalcMatrix,
+                       -((player->xRot_120 + player->rot.x + player->damageShake + player->aerobaticPitch) * M_DTOR),
+                       MTXF_APPLY);
+        Matrix_RotateZ(gCalcMatrix, -((player->bankAngle + player->rockAngle + player->damageShake) * M_DTOR),
+                       MTXF_APPLY);
+
+        Matrix_Translate(gCalcMatrix, player->xShake, player->yBob, 0.0f, MTXF_APPLY);
+
+        src.x = 0.0f;
+        src.y = 0.0f;
+        src.z = -30.0f;
+
+        Matrix_MultVec3f(gCalcMatrix, &src, &dest);
+
+        zRotDirection = 1.0f;
+        if (player->baseRollRate < 0) {
+            zRotDirection = -1.0f;
+        }
+
+        if (gCamera1Skipped) {
+            // Skip
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, ((u32)player << 16) | TAG_BARREL_ROLL, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_NONE);
+        } else {
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, ((u32)player << 16) | TAG_BARREL_ROLL, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        }
+
+        Matrix_Push(&gGfxMatrix);
+        Matrix_Translate(gGfxMatrix, player->pos.x + dest.x, player->pos.y + dest.y,
+                         player->trueZpos + player->zPath + dest.z, MTXF_APPLY);
+        Matrix_RotateY(gGfxMatrix, -gPlayer[gPlayerNum].camYaw, MTXF_APPLY);
+        Matrix_RotateX(gGfxMatrix, gPlayer[gPlayerNum].camPitch, MTXF_APPLY);
+        Matrix_RotateZ(gGfxMatrix, gGameFrameCount * 20.0f * zRotDirection * M_DTOR, MTXF_APPLY);
+
+        if (player->form == FORM_ARWING) {
+            Matrix_Scale(gGfxMatrix, 2.0f, 2.0f, 2.0f, MTXF_APPLY);
+        } else {
+            Matrix_Scale(gGfxMatrix, 1.2f, 1.2f, 1.2f, MTXF_APPLY);
+        }
+
+        if (player->baseRollRate < 0) {
+            Matrix_RotateX(gGfxMatrix, M_PI, MTXF_APPLY);
+        }
+
+        Matrix_SetGfxMtx(&gMasterDisp);
+        RCP_SetupDL(&gMasterDisp, SETUPDL_67);
+        gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 255, 255, 255, player->barrelRollAlpha);
+        gDPSetEnvColor(gMasterDisp++, 0, 0, 160, player->barrelRollAlpha);
+        gSPDisplayList(gMasterDisp++, aBarrelRollTex);
+        Matrix_Pop(&gGfxMatrix);
+
+        // @recomp Pop the transform id.
+        gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     }
 }
 #endif

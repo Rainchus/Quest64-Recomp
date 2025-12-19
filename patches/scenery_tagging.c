@@ -90,6 +90,7 @@ RECOMP_PATCH void Scenery_Draw(Scenery* this, s32 cullDir) {
     }
 }
 
+#if 0
 RECOMP_PATCH void Sprite_Draw(Sprite* this, s32 arg1) {
     if (arg1 >= 0) {
         this->obj.pos.y += gCameraShakeY;
@@ -102,7 +103,7 @@ RECOMP_PATCH void Sprite_Draw(Sprite* this, s32 arg1) {
             //                                G_EX_EDIT_ALLOW);
 
             gSPDisplayList(gMasterDisp++, this->info.dList);
-            
+
             // @recomp Pop the transform id.
             // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
         } else if (this->info.draw != NULL) {
@@ -110,27 +111,22 @@ RECOMP_PATCH void Sprite_Draw(Sprite* this, s32 arg1) {
         }
     }
 }
+#endif
 
+#if 0
 RECOMP_PATCH void CoBuilding9_Draw(CoBuilding9* this) {
     Matrix_Translate(gGfxMatrix, 0.0f, 0.0f, -95.0f, MTXF_APPLY);
     Matrix_SetGfxMtx(&gMasterDisp);
-    // @recomp Tag the transform.
-    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
     gSPDisplayList(gMasterDisp++, aCoBuilding9DL);
-    // @recomp Pop the transform id.
-    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+#endif
 
 RECOMP_PATCH void CoBuilding10_Draw(CoBuilding10* this) {
-    // @recomp Tag the transform.
-    // gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_SCENERY(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
-
-    // @recomp ReplaceaCoBuilding10DL for aCoBuilding9DL, a full model of the same building.
+    // @recomp Replace aCoBuilding10DL for aCoBuilding9DL, a full model of the same building.
     gSPDisplayList(gMasterDisp++, aCoBuilding9DL);
-    // @recomp Pop the transform id.
-    // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
 
+#if 0
 RECOMP_PATCH void Corneria_CoBuildingOnFire_Draw(CoBuildingOnFire* this) {
     gSPClearGeometryMode(gMasterDisp++, G_CULL_BACK);
     // @recomp Tag the transform.
@@ -140,6 +136,7 @@ RECOMP_PATCH void Corneria_CoBuildingOnFire_Draw(CoBuildingOnFire* this) {
     // gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
     gSPSetGeometryMode(gMasterDisp++, G_CULL_BACK);
 }
+#endif
 
 // @recomp: Replacement draw function for OBJ_SCENERY_CO_BUILDING_8
 void Recomp_CoBuilding_Draw(Scenery2* this) {

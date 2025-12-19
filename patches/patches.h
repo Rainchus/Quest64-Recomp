@@ -4,10 +4,10 @@
 #define RECOMP_EXPORT __attribute__((section(".recomp_export")))
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #define RECOMP_FORCE_PATCH __attribute__((section(".recomp_force_patch")))
-#define RECOMP_DECLARE_EVENT(func) \
-    _Pragma("GCC diagnostic push") \
-    _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
-    __attribute__((noinline, weak, used, section(".recomp_event"))) void func {} \
+#define RECOMP_DECLARE_EVENT(func)                                                          \
+    _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
+        __attribute__((noinline, weak, used, section(".recomp_event"))) void func {         \
+    }                                                                                       \
     _Pragma("GCC diagnostic pop")
 
 // TODO fix renaming symbols in patch recompilation
@@ -52,6 +52,8 @@
 #include "assets.h"
 #include "bgm.h"
 
+extern s32 gCamera1Skipped;
+
 #ifndef gEXFillRectangle
 #define gEXFillRectangle(cmd, lorigin, rorigin, ulx, uly, lrx, lry)                         \
     G_EX_COMMAND2(cmd, PARAM(RT64_EXTENDED_OPCODE, 8, 24) | PARAM(G_EX_FILLRECT_V1, 24, 0), \
@@ -64,47 +66,54 @@
 #define gEXMatrixGroupNoInterpolation(cmd, push, proj, edit)                                                           \
     gEXMatrixGroup(cmd, G_EX_ID_IGNORE, G_EX_INTERPOLATE_SIMPLE, push, proj, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, \
                    G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,                 \
-                   G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, edit)
+                   G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, edit, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupInterpolateOnlyTiles(cmd, push, proj, edit)                                                      \
     gEXMatrixGroup(cmd, G_EX_ID_IGNORE, G_EX_INTERPOLATE_SIMPLE, push, proj, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, \
                    G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,                 \
-                   G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                   G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedNormal(cmd, id, push, proj, edit)                                                \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,        \
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, \
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit,           \
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedNormal2(cmd, id, push, proj, edit)                                               \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_AUTO,               \
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, \
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit,           \
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedSkipRot(cmd, id, push, proj, edit)                                               \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,               \
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, \
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit,           \
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedSkipPosRot(cmd, id, push, proj, edit)                                            \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,                      \
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, \
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit,           \
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedSkipAll(cmd, id, push, proj, edit)                                               \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, \
                              G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,                      \
-                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit, G_EX_COMPONENT_SKIP,           \
+                             G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedVerts(cmd, id, push, proj, edit)                                                 \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,        \
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, \
-                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit,    \
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 #define gEXMatrixGroupDecomposedVertsOrderAuto(cmd, id, push, proj, edit)                                        \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,        \
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, \
-                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, edit)
+                             G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, edit,      \
+                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP)
 
 int recomp_printf(const char* fmt, ...);
 float recomp_powf(float, float);

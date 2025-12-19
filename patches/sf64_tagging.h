@@ -12,7 +12,7 @@
 
 /* Actor Types */
 #define TAG_ACTOR(actor) ((u32) (0x10000000 | (TAG_OBJ(actor))))
-#define TAG_ACTOR_EVENT(actor) ((u32) (0x20000000 | (TAG_OBJ(actor))))
+#define TAG_ACTOR_EVENT(actor) ((u32) (0x20000000 | (TAG_OBJ(actor))) | ((actor)->eventType) & 0x000000FF)
 #define TAG_ACTOR_EVENT_COMMON(actor) ((u32) (0x90000000 | (TAG_OBJ(actor))))
 #define TAG_BOSS(boss) ((u32) (0x30000000 | (TAG_OBJ(boss))))
 #define TAG_SCENERY(scenery) ((u32) (0x40000000 | (TAG_OBJ(scenery))))
@@ -46,6 +46,9 @@
 #define TAG_ARWING_ENGINE_GLOW_PARTICLES (0x2016)
 #define TAG_CORNERIA_EXPLOSIONS (0x2036)
 #define TAG_TITLE_PASSAGE (0x2046)
+#define TAG_CHARGED_SHOT (0x2056)
+#define TAG_BARREL_ROLL (0x2066)
+#define TAG_HUD_GOLD_RING (0x2080)
 
 /* Background */
 #define TAG_STARFIELD (0xD0000000)

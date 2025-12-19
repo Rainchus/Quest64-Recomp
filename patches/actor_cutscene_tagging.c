@@ -89,8 +89,17 @@ RECOMP_PATCH void Cutscene_DrawGreatFox(void) {
 #endif
     } else {
     ending_gf_tag:
-        // @recomp Tag the transform.
-        gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_EDIT_ALLOW);
+
+        if (gCamera1Skipped) {
+            // Skip
+            // @recomp Tag the transform
+            gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW,
+                                            G_EX_EDIT_NONE);
+        } else {
+            // @recomp Tag the transform.
+            gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW,
+                                           G_EX_EDIT_ALLOW);
+        }
     }
 
     if (gGreatFoxIntact) {
