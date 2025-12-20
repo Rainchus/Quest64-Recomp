@@ -456,6 +456,33 @@ RECOMP_PATCH void Display_Update(void) {
 #if DEBUG_NO_COLLISION == 1
     gPlayer->mercyTimer = 1000;
 #endif
+#if DEBUG_L_FOR_WARPZONE == 1
+{
+        if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
+            return;
+        }
+        if (gControllerPress[0].button & L_TRIG) {
+            if ((gCurrentLevel != LEVEL_SECTOR_X) && (gCurrentLevel != LEVEL_METEO)) {
+                return;
+            }
+            if (gCurrentLevel == LEVEL_SECTOR_X) {
+                gRingPassCount++;
+                gPlayer[0].state = PLAYERSTATE_ENTER_WARP_ZONE;
+                gPlayer[0].csState = 0;
+                gSceneSetup = 1;
+                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+                gMissionStatus = MISSION_WARP;
+                gLeveLClearStatus[gCurrentLevel] = 1;
+            } else {
+                gPlayer[0].state = PLAYERSTATE_ENTER_WARP_ZONE;
+                gPlayer[0].csState = 0;
+                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
+                gMissionStatus = MISSION_WARP;
+                gLeveLClearStatus[gCurrentLevel] = 1;
+            }
+        }
+    }
+#endif
 // background testing
 #if 0
     RCP_SetupDL(&gMasterDisp, SETUPDL_83);
