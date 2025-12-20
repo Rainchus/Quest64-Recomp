@@ -52,7 +52,8 @@
 
 /* Background */
 #define TAG_STARFIELD (0xD0000000)
-#define TAG_BACKGROUND ((0xD1000000) | (gCurrentLevel << 16))
+#define TAG_STARFIELD_WZ (0xD1000000)
+#define TAG_BACKGROUND ((0xD2000000) | (gCurrentLevel << 16))
 
 /* Map */
 #define TAG_PLANET_SHADOW (0xA0000000)
