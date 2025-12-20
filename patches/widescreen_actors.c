@@ -60,13 +60,13 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         }
 
         // @recomp draw no matter what
-        // goto render;
+        goto render;
 
         if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
             // @recomp: Extend Actor visibility to widescreen.
             if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * /*0.5f*/ 1.5f) + 500.0f)) {
                 if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * 0.5f) + 500.0f)) {
-                    // render:
+                    render:
                     Matrix_RotateY(gCalcMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gCalcMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
                     Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
@@ -97,12 +97,12 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         }
 
         // @recomp draw no matter what
-        // goto render2;
+        goto render2;
 
         if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
-            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1 + 1.0f) + var_ft5)) {
+            if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
                 if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
-                    // render2:
+                    render2:
                     if (this->info.draw != NULL) {
                         Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                         Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -192,13 +192,13 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     // @recomp draw no matter what
     if ((gCurrentLevel != LEVEL_KATINA) &&
         (gCurrentLevel != LEVEL_SECTOR_Y)) { // Excepting Katina because of KaSaucerer's bug
-        // goto render;
+        goto render;
     }
 
     if ((D_edisplay_801615D0.z < var_fv0) && (var_fv1 < D_edisplay_801615D0.z)) {
         if (fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * (var_ft5 + 1.0f)) + var_fa1)) {
             if (fabsf(D_edisplay_801615D0.y) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
-                // render:
+                render:
                 sp3C = 1.0f;
                 if (this->obj.id != OBJ_BOSS_BO_BASE) {
                     if (this->obj.id != OBJ_BOSS_KA_SAUCERER) {
