@@ -24,15 +24,15 @@ namespace zelda64 {
     bool get_debug_mode_enabled();
     void set_debug_mode_enabled(bool enabled);
     
-    enum class AutosaveMode {
+    enum class FilmGrainMode {
         On,
         Off,
         OptionCount
     };
 
-    NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::AutosaveMode, {
-        {zelda64::AutosaveMode::On, "On"},
-        {zelda64::AutosaveMode::Off, "Off"}
+    NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::FilmGrainMode, {
+        {zelda64::FilmGrainMode::On, "On"},
+        {zelda64::FilmGrainMode::Off, "Off"}
     });
 
     enum class TargetingMode {
@@ -81,8 +81,8 @@ namespace zelda64 {
         {zelda64::AnalogCamMode::Off, "Off"}
     });
 
-    AutosaveMode get_autosave_mode();
-    void set_autosave_mode(AutosaveMode mode);
+    FilmGrainMode get_film_grain_mode();
+    void set_film_grain_mode(FilmGrainMode mode);
 
     AnalogCamMode get_analog_cam_mode();
     void set_analog_cam_mode(AnalogCamMode mode);

@@ -1,10 +1,5 @@
 #define RECOMP_PATCH __attribute__((section(".recomp_patch")))
 #define END_OF_ARRAY(array) (&(array)[0] + ARRAY_COUNT(array))
-#define gEXSetRDRAMExtended(cmd, isExtended) \
-    G_EX_COMMAND1(cmd, \
-        PARAM(RT64_EXTENDED_OPCODE, 8, 24) | PARAM(G_EX_SETRDRAMEXTENDED_V1, 24, 0), \
-        PARAM(isExtended, 1, 0) \
-    )
 #define SCREEN_MARGIN_RECOMP 0
 
 #define osSendMesg osSendMesg_recomp
@@ -130,13 +125,15 @@ RECOMP_PATCH void Graphics_ThreadEntry(void* arg0) {
 
 #if 1
             // Noise
-            // gDPSetAlphaDither(gMasterDisp++, G_AD_NOISE);
-            gDPSetColorDither(gMasterDisp++, G_CD_NOISE);
-            // Fill the screen with a White rectangle
-            gDPSetRenderMode(gMasterDisp++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
-            gDPSetCombineMode(gMasterDisp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-            gDPSetPrimColor(gMasterDisp++, 0, 0, 175, 175, 175, 2); // White with 100 alpha (semi-transparent)
-            gDPFillRectangle(gMasterDisp++, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            if (recomp_get_film_grain_enabled()) {
+                // gDPSetAlphaDither(gMasterDisp++, G_AD_NOISE);
+                gDPSetColorDither(gMasterDisp++, G_CD_NOISE);
+                // Fill the screen with a White rectangle
+                gDPSetRenderMode(gMasterDisp++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+                gDPSetCombineMode(gMasterDisp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+                gDPSetPrimColor(gMasterDisp++, 0, 0, 175, 175, 175, 2); // White with 100 alpha (semi-transparent)
+                gDPFillRectangle(gMasterDisp++, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            }
 #endif
             gDPFullSync(gMasterDisp++);
             gSPEndDisplayList(gMasterDisp++);
@@ -200,7 +197,7 @@ typedef struct {
 // @recomp use gExGfxPool instead of the original GfxPool
 RECOMP_PATCH void Graphics_SetTask(void) {
     // Unused memory between the recomp variables and the patch memory
-    BootstrapDLs* bootstrapDLs = (BootstrapDLs*)(0x80800800);
+    BootstrapDLs* bootstrapDLs = (BootstrapDLs*) (0x80800800);
     Gfx* bootstrapDL = bootstrapDLs->data[gSysFrameCount % 2];
     Gfx* bootstrapDLHead = bootstrapDL;
 
@@ -224,12 +221,12 @@ RECOMP_PATCH void Graphics_SetTask(void) {
     gGfxTask->task.t.output_buff = (u64*) gTaskOutputBuffer;
     gGfxTask->task.t.output_buff_size = (u64*) gAudioHeap;
     // gGfxTask->task.t.data_ptr = (u64*) gExGfxPool->masterDL;                         // @recomp
-    gGfxTask->task.t.data_ptr = (u64*)bootstrapDL; // @recomp
+    gGfxTask->task.t.data_ptr = (u64*) bootstrapDL;                                  // @recomp
     gGfxTask->task.t.data_size = (gMasterDisp - gExGfxPool->masterDL) * sizeof(Gfx); // @recomp
     gGfxTask->task.t.yield_data_ptr = (u64*) &gOSYieldData;
     gGfxTask->task.t.yield_data_size = OS_YIELD_DATA_SIZE;
     osWritebackDCacheAll();
-    osSendMesg(&gTaskMesgQueue, gGfxTask, OS_MESG_NOBLOCK);    
+    osSendMesg(&gTaskMesgQueue, gGfxTask, OS_MESG_NOBLOCK);
 }
 
 // @recomp Remove screen margin & gEXSetScissor

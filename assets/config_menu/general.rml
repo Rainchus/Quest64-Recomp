@@ -73,6 +73,36 @@
                             <label class="config-option__tab-label" for="bg_input_disabled">Off</label>
                         </div>
                     </div>
+
+                    <!-- Film Grain -->
+                    <div class="config-option" data-event-mouseover="set_cur_config_index(6)">
+                        <label class="config-option__title">Film Grain</label>
+                        <div class="config-option__list">
+                            <input
+                                type="radio"
+                                data-event-blur="set_cur_config_index(-1)"
+                                data-event-focus="set_cur_config_index(6)"
+                                name="film_grain_mode"
+                                data-checked="film_grain_mode"
+                                value="On"
+                                id="autosave_enabled"
+                                style="nav-up: #bg_input_enabled; nav-down: #camera_inversion_none"
+                            />
+                            <label class="config-option__tab-label" for="autosave_enabled">On</label>
+
+                            <input
+                                type="radio"
+                                data-event-blur="set_cur_config_index(-1)"
+                                data-event-focus="set_cur_config_index(6)"
+                                name="film_grain_mode"
+                                data-checked="film_grain_mode"
+                                value="Off"
+                                id="autosave_disabled"
+                                style="nav-up: #bg_input_disabled; nav-down: #camera_inversion_x"
+                            />
+                            <label class="config-option__tab-label" for="autosave_disabled">Off</label>
+                        </div>
+                    </div>
                 </div>
                 <!-- Descriptions -->
                 <div class="config__wrapper">
@@ -103,13 +133,13 @@
                         <b>This setting does not affect keyboard input.</b>
                     </p>
                     <p data-if="cur_config_index == 6">
-                        Turns on autosaving and prevents owl saves from being deleted on load. Autosaves act as owl saves and take up the same slot as they do.
+                        <!-- Turns on autosaving and prevents owl saves from being deleted on load. Autosaves act as owl saves and take up the same slot as they do. -->
                         <br/>
                         <br/>
-                        Loading an autosave will place you in Clock Town or at the entrance of the current dungeon if you were in one.
+                        <!-- Loading an autosave will place you in Clock Town or at the entrance of the current dungeon if you were in one. -->
                         <br/>
                         <br/>
-                        <b>If autosaving is disabled, existing autosaves will be deleted when loaded.</b>
+                        <!-- <b>If autosaving is disabled, existing autosaves will be deleted when loaded.</b> -->
                     </p>
                     <p data-if="cur_config_index == 7">
                         Inverts the camera controls for first-person aiming. <b>Invert Y</b> is the default and matches the original game.

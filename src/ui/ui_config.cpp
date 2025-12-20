@@ -236,7 +236,7 @@ struct ControlOptionsContext {
     int joystick_deadzone; // 0 to 100
     zelda64::TargetingMode targeting_mode;
     recomp::BackgroundInputMode background_input_mode;
-    zelda64::AutosaveMode autosave_mode;
+    zelda64::FilmGrainMode film_grain_mode;
     zelda64::CameraInvertMode camera_invert_mode;
     zelda64::AnalogCamMode analog_cam_mode;
     zelda64::CameraInvertMode analog_camera_invert_mode;
@@ -316,14 +316,14 @@ void recomp::set_background_input_mode(recomp::BackgroundInputMode mode) {
     );
 }
 
-zelda64::AutosaveMode zelda64::get_autosave_mode() {
-    return control_options_context.autosave_mode;
+zelda64::FilmGrainMode zelda64::get_film_grain_mode() {
+    return control_options_context.film_grain_mode;
 }
 
-void zelda64::set_autosave_mode(zelda64::AutosaveMode mode) {
-    control_options_context.autosave_mode = mode;
+void zelda64::set_film_grain_mode(zelda64::FilmGrainMode mode) {
+    control_options_context.film_grain_mode = mode;
     if (general_model_handle) {
-        general_model_handle.DirtyVariable("autosave_mode");
+        general_model_handle.DirtyVariable("film_grain_mode");
     }
 }
 
@@ -944,7 +944,7 @@ public:
         constructor.Bind("joystick_deadzone", &control_options_context.joystick_deadzone);
         bind_option(constructor, "targeting_mode", &control_options_context.targeting_mode);
         bind_option(constructor, "background_input_mode", &control_options_context.background_input_mode);
-        bind_option(constructor, "autosave_mode", &control_options_context.autosave_mode);
+        bind_option(constructor, "film_grain_mode", &control_options_context.film_grain_mode);
         bind_option(constructor, "camera_invert_mode", &control_options_context.camera_invert_mode);
         bind_option(constructor, "analog_cam_mode", &control_options_context.analog_cam_mode);
         bind_option(constructor, "analog_camera_invert_mode", &control_options_context.analog_camera_invert_mode);
