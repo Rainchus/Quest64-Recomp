@@ -675,7 +675,7 @@ RECOMP_PATCH void ActorTeamArwing_Draw(ActorTeamArwing* this) {
 
     Matrix_MultVec3f(gGfxMatrix, &src, &dest);
 
-    if ((/* ((fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && !gBossActive)  || */
+    if (( (/*(fabsf(dest.z) < 3000.0f) && (fabsf(dest.x) < 3000.0f) && */!gBossActive)  || 
          (gPlayer[0].state == PLAYERSTATE_STANDBY) || (gCurrentLevel == LEVEL_VENOM_ANDROSS) ||
          (gCurrentLevel == LEVEL_VENOM_2) || (gPlayer[0].state == PLAYERSTATE_LEVEL_COMPLETE)) &&
         (gCurrentLevel != LEVEL_MACBETH) && (gCurrentLevel != LEVEL_TITANIA)) {
