@@ -90,7 +90,7 @@ RECOMP_PATCH void Cutscene_DrawGreatFox(void) {
     } else {
     ending_gf_tag:
 
-        if (gCamera1Skipped) {
+        if (gCamera1Skipped || ((gCurrentLevel == LEVEL_AQUAS) && (gCsFrameCount <= 2) && (gPlayer[0].csState == 1))) {
             // Skip
             // @recomp Tag the transform
             gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_CS_GREAT_FOX, G_EX_PUSH, G_MTX_MODELVIEW,
