@@ -1987,7 +1987,7 @@ scrollbarhorizontal sliderbar {
   width: auto;
   height: 100%;
   animation: 2.5s cubic-in-out 1 fade-mm-in;
-  opacity: 0.1;
+  opacity: 0.15;
 }
 
 .launcher__title-quadrant {
