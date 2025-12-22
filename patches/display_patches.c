@@ -456,33 +456,7 @@ RECOMP_PATCH void Display_Update(void) {
 #if DEBUG_NO_COLLISION == 1
     gPlayer->mercyTimer = 1000;
 #endif
-#if DEBUG_L_FOR_WARPZONE == 1
-{
-        if ((gGameState != GSTATE_PLAY) || (gPlayState <= PLAY_INIT)) {
-            return;
-        }
-        if (gControllerPress[0].button & L_TRIG) {
-            if ((gCurrentLevel != LEVEL_SECTOR_X) && (gCurrentLevel != LEVEL_METEO)) {
-                return;
-            }
-            if (gCurrentLevel == LEVEL_SECTOR_X) {
-                gRingPassCount++;
-                gPlayer[0].state = PLAYERSTATE_ENTER_WARP_ZONE;
-                gPlayer[0].csState = 0;
-                gSceneSetup = 1;
-                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
-                gMissionStatus = MISSION_WARP;
-                gLeveLClearStatus[gCurrentLevel] = 1;
-            } else {
-                gPlayer[0].state = PLAYERSTATE_ENTER_WARP_ZONE;
-                gPlayer[0].csState = 0;
-                AUDIO_PLAY_SFX(NA_SE_WARP_HOLE, gDefaultSfxSource, 0);
-                gMissionStatus = MISSION_WARP;
-                gLeveLClearStatus[gCurrentLevel] = 1;
-            }
-        }
-    }
-#endif
+
 // background testing
 #if 0
     RCP_SetupDL(&gMasterDisp, SETUPDL_83);
@@ -565,6 +539,13 @@ RECOMP_PATCH void Display_Update(void) {
     Graphics_DisplaySmallNumber(60, 220, (int) ABS(gInputPress->stick_y));
     if (gInputPress->stick_x < 0) Graphics_DisplaySmallText(110, 210, 1.0f, 1.0f, "NEG:");
     if (gInputPress->stick_y < 0) Graphics_DisplaySmallText(110, 220, 1.0f, 1.0f, "NEG:");
+#endif
+
+#if 0
+    RCP_SetupDL(&gMasterDisp, SETUPDL_83);
+    gDPSetPrimColor(gMasterDisp++, 0, 0, 255, 255, 0, 255);
+    Graphics_DisplaySmallText(10, 210, 1.0f, 1.0f, "STICK_X:");
+    Graphics_DisplaySmallNumber(60, 210, (int) gPlayer->csState);
 #endif
 
 // For texture scroll debugging

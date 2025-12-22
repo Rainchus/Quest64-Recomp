@@ -244,6 +244,7 @@ RECOMP_PATCH void Map_Update(void) {
 #endif
 }
 
+#if DEBUG_LEVEL_SELECT == 1
 RECOMP_PATCH void Map_Prologue_Update(void) {
     PlanetId planetId;
     static f32 D_menu_801B6934[] = {
@@ -339,7 +340,9 @@ RECOMP_PATCH void Map_Prologue_Update(void) {
         sMapState = MAP_IDLE;
     }
 }
+#endif
 
+#if DEBUG_LEVEL_SELECT == 1
 RECOMP_PATCH void Map_Idle_Update(void) {
     s32 i;
     bool movingCamera;
@@ -487,3 +490,4 @@ RECOMP_PATCH void Map_Idle_Update(void) {
         D_menu_801CF010 = 0;
     }
 }
+#endif
