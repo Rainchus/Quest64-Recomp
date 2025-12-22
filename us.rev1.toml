@@ -30,3 +30,13 @@ renamed = [
     "__nearbyint",
     "__nearbyintf"
 ]
+
+# HitCount Cap to 999 instead of 511
+[[patches.instruction]]
+func = "Display_Update"
+vram = 0x80057D50
+value = 0x290103E8 # slti        $at, $t0, 0x200 -> slti $at, $t0, 0x3E8
+[[patches.instruction]]
+func = "Display_Update"
+vram = 0x80057D5C
+value = 0x240903E7 # slti        addiu t1,zero, 0x1ff -> addiu t1,zero,0x3e7
