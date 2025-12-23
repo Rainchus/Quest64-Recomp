@@ -241,9 +241,17 @@ RECOMP_PATCH void Display_ActorMarks(void) {
                 Matrix_SetGfxMtx(&gMasterDisp);
                 gDPSetTextureFilter(gMasterDisp++, G_TF_POINT);
 
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEAM_ARROW + i, G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
+                if (gCamera1Skipped ||
+                    ((gCurrentLevel == LEVEL_AQUAS) && (gCsFrameCount <= 2) && (gPlayer[0].csState == 1))) {
+                    // Skip
+                    // @recomp Tag the transform
+                    gEXMatrixGroupDecomposedSkipAll(gMasterDisp++, TAG_TEAM_ARROW + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                    G_EX_EDIT_NONE);
+                } else {
+                    // @recomp Tag the transform.
+                    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_TEAM_ARROW + i, G_EX_PUSH, G_MTX_MODELVIEW,
+                                                   G_EX_EDIT_ALLOW);
+                }
 
                 if ((i == 0) && (gCurrentLevel == LEVEL_SECTOR_Z)) {
                     gSPDisplayList(gMasterDisp++, aSzMissileMark);
