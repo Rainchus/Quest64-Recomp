@@ -25,7 +25,7 @@ void Macbeth_801AF44C(void);
 void Audio_FadeOutAll(u8);
 void PlayerShot_DrawLaser(PlayerShot* shot);
 void Solar_801A0DF8(f32 xPos, f32 zPos, f32 yRot, s32 index, f32 yPos);
-void Solar_801A0FD4(ActorCutscene *this, s32 index);
+void Solar_801A0FD4(ActorCutscene* this, s32 index);
 void Solar_SoFlare_Spawn3(f32 xPos, f32 yPos, f32 zPos, f32 scale2);
 
 // for draw distance tests
@@ -69,7 +69,7 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
             // @recomp: Extend Actor visibility to widescreen.
             if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * /*0.5f*/ 1.5f) + 500.0f)) {
                 if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * 0.5f) + 500.0f)) {
-                    render:
+                render:
                     Matrix_RotateY(gCalcMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                     Matrix_RotateX(gCalcMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
                     Matrix_RotateZ(gCalcMatrix, this->obj.rot.z * M_DTOR, MTXF_APPLY);
@@ -105,7 +105,7 @@ RECOMP_PATCH void Actor_DrawAllRange(Actor* this) {
         if ((var_fv0 > sViewPos.z) && (sViewPos.z > var_fv1)) {
             if (fabsf(sViewPos.x) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
                 if (fabsf(sViewPos.y) < (fabsf(sViewPos.z * var_fa1) + var_ft5)) {
-                    render2:
+                render2:
                     if (this->info.draw != NULL) {
                         Matrix_RotateY(gGfxMatrix, this->obj.rot.y * M_DTOR, MTXF_APPLY);
                         Matrix_RotateX(gGfxMatrix, this->obj.rot.x * M_DTOR, MTXF_APPLY);
@@ -201,7 +201,7 @@ RECOMP_PATCH void Boss_Draw(Boss* this, s32 arg1) {
     if ((D_edisplay_801615D0.z < var_fv0) && (var_fv1 < D_edisplay_801615D0.z)) {
         if (fabsf(D_edisplay_801615D0.x) < (fabsf(D_edisplay_801615D0.z * (var_ft5 + 1.0f)) + var_fa1)) {
             if (fabsf(D_edisplay_801615D0.y) < (fabsf(D_edisplay_801615D0.z * var_ft5) + var_fa1)) {
-                render:
+            render:
                 sp3C = 1.0f;
                 if (this->obj.id != OBJ_BOSS_BO_BASE) {
                     if (this->obj.id != OBJ_BOSS_KA_SAUCERER) {
