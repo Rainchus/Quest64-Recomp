@@ -4,13 +4,14 @@
 extern unsigned char gControllerPlugged[4];
 extern SaveFile gSaveFile;
 
+#if 0
 // Controller detection bypass
 RECOMP_PATCH int Title_CheckControllers(void) {
     int ret = -1;
     int i;
 
     // @recomp: save hack
-    #if DEBUG_FULL_SAVE == 1
+#if DEBUG_FULL_SAVE == 1
     for (i = 0; i < 16; i++) {
         gSaveFile.save.data.planet[i].expertClear = 1;
         gSaveFile.save.data.planet[i].normalClear = 1;
@@ -19,7 +20,7 @@ RECOMP_PATCH int Title_CheckControllers(void) {
         gSaveFile.save.data.planet[i].expertMedal = 1;
     }
     Save_Write();
-    #endif
+#endif
 
     gControllerPlugged[0] = 1;
 
@@ -32,3 +33,4 @@ RECOMP_PATCH int Title_CheckControllers(void) {
 
     return ret;
 }
+#endif
