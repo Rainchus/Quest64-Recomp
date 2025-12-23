@@ -24,6 +24,9 @@ void Macbeth_801AF27C(ActorCutscene* this, s32 arg1);
 void Macbeth_801AF44C(void);
 void Audio_FadeOutAll(u8);
 void PlayerShot_DrawLaser(PlayerShot* shot);
+void Solar_801A0DF8(f32 xPos, f32 zPos, f32 yRot, s32 index, f32 yPos);
+void Solar_801A0FD4(ActorCutscene *this, s32 index);
+void Solar_SoFlare_Spawn3(f32 xPos, f32 yPos, f32 zPos, f32 scale2);
 
 // for draw distance tests
 #if 0
@@ -1811,5 +1814,253 @@ RECOMP_PATCH bool Display_CheckPlayerVisible(s32 index, s32 reflectY) {
     }
     return false;
 }
+
+#if 1
+RECOMP_PATCH void Solar_LevelStart(Player* player) {
+    s32 i;
+    Vec3f sp50;
+    Vec3f sp44;
+
+    if (D_ctx_80177A10[0] != 0) {
+        D_ctx_80177A10[0]--;
+    }
+    if (D_ctx_80177A10[1] != 0) {
+        D_ctx_80177A10[1]--;
+    }
+
+    switch (player->csState) {
+        case 0:
+            // @recomp: Get the player away from the screen
+            player->pos.z = 10000.0f;
+
+            gCsFrameCount = 0;
+            Rand_SetSeed(1, 29100, 9786);
+            player->csState = 1;
+            player->cam.eye.x = -2000.0f;
+            gCsCamEyeX = -2800.0f;
+            player->cam.eye.y = gCsCamEyeY = 120.0f;
+            player->cam.eye.z = -1800.0f;
+            gCsCamEyeZ = -2800.0f;
+
+            player->cam.at.x = gCsCamAtX = -1000.0f;
+            player->cam.at.y = 1400.0f;
+            gCsCamAtY = 400.0f;
+            player->cam.at.z = gCsCamAtZ = -2300.0f;
+
+            D_ctx_80177A48[0] = 0.0045f;
+
+            player->camRoll = 0.0f;
+            player->baseSpeed = 0.0f;
+
+            gFillScreenAlpha = 255;
+            gFillScreenAlphaTarget = 0;
+            Solar_801A0DF8(-750.0f, -2600.0f, 300.0f, 2, 1.0f);
+            AUDIO_PLAY_SFX(NA_SE_OB_MAGMA_BUBBLE, player->sfxSource, 0);
+            break;
+
+        case 1:
+            gPathTexScroll += 30.0f;
+
+            if (gCsFrameCount == 140) {
+                Solar_801A0DF8(-400.0f, -2000.0f, 45.0f, 3, 1.0f);
+            }
+            if (gCsFrameCount == 280) {
+                Solar_801A0DF8(-1730.0f, -2300.0f, 250.0f, 1, 1.0f);
+            }
+
+            if (gCsFrameCount == 100) {
+                Object_Kill(&gActors[4].obj, gActors[4].sfxSource);
+            }
+            if (gCsFrameCount == 240) {
+                Object_Kill(&gActors[5].obj, gActors[5].sfxSource);
+            }
+            if (gCsFrameCount == 380) {
+                Object_Kill(&gActors[6].obj, gActors[6].sfxSource);
+            }
+
+            if (gCsFrameCount < 3) {
+                gFillScreenAlpha = 255;
+            }
+
+            if (gCsFrameCount == 370) {
+                gFillScreenAlphaTarget = 255;
+                gFillScreenRed = 255;
+                gFillScreenGreen = 255;
+                gFillScreenBlue = 255;
+                gFillScreenAlphaStep = 8;
+            }
+
+            if ((gGameFrameCount % 8) == 0) {
+                Solar_SoFlare_Spawn3(RAND_FLOAT_CENTERED(6000.0f), RAND_FLOAT_CENTERED(5.0f) - 90.0f,
+                                     RAND_FLOAT(2000.0f) - 6000.0f + gPathProgress, RAND_FLOAT(20.0f) + 20.0f);
+            }
+
+            if (gCsFrameCount == 380) {
+                for (i = 0; i < ARRAY_COUNT(gEffects); i++) {
+                    Object_Kill(&gEffects[i].obj, gEffects[i].sfxSource);
+                }
+                Solar_801A0DF8(400.0f, -2800.0f, 340.0f, 1, 1.0f);
+            }
+
+            if (gCsFrameCount == 410) {
+                player->csState++;
+                player->cam.eye.x = 200.0f;
+                gCsCamEyeX = 800.0f;
+                player->cam.eye.y = 140.0f;
+                gCsCamEyeY = player->pos.y + 200.0f;
+                player->cam.eye.z = gCsCamEyeZ = 400.0f;
+
+                player->cam.at.x = 400.0f;
+                gCsCamAtX = 200.0f;
+                player->cam.at.y = 140.0f;
+                gCsCamAtY = 1200.0f;
+                player->cam.at.z = -500.0f;
+
+                player->pos.y = 1200.0f;
+                player->pos.z = -2500.0f;
+
+                Solar_801A0FD4(&gActors[0], 0);
+                Solar_801A0FD4(&gActors[1], 1);
+                Solar_801A0FD4(&gActors[2], 2);
+
+                gCsCamAtZ = -3000.0f;
+                gCsCamEyeZ = -3400.0f;
+
+                Audio_KillSfxBySourceAndId(player->sfxSource, NA_SE_OB_MAGMA_BUBBLE);
+
+                AUDIO_PLAY_BGM(NA_BGM_SO_START_DEMO);
+
+                Display_SetupPlayerSfxPos(player);
+                Audio_StartPlayerNoise(gPlayerNum);
+
+                D_ctx_80177A48[0] = 0.01f;
+            }
+            break;
+
+        case 2:
+            gPathTexScroll += 60.0f;
+            gFillScreenAlphaTarget = 0;
+            gFillScreenAlphaStep = 8;
+
+            Math_SmoothStepToF(D_ctx_80177A48, 0.02f, 1.0f, 0.0000003f, 0.0f);
+
+            if (gCsFrameCount == 525) {
+                Radio_PlayMessage(gMsg_ID_10010, RCID_FOX);
+            }
+            if (gCsFrameCount == 550) {
+                Object_Kill(&gActors[5].obj, gActors[5].sfxSource);
+                Solar_801A0DF8(30.0f, -1500.0f, 160.0f, 3, 2.0f);
+            }
+
+            if (player->cam.eye.z <= -2465.0f) {
+                player->csState++;
+                gCsCamEyeY = player->pos.y + 180.0f;
+                gCsCamAtX = 0.0f;
+                gCsCamEyeX = 0.0f;
+                gCsCamAtZ = -2800.0f;
+                D_ctx_80177A48[0] = 0.06f;
+            }
+            break;
+
+        case 3:
+            gPathTexScroll += 60.0f;
+
+            if ((gGameFrameCount % 4) == 0) {
+                Solar_SoFlare_Spawn3(RAND_FLOAT_CENTERED(6000.0f), -400.0f - ((player->cam.eye.y - 1380.0f) * 0.3f),
+                                     RAND_FLOAT_CENTERED(2000.0f) + 500.0f + gPathProgress, RAND_FLOAT(20.0f) + 20.0f);
+            }
+
+            if (gCsFrameCount == 615) {
+                Play_PlaySfxFirstPlayer(player->sfxSource, NA_SE_ARWING_BOOST);
+                gActors[0].fwork[29] = gActors[1].fwork[29] = gActors[2].fwork[29] = 5.0f;
+                gActors[0].state = 3;
+                gActors[1].state = 2;
+                gActors[2].state = 1;
+                player->csTimer = 3;
+                player->unk_190 = 5.0f;
+                player->csState++;
+                player->unk_194 = 5.0f;
+            }
+            break;
+
+        case 4:
+            gCsCamEyeX = player->pos.x;
+            gCsCamEyeY = player->pos.y;
+            gCsCamEyeZ = player->trueZpos + 1000.0f;
+
+            gCsCamAtX = player->pos.x;
+            gCsCamAtY = player->pos.y;
+            gCsCamAtZ = player->trueZpos + 1100.0f;
+
+            D_ctx_80177A48[0] = 0.03f;
+            D_ctx_801779A8[gMainController] = 60.0f;
+
+            player->unk_190 = 2.0f;
+
+            if (player->csTimer == 0) {
+                gFillScreenAlphaTarget = 255;
+                gFillScreenAlphaStep = 24;
+                gFillScreenRed = gFillScreenGreen = gFillScreenBlue = 255;
+            }
+
+            if (gFillScreenAlpha == 255) {
+                AUDIO_PLAY_BGM(NA_BGM_STAGE_SO);
+                player->pos.z = 0.0f;
+                player->baseSpeed = gArwingSpeed;
+                Play_ClearObjectData();
+                gLevelStartStatusScreenTimer = 50;
+                player->state = PLAYERSTATE_ACTIVE;
+                player->csState = 0;
+                player->pos.y = 350.0f;
+
+                player->cam.eye.x = player->pos.x;
+                player->cam.eye.y = 50.0f + player->pos.y * player->unk_148;
+                player->cam.eye.z = 30.0f;
+
+                player->cam.at.x = player->pos.x;
+                player->cam.at.y = 20.0f + player->pos.y * player->unk_148;
+                player->cam.at.z = player->trueZpos;
+
+                D_ctx_80177950 = 1.0f;
+                Audio_SetHeatAlarmParams(255, 3);
+                AUDIO_PLAY_SFX(NA_SE_OVERHEAT_ALARM, gDefaultSfxSource, 4);
+                gLoadLevelObjects = 1;
+                gFillScreenAlphaTarget = 0;
+                player->csTimer = 15;
+                gPlayer[0].shields = 255;
+            }
+            break;
+
+        case 10:
+            gPathTexScroll += 60.0f;
+            break;
+    }
+    Math_SmoothStepToF(&player->cam.eye.x, gCsCamEyeX, D_ctx_80177A48[0], 20000.0f, 0);
+    Math_SmoothStepToF(&player->cam.eye.y, gCsCamEyeY, D_ctx_80177A48[0], 20000.0f, 0);
+    Math_SmoothStepToF(&player->cam.eye.z, gCsCamEyeZ, D_ctx_80177A48[0], 20000.0f, 0);
+
+    Math_SmoothStepToF(&player->cam.at.x, gCsCamAtX, D_ctx_80177A48[0], 20000.0f, 0);
+    Math_SmoothStepToF(&player->cam.at.y, gCsCamAtY, D_ctx_80177A48[0], 20000.0f, 0);
+    Math_SmoothStepToF(&player->cam.at.z, gCsCamAtZ, D_ctx_80177A48[0], 20000.0f, 0);
+
+    Matrix_RotateY(gCalcMatrix, (player->rot.y + 180.0f) * M_DTOR, MTXF_NEW);
+    Matrix_RotateX(gCalcMatrix, -(player->rot.x * M_DTOR), MTXF_APPLY);
+
+    sp50.x = 0.f;
+    sp50.y = 0.0f;
+    sp50.z = player->baseSpeed;
+
+    Matrix_MultVec3fNoTranslate(gCalcMatrix, &sp50, &sp44);
+
+    player->vel.x = sp44.x;
+    player->vel.z = sp44.z;
+    player->vel.y = sp44.y;
+
+    player->pos.x += player->vel.x;
+    player->pos.y += player->vel.y;
+    player->pos.z += player->vel.z;
+    player->trueZpos = player->pos.z + player->camDist;
+}
+#endif
 
 #endif // full scope
