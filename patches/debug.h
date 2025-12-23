@@ -69,6 +69,6 @@
 #define DEBUG_EU_AUDIO 0
 
 // Settings
-#define ENDING_SKIP_INTERPOLATION 1
+#define ENDING_SKIP_INTERPOLATION 0
 #define ENDING_BORDERS 1
 #endif

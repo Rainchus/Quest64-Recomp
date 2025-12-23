@@ -174,7 +174,11 @@ RECOMP_PATCH void Title_NextState_OptionMenu(void) {
 #endif
 
 // Characters running in the ending
-#if ENDING_SKIP_INTERPOLATION == 1
+#if 1
+void Animation_DrawSkeletonEnding(s32 mode, Limb** skeletonSegment, Vec3f* jointTable,
+                                  OverrideLimbDraw overrideLimbDraw, PostLimbDraw postLimbDraw, void* data,
+                                  Matrix* transform);
+
 RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
     f32 temp;
 
@@ -211,9 +215,8 @@ RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
 
     if ((asset->unk_04 == aFoxSkel) || (asset->unk_04 == aFalcoSkel) || (asset->unk_04 == aPeppySkel) ||
         (asset->unk_04 == aSlippySkel)) {
-        // @recomp: Skip interpolation in the ending running sequence of the ending.
-        Animation_DrawSkeleton_SkipInterpolation(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL,
-                                                 &gIdentityMatrix);
+        // @recomp: Use gEXMatrixGroup in the ending running sequence of the ending.
+        Animation_DrawSkeletonEnding(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
     } else {
         // @recomp: Normal for everything else.
         Animation_DrawSkeleton(0, asset->unk_04, D_ending_80198600, NULL, NULL, NULL, &gIdentityMatrix);
@@ -221,8 +224,7 @@ RECOMP_PATCH void Ending_80191C7C(u32 arg0, AssetInfo* asset) {
 }
 #endif
 
-#if ENDING_SKIP_INTERPOLATION == 1
-// @recomp Skip interpolation on the floor.
+#if 1
 RECOMP_PATCH void Ending_Floor_Draw(u32 arg0, AssetInfo* asset) {
     f32 temp;
 
@@ -254,10 +256,9 @@ RECOMP_PATCH void Ending_Floor_Draw(u32 arg0, AssetInfo* asset) {
 
     Matrix_SetGfxMtx(&gMasterDisp);
 
-    // @recomp Skip interpolation on the floor.
-    gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ADDRESS(aEndFloorDL), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_SKIP,
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP,
-                             G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+    // @recomp Tag the transform
+    gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_ADDRESS(aEndFloorDL), G_EX_PUSH, G_MTX_MODELVIEW,
+                                   G_EX_EDIT_ALLOW);
 
     gDPLoadTextureBlock(gMasterDisp++, aEndFloorTex, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_WRAP | G_TX_NOMIRROR,
                         G_TX_WRAP | G_TX_NOMIRROR, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
@@ -269,6 +270,7 @@ RECOMP_PATCH void Ending_Floor_Draw(u32 arg0, AssetInfo* asset) {
     // @recomp Pop the transform id.
     gEXPopMatrixGroup(gMasterDisp++, G_MTX_MODELVIEW);
 }
+#endif
 
 // @recomp: Hide Venom under 1700 frames
 RECOMP_PATCH void Ending_80190648(s32 arg0, AssetInfo* asset) {
@@ -334,4 +336,3 @@ RECOMP_PATCH void Ending_Draw(void) {
 
     Matrix_Pop(&gGfxMatrix);
 }
-#endif
