@@ -356,6 +356,8 @@ std::vector<recomp::GameEntry> supported_games = {
         .mod_game_id = "sf64",
         .save_type = recomp::SaveType::Eep4k,
         .is_enabled = true,
+        .decompression_routine = zelda64::decompress_sf64,
+        .has_compressed_code = true,
         .entrypoint_address = get_entrypoint_address(),
         .entrypoint = recomp_entrypoint,
     },

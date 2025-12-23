@@ -1,8 +1,9 @@
 #include <cassert>
 #include <cstring>
 #include <fstream>
-
-#include "zelda_game.h"
+#include <span>
+#include <cstdint>
+#include <vector>
 
 uint8_t read_bit_array(std::span<const uint8_t> arr, size_t index) {
     uint8_t byte = arr[index / 8];
@@ -65,7 +66,7 @@ constexpr uint32_t byteswap(uint32_t val) {
 // For other recomps using this repo as an example, you can omit the decompression routine and
 // set the corresponding fields in the GameEntry if the game doesn't have compressed code,
 // even if it does have compressed data.
-std::vector<uint8_t> zelda64::decompress_sf64(std::span<const uint8_t> compressed_rom) {
+std::vector<uint8_t> decompress_sf64(std::span<const uint8_t> compressed_rom) {
     // Sanity check the rom size and header. These should already be correct from the runtime's check,
     // but it should prevent this file from accidentally being copied to another recomp.
     if (compressed_rom.size() != 0xC00000) {
@@ -169,4 +170,23 @@ std::vector<uint8_t> zelda64::decompress_sf64(std::span<const uint8_t> compresse
     } while (cur_entry.rom_end != 0);
 
     return ret;
+}
+
+int main() {
+    std::vector<uint8_t> rom_data;
+    {
+        std::ifstream rom_file{"baserom.us.rev1.z64", std::ios::binary};
+        rom_file.seekg(0, std::ios::end);
+        rom_data.resize(rom_file.tellg());
+        rom_file.seekg(0, std::ios::beg);
+        rom_file.read(reinterpret_cast<char*>(rom_data.data()), rom_data.size());
+    }
+
+    std::vector<uint8_t> decompressed = decompress_sf64(rom_data);
+
+    {
+        std::ofstream rom_out{"decompressed.z64", std::ios::binary};
+        rom_out.write(reinterpret_cast<const char*>(decompressed.data()), decompressed.size());
+    }
+    return 0;
 }
