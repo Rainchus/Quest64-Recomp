@@ -32,7 +32,7 @@
 #define bzero bzero_recomp
 #define gRandFloat sRandFloat
 
-#define INVERT_Y_AXIS_COND_RES (recomp_get_invert_y_axis_mode() == 0 ? 1 : -1)
+#define INVERT_Y_AXIS_COND_RES (recomp_get_invert_y_axis_mode() == 1 ? 1 : -1)
 
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"

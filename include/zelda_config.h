@@ -50,25 +50,25 @@ namespace zelda64 {
     void set_targeting_mode(TargetingMode mode);
 
     enum class AimInvertMode {
-        InvertY,
-        Original,
+        On,
+        Off,
         OptionCount
     };
 
     enum class RadioBoxMode {
         Expand,
-        Center,
+        Original,
         OptionCount
     };
 
     NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::RadioBoxMode, {
         {zelda64::RadioBoxMode::Expand, "Expand"},
-        {zelda64::RadioBoxMode::Center, "Center"}
+        {zelda64::RadioBoxMode::Original, "Original"}
     });
 
     NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::AimInvertMode, {
-        {zelda64::AimInvertMode::InvertY, "InvertY"},
-        {zelda64::AimInvertMode::Original, "Original"},
+        {zelda64::AimInvertMode::On, "On"},
+        {zelda64::AimInvertMode::Off, "Off"},
     });
 
     RadioBoxMode get_radio_comm_box_mode();

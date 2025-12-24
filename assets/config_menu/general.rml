@@ -114,7 +114,7 @@
                                 data-event-focus="set_cur_config_index(7)"
                                 name="invert_y_axis_mode"
                                 data-checked="invert_y_axis_mode"
-                                value="Original"
+                                value="On"
                                 id="invert_y_axis_mode_on"
                                 style="nav-up: #film_grain_mode_on;"
                             />
@@ -126,7 +126,7 @@
                                 data-event-focus="set_cur_config_index(7)"
                                 name="invert_y_axis_mode"
                                 data-checked="invert_y_axis_mode"
-                                value="InvertY"
+                                value="Off"
                                 id="invert_y_axis_mode_off"
                                 style="nav-up: #film_grain_mode_off;"
                             />
@@ -156,11 +156,11 @@
                                 data-event-focus="set_cur_config_index(8)"
                                 name="radio_comm_box_mode"
                                 data-checked="radio_comm_box_mode"
-                                value="Center"
+                                value="Original"
                                 id="radio_comm_box_mode_center"
                                 style="nav-up: #invert_y_axis_mode_off;"
                             />
-                            <label class="config-option__tab-label" for="radio_comm_box_mode_center">Center</label>
+                            <label class="config-option__tab-label" for="radio_comm_box_mode_center">Original</label>
                         </div>
                     </div>
 
@@ -199,7 +199,7 @@
                         <br/>
                     </p>
                     <p data-if="cur_config_index == 7">
-                        Inverts the Y axis aiming controls. <b>Off</b> is the default and matches the original game.
+                        Inverts the Y axis aiming controls. <b>On</b> is the default and matches the original game.
                     </p>
                     <p data-if="cur_config_index == 8">
                         Alignment for Radio Communications Box.
