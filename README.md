@@ -3,7 +3,7 @@
 
 [Starfox 64: Recompiled](https://github.com/sonicdcer/Starfox64Recomp) was developed alongside [Starship](https://github.com/HarbourMasters/Starship) with both ports intended to coexist and evolve independently using different technologies. As such, they are considered sibling projects.
 
-For a more detailed history, be sure to check out [fox_lore.md](https://github.com/sonicdcer/Starfox64Recomp/DOCS/fox_lore.md)
+For a more detailed history, be sure to check out [fox_lore.md](DOCS/fox_lore.md)
 
 ### [Check out the latest release here](https://github.com/sonicdcer/Starfox64Recomp/releases/latest).
 
