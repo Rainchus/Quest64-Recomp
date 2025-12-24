@@ -9,7 +9,7 @@ on:
       N64RECOMP_COMMIT:
         type: string
         required: false
-        default: '07fcdac76da3e47105238d45defe83d56c2821f5'
+        default: '98bf104b1b5ed83126af8bcab0cc964782617dbf'
     secrets:
       SF64_REPO_WITH_PAT:
         required: true
