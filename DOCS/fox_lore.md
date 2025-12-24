@@ -103,4 +103,4 @@ May 4, 2025:
 The first version of [WISEGUY]’s Modding Framework was released alongside [ZELDA64RECOMP] v1.2.0 and is now ready to be tested with [SF64RECOMP].
 
 May 25, 2025:
-The second version of [STARSHIP] releases, with many New Features & Improvements, some of them being also developed and transfered to [SF64RECOMP] for an eventual future release.
+The second version of [STARSHIP] was released, introducing many new features and improvements, some of which were also developed and carried over to [SF64RECOMP] for a future release.
