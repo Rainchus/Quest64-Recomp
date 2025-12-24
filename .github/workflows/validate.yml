@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
-          token: ${{ secrets.MK64_TOKEN }}
+          token: ${{ secrets.SF64_RECOMP }}
           path: mk64recomp-secret
       - name: Prepare Build
         run: cp -r mk64recomp-secret/mk64.us.z64 ./
@@ -141,7 +141,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
-          token: ${{ secrets.MK64_TOKEN }}
+          token: ${{ secrets.SF64_RECOMP }}
           path: mk64recomp-secret
       - name: Prepare Build
         run: cp -r mk64recomp-secret/mk64.us.z64 ./
@@ -206,7 +206,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
-          token: ${{ secrets.MK64_TOKEN }}
+          token: ${{ secrets.SF64_RECOMP }}
           path: mk64recomp-secret
       - name: Prepare Build
         run: cp -r mk64recomp-secret/mk64.us.z64 ./
@@ -291,8 +291,8 @@ jobs:
       - name: Get extra dependencies
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.SF64_REPO_WITH_PAT }}
-          token: ${{ secrets.MK64_TOKEN }}
+          repository: ${{ secrets.SF64_REPO_WITH_PAT }} 
+          token: ${{ secrets.SF64_RECOMP }}
           path: mk64recomp-secret
       - name: Prepare Build
         run: copy .\mk64recomp-secret\mk64.us.z64 .\
@@ -387,7 +387,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
-          token: ${{ secrets.MK64_TOKEN }}
+          token: ${{ secrets.SF64_RECOMP }}
           path: mk64recomp-secret
       - name: Prepare Build
         run: cp -r mk64recomp-secret/mk64.us.z64 ./
