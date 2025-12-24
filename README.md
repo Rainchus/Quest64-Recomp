@@ -131,6 +131,7 @@ Building is not required to play this project, as prebuilt binaries (which do no
 * [Wiseguy](https://github.com/Mr-Wiseguy) and [DarioSamo](https://github.com/DarioSamo): for creating [N64Recomp](https://github.com/N64Recomp) and [RT64](https://github.com/rt64/rt64), assisting with fantastic technical support along the way.
 
 * [inspectredc](https://github.com/inspectredc) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64).
+* [jnmartin84](https://github.com/jnmartin84) : for contributing with a UV texture scrolling implementation.
 * [Lywx](https://github.com/KiritoDv) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64) and creating [Torch](https://github.com/HarbourMasters/Torch) asset extraction system.
 * [petrie911](https://github.com/petrie911) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64) as a lead.
 * [Ryan-Myers](https://github.com/Ryan-Myers) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64).
