@@ -59,9 +59,9 @@ jobs:
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
           token: ${{ secrets.SF64_RECOMP }}
-          path: mk64recomp-secret
+          path: sf64-secret
       - name: Prepare Build
-        run: cp -r mk64recomp-secret/mk64.us.z64 ./
+        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -142,9 +142,9 @@ jobs:
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
           token: ${{ secrets.SF64_RECOMP }}
-          path: mk64recomp-secret
+          path: sf64-secret
       - name: Prepare Build
-        run: cp -r mk64recomp-secret/mk64.us.z64 ./
+        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
 
       - name: Prepare Flatpak
         run: |
@@ -207,9 +207,9 @@ jobs:
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
           token: ${{ secrets.SF64_RECOMP }}
-          path: mk64recomp-secret
+          path: sf64-secret
       - name: Prepare Build
-        run: cp -r mk64recomp-secret/mk64.us.z64 ./
+        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -293,9 +293,9 @@ jobs:
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }} 
           token: ${{ secrets.SF64_RECOMP }}
-          path: mk64recomp-secret
+          path: sf64-secret
       - name: Prepare Build
-        run: copy .\mk64recomp-secret\mk64.us.z64 .\
+        run: copy .\sf64-secret\starfox64.us.rev1.uncompressed.z64 .\
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -388,9 +388,9 @@ jobs:
         with:
           repository: ${{ secrets.SF64_REPO_WITH_PAT }}
           token: ${{ secrets.SF64_RECOMP }}
-          path: mk64recomp-secret
+          path: sf64-secret
       - name: Prepare Build
-        run: cp -r mk64recomp-secret/mk64.us.z64 ./
+        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
 
       - name: Build N64Recomp & RSPRecomp
         run: |
