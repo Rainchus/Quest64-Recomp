@@ -55,13 +55,24 @@ namespace zelda64 {
         OptionCount
     };
 
+    enum class RadioBoxMode {
+        Expand,
+        Center,
+        OptionCount
+    };
+
+    NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::RadioBoxMode, {
+        {zelda64::RadioBoxMode::Expand, "Expand"},
+        {zelda64::RadioBoxMode::Center, "Center"}
+    });
+
     NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::AimInvertMode, {
         {zelda64::AimInvertMode::InvertY, "InvertY"},
         {zelda64::AimInvertMode::Original, "Original"},
     });
 
-    AimInvertMode get_camera_invert_mode();
-    void set_camera_invert_mode(AimInvertMode mode);
+    RadioBoxMode get_radio_comm_box_mode();
+    void set_radio_comm_box_mode(RadioBoxMode mode);
 
     AimInvertMode get_analog_camera_invert_mode();
     void set_analog_camera_invert_mode(AimInvertMode mode);
@@ -81,7 +92,7 @@ namespace zelda64 {
     void set_film_grain_mode(FilmGrainMode mode);
 
     AimInvertMode get_invert_y_axis_mode();
-    void set_analog_cam_mode(AimInvertMode mode);
+    void set_invert_y_axis_mode(AimInvertMode mode);
 
     void open_quit_game_prompt();
 };

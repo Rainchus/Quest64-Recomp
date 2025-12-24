@@ -67,3 +67,4 @@ osCreateThread_recomp = 0x8F0000DC;
 osStartThread_recomp = 0x8F0000E0;
 recomp_get_film_grain_enabled = 0x8F0000E4;
 recomp_get_invert_y_axis_mode = 0x8F0000E8;
+recomp_get_radio_comm_box_mode = 0x8F0000EC;

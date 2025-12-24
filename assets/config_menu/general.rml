@@ -56,7 +56,7 @@
                                 data-checked="background_input_mode"
                                 value="On"
                                 id="bg_input_enabled"
-                                style="nav-up: #joystick_deadzone_input; nav-down: #autosave_enabled"
+                                style="nav-up: #joystick_deadzone_input; nav-down: #film_grain_mode_on"
                             />
                             <label class="config-option__tab-label" for="bg_input_enabled">On</label>
 
@@ -68,7 +68,7 @@
                                 data-checked="background_input_mode"
                                 value="Off"
                                 id="bg_input_disabled"
-                                style="nav-up: #joystick_deadzone_input; nav-down: #autosave_disabled"
+                                style="nav-up: #joystick_deadzone_input; nav-down: #film_grain_mode_off"
                             />
                             <label class="config-option__tab-label" for="bg_input_disabled">Off</label>
                         </div>
@@ -85,10 +85,10 @@
                                 name="film_grain_mode"
                                 data-checked="film_grain_mode"
                                 value="On"
-                                id="autosave_enabled"
-                                style="nav-up: #bg_input_enabled; nav-down: #camera_inversion_none"
+                                id="film_grain_mode_on"
+                                style="nav-up: #bg_input_enabled; nav-down: #invert_y_axis_mode_on"
                             />
-                            <label class="config-option__tab-label" for="autosave_enabled">On</label>
+                            <label class="config-option__tab-label" for="film_grain_mode_on">On</label>
 
                             <input
                                 type="radio"
@@ -97,10 +97,10 @@
                                 name="film_grain_mode"
                                 data-checked="film_grain_mode"
                                 value="Off"
-                                id="autosave_disabled"
-                                style="nav-up: #bg_input_disabled; nav-down: #camera_inversion_x"
+                                id="film_grain_mode_off"
+                                style="nav-up: #bg_input_disabled; nav-down: #invert_y_axis_mode_off"
                             />
-                            <label class="config-option__tab-label" for="autosave_disabled">Off</label>
+                            <label class="config-option__tab-label" for="film_grain_mode_off">Off</label>
                         </div>
                     </div>
 
@@ -115,10 +115,10 @@
                                 name="invert_y_axis_mode"
                                 data-checked="invert_y_axis_mode"
                                 value="Original"
-                                id="camera_inversion_none"
-                                style="nav-up: #autosave_enabled;"
+                                id="invert_y_axis_mode_on"
+                                style="nav-up: #film_grain_mode_on;"
                             />
-                            <label class="config-option__tab-label" for="camera_inversion_none">On</label>
+                            <label class="config-option__tab-label" for="invert_y_axis_mode_on">On</label>
 
                             <input
                                 type="radio"
@@ -127,10 +127,40 @@
                                 name="invert_y_axis_mode"
                                 data-checked="invert_y_axis_mode"
                                 value="InvertY"
-                                id="camera_inversion_x"
-                                style="nav-up: #autosave_disabled;"
+                                id="invert_y_axis_mode_off"
+                                style="nav-up: #film_grain_mode_off;"
                             />
-                            <label class="config-option__tab-label" for="camera_inversion_x">Off</label>
+                            <label class="config-option__tab-label" for="invert_y_axis_mode_off">Off</label>
+                        </div>
+                    </div>
+
+                    <!-- Radio Communication Box -->
+                    <div class="config-option" data-event-mouseover="set_cur_config_index(8)">
+                        <label class="config-option__title">Radio Communication Box</label>
+                        <div class="config-option__list">
+                            <input
+                                type="radio"
+                                data-event-blur="set_cur_config_index(-1)"
+                                data-event-focus="set_cur_config_index(8)"
+                                name="radio_comm_box_mode"
+                                data-checked="radio_comm_box_mode"
+                                value="Expand"
+                                id="radio_comm_box_mode_expand"
+                                style="nav-up: #invert_y_axis_mode_on;"
+                            />
+                            <label class="config-option__tab-label" for="radio_comm_box_mode_expand">Expand</label>
+
+                            <input
+                                type="radio"
+                                data-event-blur="set_cur_config_index(-1)"
+                                data-event-focus="set_cur_config_index(8)"
+                                name="radio_comm_box_mode"
+                                data-checked="radio_comm_box_mode"
+                                value="Center"
+                                id="radio_comm_box_mode_center"
+                                style="nav-up: #invert_y_axis_mode_off;"
+                            />
+                            <label class="config-option__tab-label" for="radio_comm_box_mode_center">Center</label>
                         </div>
                     </div>
 
@@ -172,13 +202,8 @@
                         Inverts the Y axis aiming controls. <b>Off</b> is the default and matches the original game.
                     </p>
                     <p data-if="cur_config_index == 8">
-                        Enables an analog "free" camera similar to later entries in the series that's mapped to the right analog stick on the controller.
+                        Alignment for Radio Communications Box.
                         <br/>
-                        <br/>
-                        When you move the right stick, the camera will enter free mode and stop centering behind Link. Press the <b>Target</b> button at any time to go back into the normal camera mode. The camera will also return to normal mode after a cutscene plays or when you move between areas.
-                        <br/>
-                        <br/>
-                        This option also enables right stick control while looking and aiming.
                     </p>
                     <p data-if="cur_config_index == 9">
                         Inverts the camera controls for the analog camera if it's enabled. <b>None</b> is the default.

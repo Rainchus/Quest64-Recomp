@@ -1329,7 +1329,7 @@ RECOMP_PATCH void Radio_Draw(void) {
     s32 fakeTemp;
 
     Game_InitFullViewport();
-    if (gGameState != GSTATE_ENDING) {
+    if ((gGameState != GSTATE_ENDING) && (recomp_get_radio_comm_box_mode() == 1)) {
         gEXSetRectAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_LEFT, 0, 0, 0, 0);
         gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
         gSPViewport(gMasterDisp++, gViewport);
@@ -1616,11 +1616,14 @@ void HUD_RadioDamage_Update(void);
 void HUD_RadioDamage_Draw(void);
 
 RECOMP_PATCH void HUD_RadioDamage(void) {
-
     if (gPlayState != PLAY_PAUSE) {
         HUD_RadioDamage_Update();
         Game_InitFullViewport();
-        gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
+        if (recomp_get_radio_comm_box_mode() == 1) {
+            gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_LEFT, 0, 0);
+        } else {
+            gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_NONE, 0, 0);
+        }
         gSPViewport(gMasterDisp++, gViewport);
         HUD_RadioDamage_Draw();
         gEXSetViewportAlign(gMasterDisp++, G_EX_ORIGIN_NONE, 0, 0);

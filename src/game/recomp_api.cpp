@@ -147,10 +147,14 @@ extern "C" void recomp_get_inverted_axes(uint8_t* rdram, recomp_context* ctx) {
     s32* x_out = _arg<0, s32*>(rdram, ctx);
     s32* y_out = _arg<1, s32*>(rdram, ctx);
 
-    zelda64::AimInvertMode mode = zelda64::get_camera_invert_mode();
+    zelda64::RadioBoxMode mode = zelda64::get_radio_comm_box_mode();
 
     // *x_out = (mode == zelda64::AimInvertMode::InvertX || mode == zelda64::AimInvertMode::InvertBoth);
     // *y_out = (mode == zelda64::AimInvertMode::InvertY || mode == zelda64::AimInvertMode::InvertBoth);
+}
+
+extern "C" void recomp_get_radio_comm_box_mode(uint8_t* rdram, recomp_context* ctx) {
+    _return<s32>(ctx, zelda64::get_radio_comm_box_mode() == zelda64::RadioBoxMode::Expand);
 }
 
 extern "C" void recomp_get_analog_inverted_axes(uint8_t* rdram, recomp_context* ctx) {
