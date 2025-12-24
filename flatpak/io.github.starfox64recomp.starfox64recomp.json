@@ -42,7 +42,7 @@
         {
           "type": "git",
           "url": "https://github.com/N64Recomp/N64Recomp.git",
-          "commit": "989a86b36912403cd323de884bf834f2605ea770",
+          "commit": "98bf104b1b5ed83126af8bcab0cc964782617dbf",
           "dest": "lib/N64Recomp"
         },
         {
