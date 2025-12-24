@@ -604,6 +604,12 @@ RECOMP_PATCH void Background_DrawGround(void) {
             }
 
             if ((gDrawAquasSurfaceWater != 0) || (gAqDrawMode == 0)) {
+                gEXMatrixGroupDecomposed(
+                    gMasterDisp++, TAG_GROUND_AQ, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
+                    G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                    G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
+                    G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+
                 gDPLoadTileTexture(gMasterDisp++, SEGMENTED_TO_VIRTUAL(aAqWaterTex), G_IM_FMT_RGBA, G_IM_SIZ_16b, 32,
                                    32);
                 gDPSetTextureImage(gMasterDisp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, SEGMENTED_TO_VIRTUAL(aAqWaterTex));
@@ -628,10 +634,6 @@ RECOMP_PATCH void Background_DrawGround(void) {
 
                 // Render the original object in the middle TEST
                 Matrix_Push(&gGfxMatrix);
-
-                // @recomp Tag the transform.
-                gEXMatrixGroupDecomposedNormal(gMasterDisp++, TAG_GROUND_AQ_2, G_EX_PUSH, G_MTX_MODELVIEW,
-                                               G_EX_EDIT_ALLOW);
 
                 Matrix_Translate(gGfxMatrix, 0.0f, gSurfaceWaterYPos, -9000.0f, MTXF_APPLY); // Center
                 Matrix_Scale(gGfxMatrix, 2.0f, 1.0f, 0.5f, MTXF_APPLY);
@@ -1387,7 +1389,7 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
             Play_UpdateDynaFloor();
 
             // @recomp: Use UV texture scrolling
-            for ((void)gPathTexScroll; gPathTexScroll >= 10.0f; gPathTexScroll -= 10.0f) {
+            for ((void) gPathTexScroll; gPathTexScroll >= 10.0f; gPathTexScroll -= 10.0f) {
                 sol_ult = (sol_ult + 4) & 0x7F;
                 // Lib_Texture_Scroll(aSoLavaTex, 32, 32, 1);
             }
@@ -1479,11 +1481,38 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
 
         case LEVEL_ZONESS:
             Play_UpdateDynaFloor();
-            for ((void)gPathTexScroll; gPathTexScroll >= 20.0f; gPathTexScroll -= 20.0f) {
-                Lib_Texture_Scroll(D_ZO_602C2CC, 32, 32, 1);
+            
+            // @recomp: Use UV texture scrolling
+            for ((void) gPathTexScroll; gPathTexScroll >= 20.0f; gPathTexScroll -= 20.0f) {
+                sol_ult = (sol_ult + 4) & 0x7F;
+                // Lib_Texture_Scroll(D_ZO_602C2CC, 32, 32, 1);
             }
             if (gPlayer[0].state == PLAYERSTATE_NEXT) {
-                Lib_Texture_Scroll(D_ZO_602C2CC, 32, 32, 1);
+                sol_ult = (sol_ult + 4) & 0x7F;
+                // Lib_Texture_Scroll(D_ZO_602C2CC, 32, 32, 1);
+            }
+
+            {
+                sol_lrt = (sol_ult + 127) & 0xFFF;
+                Gfx* cmd1 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aZoWater1DL + 2)));
+                Gfx* cmd2 = (Gfx*) SEGMENTED_TO_VIRTUAL((void*) ((Gfx*) (aZoWater2DL + 2)));
+                u32 words_w0 = (G_SETTILESIZE << 24) | sol_ult;
+                u32 words_w1 = (cmd1->words.w1 & 0x0707F000) | sol_lrt;
+                cmd1->words.w0 = words_w0;
+                cmd1->words.w1 = words_w1;
+                cmd2->words.w0 = words_w0;
+                cmd2->words.w1 = words_w1;
+            }
+            {
+                sol_lrt = (sol_ult + 127) & 0xFFF;
+                Gfx* cmd1 = (Gfx*) ((void*) ((Gfx*) (aZoWater1DL_copy + 2)));
+                Gfx* cmd2 = (Gfx*) ((void*) ((Gfx*) (aZoWater2DL_copy + 2)));
+                u32 words_w0 = (G_SETTILESIZE << 24) | sol_ult;
+                u32 words_w1 = (cmd1->words.w1 & 0x0707F000) | sol_lrt;
+                cmd1->words.w0 = words_w0;
+                cmd1->words.w1 = words_w1;
+                cmd2->words.w0 = words_w0;
+                cmd2->words.w1 = words_w1;
             }
 
             HUD_Texture_Wave(D_ZO_602C2CC, aZoWaterTex);
