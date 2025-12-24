@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Starfox 64: Recompiled
+Exec=/app/bin/Starfox64Recompiled
+Type=Application
+Icon=io.github.starfox64recomp.starfox64recomp
+Categories=Game;
+Comment=Static recompilation of Starfox 64 for PC.
+MimeType=x-scheme-handler/starfox64recomp
