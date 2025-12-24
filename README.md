@@ -1,7 +1,15 @@
 # Starfox 64: Recompiled
-Starfox 64: Recompiled is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Starfox 64 into a native port with many new features and enhancements. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
+[Starfox 64: Recompiled](https://github.com/sonicdcer/Starfox64Recomp) is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Starfox 64 into a native port with many new features, enhancements, and extensive mod support. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
+
+[Starfox 64: Recompiled](https://github.com/sonicdcer/Starfox64Recomp) was developed alongside [Starship](https://github.com/HarbourMasters/Starship) with both ports intended to coexist and evolve independently using different technologies. As such, they are considered sibling projects.
+
+For a more detailed history, be sure to check out [fox_lore.md](https://github.com/sonicdcer/Starfox64Recomp/DOCS/fox_lore.md)
 
 ### [Check out the latest release here](https://github.com/sonicdcer/Starfox64Recomp/releases/latest).
+
+Join the [N64: Recompiled Community Discord](https://discord.gg/AWZThJ4dPf) to discuss this and other N64: Recompiled projects!
+
+[![Discord Invitation](https://discordapp.com/api/guilds/1374083583739826328/widget.png?style=banner2 'N64 Recomp')](https://discord.gg/AWZThJ4dPf)
 
 ### **This repository and its releases do not contain game assets. The original game is required to build or run this project.**
 
@@ -13,10 +21,7 @@ Starfox 64: Recompiled is a project that uses [N64: Recompiled](https://github.c
   * [Easy-to-Use Menus](#easy-to-use-menus)
   * [High Framerate Support](#high-framerate-support)
   * [Widescreen and Ultrawide Support](#widescreen-and-ultrawide-support)
-  * [Dual Analog Camera](#dual-analog-camera)
-  * [Gyro Aim](#gyro-aim)
   * [Additional Control Options](#additional-control-options)
-  * [Autosaving](#autosaving)
   * [Low Input Lag](#low-input-lag)
   * [Instant Load Times](#instant-load-times)
   * [Linux and Steam Deck Support](#linux-and-steam-deck-support)
@@ -27,19 +32,20 @@ Starfox 64: Recompiled is a project that uses [N64: Recompiled](https://github.c
 * [Libraries Used and Projects Referenced](#libraries-used-and-projects-referenced)
 
 ## System Requirements
-A GPU supporting Direct3D 12.0 (Shader Model 6) or Vulkan 1.2 is required to run this project. The oldest GPUs that should be supported for each vendor are:
+A GPU supporting Direct3D 12.0 (Shader Model 6), Vulkan 1.2, or Metal Argument Buffers Tier 2 support is required to run this project. The oldest GPUs that should be supported for each vendor are:
 * GeForce GT 630
 * Radeon HD 7750 (the one from 2012, not to be confused with the RX 7000 series) and newer
 * Intel HD 510 (Skylake)
+* A Mac with Apple Silicon or an Intel 7th Gen CPU with MacOS 13.0+
 
-A CPU supporting the AVX instruction set is also required (Intel Core 2000 series or AMD Bulldozer and newer).
+On x86-64 PCs, a CPU supporting the SSE4.1 instruction set is also required (Intel Core 2 Penryn series or AMD Bulldozer and newer). ARM64 builds will work on any ARM64 CPU.
 
 If you have issues with crashes on startup, make sure your graphics drivers are fully up to date. 
 
 ## Features
 
 #### Plug and Play
-Simply provide your copy of the 1.1 North American version of the game in the main menu and start playing! This project will automatically load assets from the provided copy, so there is no need to go through a separate extraction step or build the game yourself. Other versions of the game may be supported in the future.
+Simply provide your copy of the 1.1 (Rev A) North American version of the game in the main menu and start playing! This project will automatically load assets from the provided copy, so there is no need to go through a separate extraction step or build the game yourself. Other versions of the game may be supported in the future.
 
 #### Fully Intact N64 Effects
 A lot of care was put into RT64 to make sure all graphical effects were rendered exactly as they did originally on the N64. No workarounds or "hacks" were made to replicate these effects, with the only modifications to them being made for enhancement purposes such as widescreen support.
@@ -57,17 +63,28 @@ Any aspect ratio is supported, with most effects modded to work correctly in wid
 
 **Note**: Some animation quirks can be seen at the edges of the screen in certain cutscenes when using very wide aspect ratios.
 
+#### Mod Support
+Install community made mods and texture packs! Mods can change any part of the game, including adding completely new features and content. You can install mods by simply dragging the mod files onto the game window before starting the game or by clicking the **Install Mods** button in the mod menu. Mods can be toggled in the mod menu, and some mods can be configured there as well.
+
+If you're interested in making mods for this project, check out [the mod template](https://github.com/sonicdcer/SF64RecompModTemplate) and [the modding documentation](https://hackmd.io/fMDiGEJ9TBSjomuZZOgzNg). If you're interested in making texture packs, check out [the RT64 documentation](https://github.com/rt64/rt64/blob/main/TEXTURE-PACKS.md).
+
 #### Additional Control Options
-Customize your experience by setting your stick deadzone to your liking, as well as adjusting the X and Y axis inversion for aiming.
+Customize your experience by setting your stick deadzone to your liking, as well as adjusting the Y axis inversion for aiming.
 
 #### Low Input Lag
 This project has been optimized to have as little input lag as possible, making the game feel more responsive than ever!
 
+#### Instant Load Times
+Saving and loading files, going from place to place, and pausing all happen in the blink of an eye thanks to the game running natively on modern hardware.
+
+#### Linux and Steam Deck Support
+A Linux binary as well as a Flatpak is available for playing on most up-to-date distros, including on the Steam Deck.
+
 ## Planned Features
-* Mod support and Randomizer
+* Gyro Aiming
+* Randomizer
 * Texture Packs
-* Model Replacements
-* Ray Tracing (via RT64)
+* Ray Tracing and Higher Quality Model Replacements (via RT64)
 * Multi-language support with support for loading custom translations
 
 ## FAQ
@@ -76,20 +93,22 @@ This project has been optimized to have as little input lag as possible, making 
 Static recompilation is the process of automatically translating an application from one platform to another. For more details, check out the full description of how this project's recompilation works here: [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp).
 
 #### How is this related to the decompilation project?
-Unlike N64 ports in the past, this project is not based on the source code provided by a decompilation of the game. This is because static recompilation bypasses the need for decompiled source code when making a port, allowing ports to be made **without source code**. However, the reverse engineering work done by the decompilation team was invaluable for providing some of the enhancements featured in this project. For this reason, the project uses headers and some functions from the decompilation project in order to make modifications to the game. Many thanks to the decompilation team for all of the hard work they've done.
+Unlike N64 ports in the past, this project is not based on the source code provided by a decompilation of the game. This is because static recompilation bypasses the need for decompiled source code when making a port, allowing ports to be made **without source code**. However, the reverse engineering work done by the decompilation team was invaluable for providing some of the enhancements featured in this project. For this reason, the project uses headers and some functions from the [Decompilation Project](https://github.com/sonicdcer/sf64) in order to make modifications to the game. Many thanks to the [decompilation team](https://github.com/sonicdcer/sf64/graphs/contributors) for all of the hard work they've done.
 
 #### Where is the savefile stored?
 - Windows: `%LOCALAPPDATA%\Starfox64Recompiled\saves`
 - Linux: `~/.config/StarfoxRecompiled/saves`
+- macOS: `~/Library/Application Support/StarfoxRecompiled/saves`
 
 #### How do I choose a different ROM?
-**You don't.** This project is **only** a port of Starfox 64, and it will only accept one specific ROM: the US version 1.1 of the N64 release of Starfox 64. ROMs in formats other than .z64 will be automatically converted, as long as it is the correct ROM. **It is not an emulator and it cannot run any arbitrary ROM.** 
+**You don't.** This project is **only** a port of Starfox 64, and it will only accept one specific ROM: the US version 1.1 (Rev A) of the N64 release of Starfox 64. ROMs in formats other than .z64 will be automatically converted, as long as it is the correct ROM. **It is not an emulator and it cannot run any arbitrary ROM.** 
 
-If you want to play a modded ROM or in another language, note that support for modding and other languages will be added to the project itself in the future and will not rely on you supplying a different ROM. 
+Instead, you can change the game by installing mods. See the [mod support](#mod-support) section for details.
+
+#### Can you run this project as a portable application?
+Yes, if you place a file named `portable.txt` in the same folder as the executable then this project will run in portable mode. In portable mode, the save files, config files, and mods are placed in the same folder as the executable.
 
 ## Known Issues
-* Intel GPUs on Linux may not currently work. If you have experience with Vulkan development on Linux, help here would be greatly appreciated!
-* The prebuilt Linux binary may not work correctly on some distributions of Linux. If you encounter such an issue, building the project locally yourself is recommended. A Flatpak or AppImage may be provided in the future to solve this issue. Adding the Linux version to Steam and setting "Steam Linux Runtime" as the compatibility tool or launching it via Gamescope may work around the issue. Alternatively, running the Windows version with Proton is known to work well and may also work around this issue.
 * Overlays such as MSI Afterburner and other software such as Wallpaper Engine can cause performance issues with this project that prevent the game from rendering correctly. Disabling such software is recommended.
 
 ## Building
@@ -105,4 +124,15 @@ Building is not required to play this project, as prebuilt binaries (which do no
 * [Starfox 64 Decompilation](https://github.com/sonicdcer/sf64) for headers and some function definitions, used for making patches or some enhancements
 * [Ares emulator](https://github.com/ares-emulator/ares) for RSP vector instruction reference implementations, used in RSP recompilation
 
-Special thanks to [thecozies](https://github.com/thecozies) for designing and helping implement the launcher and config menus!
+# Special Thanks:
+
+* [ZeldaRET](https://github.com/zeldaret) : for teaching me the fundamental knowledge of N64 decompilation.
+* [Decompals](https://github.com/decompals) : for helping in the initial disassembly and decompilation of the game.
+* [Wiseguy](https://github.com/Mr-Wiseguy) and [DarioSamo](https://github.com/DarioSamo): for creating [N64Recomp](https://github.com/N64Recomp) and [RT64](https://github.com/rt64/rt64), assisting with fantastic technical support along the way.
+
+* [inspectredc](https://github.com/inspectredc) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64).
+* [Lywx](https://github.com/KiritoDv) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64) and creating [Torch](https://github.com/HarbourMasters/Torch) asset extraction system.
+* [petrie911](https://github.com/petrie911) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64) as a lead.
+* [Ryan-Myers](https://github.com/Ryan-Myers) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64).
+* [Thar0](https://github.com/Thar0) : for contributing with an improved Starfield that can be interpolated to any framerate.
+* [TheBoy181](https://github.com/TheBoy181) : for contributing to this project with various widescreen enhancements such as level floors, an extended Starfield among other things.
