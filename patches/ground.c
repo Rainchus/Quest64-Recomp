@@ -772,7 +772,7 @@ RECOMP_PATCH void Background_DrawGround(void) {
 
                 // @recomp Tag the transform.
                 gEXMatrixGroupDecomposed(
-                    gMasterDisp++, TAG_GROUND_ALL_RANGE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
+                    gMasterDisp++, TAG_GROUND_ALL_RANGE + i + 3, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
                     G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
@@ -1481,7 +1481,7 @@ RECOMP_PATCH void Play_UpdateLevel(void) {
 
         case LEVEL_ZONESS:
             Play_UpdateDynaFloor();
-            
+
             // @recomp: Use UV texture scrolling
             for ((void) gPathTexScroll; gPathTexScroll >= 20.0f; gPathTexScroll -= 20.0f) {
                 sol_ult = (sol_ult + 4) & 0x7F;
