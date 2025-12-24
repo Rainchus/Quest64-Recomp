@@ -49,26 +49,22 @@ namespace zelda64 {
     TargetingMode get_targeting_mode();
     void set_targeting_mode(TargetingMode mode);
 
-    enum class CameraInvertMode {
-        InvertNone,
-        InvertX,
+    enum class AimInvertMode {
         InvertY,
-        InvertBoth,
+        Original,
         OptionCount
     };
 
-    NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::CameraInvertMode, {
-        {zelda64::CameraInvertMode::InvertNone, "InvertNone"},
-        {zelda64::CameraInvertMode::InvertX, "InvertX"},
-        {zelda64::CameraInvertMode::InvertY, "InvertY"},
-        {zelda64::CameraInvertMode::InvertBoth, "InvertBoth"}
+    NLOHMANN_JSON_SERIALIZE_ENUM(zelda64::AimInvertMode, {
+        {zelda64::AimInvertMode::InvertY, "InvertY"},
+        {zelda64::AimInvertMode::Original, "Original"},
     });
 
-    CameraInvertMode get_camera_invert_mode();
-    void set_camera_invert_mode(CameraInvertMode mode);
+    AimInvertMode get_camera_invert_mode();
+    void set_camera_invert_mode(AimInvertMode mode);
 
-    CameraInvertMode get_analog_camera_invert_mode();
-    void set_analog_camera_invert_mode(CameraInvertMode mode);
+    AimInvertMode get_analog_camera_invert_mode();
+    void set_analog_camera_invert_mode(AimInvertMode mode);
 
     enum class AnalogCamMode {
         On,
@@ -84,8 +80,8 @@ namespace zelda64 {
     FilmGrainMode get_film_grain_mode();
     void set_film_grain_mode(FilmGrainMode mode);
 
-    AnalogCamMode get_analog_cam_mode();
-    void set_analog_cam_mode(AnalogCamMode mode);
+    AimInvertMode get_invert_y_axis_mode();
+    void set_analog_cam_mode(AimInvertMode mode);
 
     void open_quit_game_prompt();
 };

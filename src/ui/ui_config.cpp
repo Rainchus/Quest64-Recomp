@@ -237,9 +237,9 @@ struct ControlOptionsContext {
     zelda64::TargetingMode targeting_mode;
     recomp::BackgroundInputMode background_input_mode;
     zelda64::FilmGrainMode film_grain_mode;
-    zelda64::CameraInvertMode camera_invert_mode;
-    zelda64::AnalogCamMode analog_cam_mode;
-    zelda64::CameraInvertMode analog_camera_invert_mode;
+    zelda64::AimInvertMode camera_invert_mode;
+    zelda64::AimInvertMode invert_y_axis_mode;
+    zelda64::AimInvertMode analog_camera_invert_mode;
 };
 
 ControlOptionsContext control_options_context;
@@ -327,33 +327,33 @@ void zelda64::set_film_grain_mode(zelda64::FilmGrainMode mode) {
     }
 }
 
-zelda64::CameraInvertMode zelda64::get_camera_invert_mode() {
+zelda64::AimInvertMode zelda64::get_camera_invert_mode() {
     return control_options_context.camera_invert_mode;
 }
 
-void zelda64::set_camera_invert_mode(zelda64::CameraInvertMode mode) {
+void zelda64::set_camera_invert_mode(zelda64::AimInvertMode mode) {
     control_options_context.camera_invert_mode = mode;
     if (general_model_handle) {
         general_model_handle.DirtyVariable("camera_invert_mode");
     }
 }
 
-zelda64::AnalogCamMode zelda64::get_analog_cam_mode() {
-    return control_options_context.analog_cam_mode;
+zelda64::AimInvertMode zelda64::get_invert_y_axis_mode() {
+    return control_options_context.invert_y_axis_mode;
 }
 
-void zelda64::set_analog_cam_mode(zelda64::AnalogCamMode mode) {
-    control_options_context.analog_cam_mode = mode;
+void zelda64::set_analog_cam_mode(zelda64::AimInvertMode mode) {
+    control_options_context.invert_y_axis_mode = mode;
     if (general_model_handle) {
-        general_model_handle.DirtyVariable("analog_cam_mode");
+        general_model_handle.DirtyVariable("invert_y_axis_mode");
     }
 }
 
-zelda64::CameraInvertMode zelda64::get_analog_camera_invert_mode() {
+zelda64::AimInvertMode zelda64::get_analog_camera_invert_mode() {
     return control_options_context.analog_camera_invert_mode;
 }
 
-void zelda64::set_analog_camera_invert_mode(zelda64::CameraInvertMode mode) {
+void zelda64::set_analog_camera_invert_mode(zelda64::AimInvertMode mode) {
     control_options_context.analog_camera_invert_mode = mode;
     if (general_model_handle) {
         general_model_handle.DirtyVariable("analog_camera_invert_mode");
@@ -946,7 +946,7 @@ public:
         bind_option(constructor, "background_input_mode", &control_options_context.background_input_mode);
         bind_option(constructor, "film_grain_mode", &control_options_context.film_grain_mode);
         bind_option(constructor, "camera_invert_mode", &control_options_context.camera_invert_mode);
-        bind_option(constructor, "analog_cam_mode", &control_options_context.analog_cam_mode);
+        bind_option(constructor, "invert_y_axis_mode", &control_options_context.invert_y_axis_mode);
         bind_option(constructor, "analog_camera_invert_mode", &control_options_context.analog_camera_invert_mode);
 
         general_model_handle = constructor.GetModelHandle();

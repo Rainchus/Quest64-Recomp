@@ -103,7 +103,39 @@
                             <label class="config-option__tab-label" for="autosave_disabled">Off</label>
                         </div>
                     </div>
+
+                    <!-- Invert Y Axis -->
+                    <div class="config-option" data-event-mouseover="set_cur_config_index(7)">
+                        <label class="config-option__title">Invert Y Axis</label>
+                        <div class="config-option__list">
+                            <input
+                                type="radio"
+                                data-event-blur="set_cur_config_index(-1)"
+                                data-event-focus="set_cur_config_index(7)"
+                                name="invert_y_axis_mode"
+                                data-checked="invert_y_axis_mode"
+                                value="Original"
+                                id="camera_inversion_none"
+                                style="nav-up: #autosave_enabled;"
+                            />
+                            <label class="config-option__tab-label" for="camera_inversion_none">On</label>
+
+                            <input
+                                type="radio"
+                                data-event-blur="set_cur_config_index(-1)"
+                                data-event-focus="set_cur_config_index(7)"
+                                name="invert_y_axis_mode"
+                                data-checked="invert_y_axis_mode"
+                                value="InvertY"
+                                id="camera_inversion_x"
+                                style="nav-up: #autosave_disabled;"
+                            />
+                            <label class="config-option__tab-label" for="camera_inversion_x">Off</label>
+                        </div>
+                    </div>
+
                 </div>
+
                 <!-- Descriptions -->
                 <div class="config__wrapper">
                     <p data-if="cur_config_index == 0">
@@ -133,16 +165,11 @@
                         <b>This setting does not affect keyboard input.</b>
                     </p>
                     <p data-if="cur_config_index == 6">
-                        <!-- Turns on autosaving and prevents owl saves from being deleted on load. Autosaves act as owl saves and take up the same slot as they do. -->
+                        Adds a visual effect that simulates the random grain you see in old film or high-ISO camera footage.
                         <br/>
-                        <br/>
-                        <!-- Loading an autosave will place you in Clock Town or at the entrance of the current dungeon if you were in one. -->
-                        <br/>
-                        <br/>
-                        <!-- <b>If autosaving is disabled, existing autosaves will be deleted when loaded.</b> -->
                     </p>
                     <p data-if="cur_config_index == 7">
-                        Inverts the camera controls for first-person aiming. <b>Invert Y</b> is the default and matches the original game.
+                        Inverts the Y axis aiming controls. <b>Off</b> is the default and matches the original game.
                     </p>
                     <p data-if="cur_config_index == 8">
                         Enables an analog "free" camera similar to later entries in the series that's mapped to the right analog stick on the controller.

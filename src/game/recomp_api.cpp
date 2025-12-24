@@ -147,24 +147,24 @@ extern "C" void recomp_get_inverted_axes(uint8_t* rdram, recomp_context* ctx) {
     s32* x_out = _arg<0, s32*>(rdram, ctx);
     s32* y_out = _arg<1, s32*>(rdram, ctx);
 
-    zelda64::CameraInvertMode mode = zelda64::get_camera_invert_mode();
+    zelda64::AimInvertMode mode = zelda64::get_camera_invert_mode();
 
-    *x_out = (mode == zelda64::CameraInvertMode::InvertX || mode == zelda64::CameraInvertMode::InvertBoth);
-    *y_out = (mode == zelda64::CameraInvertMode::InvertY || mode == zelda64::CameraInvertMode::InvertBoth);
+    // *x_out = (mode == zelda64::AimInvertMode::InvertX || mode == zelda64::AimInvertMode::InvertBoth);
+    // *y_out = (mode == zelda64::AimInvertMode::InvertY || mode == zelda64::AimInvertMode::InvertBoth);
 }
 
 extern "C" void recomp_get_analog_inverted_axes(uint8_t* rdram, recomp_context* ctx) {
     s32* x_out = _arg<0, s32*>(rdram, ctx);
     s32* y_out = _arg<1, s32*>(rdram, ctx);
 
-    zelda64::CameraInvertMode mode = zelda64::get_analog_camera_invert_mode();
+    zelda64::AimInvertMode mode = zelda64::get_analog_camera_invert_mode();
 
-    *x_out = (mode == zelda64::CameraInvertMode::InvertX || mode == zelda64::CameraInvertMode::InvertBoth);
-    *y_out = (mode == zelda64::CameraInvertMode::InvertY || mode == zelda64::CameraInvertMode::InvertBoth);
+    // *x_out = (mode == zelda64::AimInvertMode::InvertX || mode == zelda64::AimInvertMode::InvertBoth);
+    // *y_out = (mode == zelda64::AimInvertMode::InvertY || mode == zelda64::AimInvertMode::InvertBoth);
 }
 
-extern "C" void recomp_get_analog_cam_enabled(uint8_t* rdram, recomp_context* ctx) {
-    _return<s32>(ctx, zelda64::get_analog_cam_mode() == zelda64::AnalogCamMode::On);
+extern "C" void recomp_get_invert_y_axis_mode(uint8_t* rdram, recomp_context* ctx) {
+    _return<s32>(ctx, zelda64::get_invert_y_axis_mode() == zelda64::AimInvertMode::Original);
 }
 
 extern "C" void recomp_get_camera_inputs(uint8_t* rdram, recomp_context* ctx) {

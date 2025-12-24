@@ -1592,7 +1592,8 @@ RECOMP_PATCH void func_tank_80044868(Player* player) {
     f32 stickTilt;
     f32 sp2C;
 
-    stickTilt = (gInputPress->stick_y * 0.7f) - 8.0f;
+    // @recomp: invert_y_axis_mode
+    stickTilt = (gInputPress->stick_y * 0.7f) * INVERT_Y_AXIS_COND_RES - 8.0f;
     if (stickTilt < -40.0f) {
         stickTilt = -40.0f;
     }

@@ -32,6 +32,8 @@
 #define bzero bzero_recomp
 #define gRandFloat sRandFloat
 
+#define INVERT_Y_AXIS_COND_RES (recomp_get_invert_y_axis_mode() == 0 ? 1 : -1)
+
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "gfx.h"
@@ -51,6 +53,8 @@
 #include "sf64_tagging.h"
 #include "assets.h"
 #include "bgm.h"
+#include "input.h"
+#include "functions.h"
 
 typedef struct ArwingInfoRecomp {
     u8 rightWingState;
