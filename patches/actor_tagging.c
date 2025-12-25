@@ -331,7 +331,7 @@ RECOMP_PATCH void MeMora_Draw(MeMora* this) {
     gEXMatrixGroupDecomposed(gMasterDisp++, TAG_ACTOR(this), G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
                              G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+                             G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
 
     for (i = this->work_04A; i < ARRAY_COUNT(D_800CFF94); i++) {
         j = (D_800CFF94[i] + this->counter_04E) % 100;

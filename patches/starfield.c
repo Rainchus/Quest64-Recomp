@@ -159,7 +159,7 @@ RECOMP_PATCH void Background_DrawStarfield(void) {
                     gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
                                              interpolateComponent, interpolateComponent, interpolateComponent,
                                              interpolateComponent, interpolateComponent, G_EX_COMPONENT_SKIP,
-                                             interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+                                             interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
                 }
 
                 // Translate to (vx, vy) in ortho coordinates
@@ -431,7 +431,7 @@ RECOMP_PATCH void Background_DrawPartialStarfield(s32 yMin, s32 yMax) { // Stars
                 gEXMatrixGroupDecomposed(gMasterDisp++, TAG_STARFIELD + i, G_EX_PUSH, G_MTX_MODELVIEW,
                                          interpolateComponent, interpolateComponent, interpolateComponent,
                                          interpolateComponent, interpolateComponent, G_EX_COMPONENT_SKIP,
-                                         interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
+                                         interpolateComponent, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
             }
 
             // Translate to (vx, vy) in ortho coordinates

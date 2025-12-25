@@ -264,7 +264,7 @@ void Animation_DrawSkeletonEnding(s32 mode, Limb** skeletonSegment, Vec3f* joint
         gEXMatrixGroupSimple(gMasterDisp++, TAG_LIMB(rootLimb, data) + rootIndex | (u32) extraPtrData, G_EX_PUSH,
                              G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_ORDER_LINEAR, G_EX_EDIT_NONE);
+                             G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
     }
 
     if (overrideLimbDraw == NULL) {
@@ -348,7 +348,7 @@ void Animation_DrawLimbEnding(s32 mode, Limb* limb, Limb** skeleton, Vec3f* join
         gEXMatrixGroupSimple(gMasterDisp++, TAG_LIMB(limb, data) + limbIndex | (u32) extraPtrData, G_EX_PUSH,
                              G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                              G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                             G_EX_ORDER_LINEAR, G_EX_EDIT_NONE);
+                             G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
     }
 
     if (overrideLimbDraw == NULL) {
