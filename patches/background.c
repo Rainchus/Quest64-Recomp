@@ -85,7 +85,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                                      G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
                                                      G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                      G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                     G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                                     G_EX_EDIT_ALLOW);
                         }
 
                         switch (gCurrentLevel) {
@@ -178,8 +178,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW,
-                                                         G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_ALLOW);
                             }
                         } else {
                             if (gCamera1Skipped) {
@@ -193,7 +192,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                     gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                                    G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                    G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
                             }
                         }
 
@@ -233,7 +232,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                                      G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
                                                      G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                      G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                                                     G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                                     G_EX_EDIT_ALLOW);
                         }
 
                         if ((gDrawBackdrop == 2) || (gDrawBackdrop == 7)) {
@@ -344,7 +343,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                     gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                                    G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                    G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
                             }
 
                             if (gPlayer[0].state == PLAYERSTATE_LEVEL_INTRO) {
@@ -421,7 +420,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                     gMasterDisp++, TAG_BACKGROUND + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_AUTO,
                                     G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE,
                                     G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE,
-                                    G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                    G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
                             }
                         } else {
                             if (gCamera1Skipped) {
@@ -434,8 +433,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                                                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                                                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW,
-                                                         G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
                             }
                         }
 
@@ -473,7 +471,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         gMasterDisp++, TAG_BACKGROUND, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO,
-                        G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                        G_EX_EDIT_ALLOW);
                 }
 
                 Matrix_Push(&gGfxMatrix);
@@ -664,7 +662,7 @@ RECOMP_PATCH void Background_DrawBackdrop(void) {
                         gMasterDisp++, TAG_STARFIELD_WZ + i, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
                         G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR,
-                        G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                        G_EX_EDIT_ALLOW);
 
                     Matrix_Push(&gGfxMatrix);
                     Matrix_Translate(gGfxMatrix, (*xStar - 160.0f - 480.0f) * 10.0f, (*yStar - 120.0f - 20.0f) * 10.0f,

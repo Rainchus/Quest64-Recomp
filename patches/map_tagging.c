@@ -260,7 +260,7 @@ RECOMP_PATCH void Map_Planet_Draw(PlanetId planetId) __attribute__((optnone)) {
             gEXMatrixGroupDecomposed(gMasterDisp++, (TAG_MEDAL + planetId), G_EX_PUSH, G_MTX_MODELVIEW,
                                      G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
                                      G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                     G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
 
             Map_PlanetMedal_Draw(planetId);
             // @recomp Pop the transform id.
@@ -570,7 +570,7 @@ RECOMP_PATCH void Map_PlanetExplosions_Draw(s32 planetId, PlanetExplosions explo
         gEXMatrixGroupDecomposed(gMasterDisp++, TAG_CORNERIA_EXPLOSIONS + i, G_EX_PUSH, G_MTX_MODELVIEW,
                                  G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO,
                                  G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP,
-                                 G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                                 G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_AUTO, G_EX_EDIT_ALLOW);
 
         Matrix_Push(&gGfxMatrix);
 

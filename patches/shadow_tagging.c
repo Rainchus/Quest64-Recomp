@@ -10,7 +10,7 @@ RECOMP_PATCH void Object_DrawShadow(s32 index, Object* obj) {
     // @recomp Tag the transform.
     gEXMatrixGroupSimple(gMasterDisp++, index + SHADOW_ID, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE);
 
     RCP_SetupDL(&gMasterDisp, SETUPDL_66);
     gDPSetPrimColor(gMasterDisp++, 0x00, 0x00, 0, 0, 0, 180);
@@ -81,7 +81,7 @@ RECOMP_PATCH void Display_PlayerShadow_Draw(Player* player) {
     // @recomp Tag the transform.
     gEXMatrixGroupSimple(gMasterDisp++, gPlayerNum + PLAYER_SHADOW_ID, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
                          G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_SKIP);
+                         G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, G_EX_EDIT_NONE);
 
     switch (player->form) {
         case FORM_ARWING:
