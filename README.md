@@ -83,7 +83,6 @@ A Linux binary as well as a Flatpak is available for playing on most up-to-date 
 ## Planned Features
 * Gyro Aiming
 * Randomizer
-* Texture Packs
 * Ray Tracing and Higher Quality Model Replacements (via RT64)
 * Multi-language support with support for loading custom translations
 
