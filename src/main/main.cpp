@@ -350,14 +350,12 @@ gpr get_entrypoint_address();
 // array of supported GameEntry objects
 std::vector<recomp::GameEntry> supported_games = {
     {
-        .rom_hash = 0x163fd3fc3813f54eULL,
-        .internal_name = "STARFOX64",
-        .game_id = u8"sf64.n64.us.1.1",
-        .mod_game_id = "sf64",
-        .save_type = recomp::SaveType::Eep4k,
+        .rom_hash = 0x35335bf69fc6515cULL,
+        .internal_name = "Quest 64",
+        .game_id = u8"quest64_us",
+        .mod_game_id = "qs64",
+        .save_type = recomp::SaveType::AllowAll,
         .is_enabled = true,
-        .decompression_routine = zelda64::decompress_sf64,
-        .has_compressed_code = true,
         .entrypoint_address = get_entrypoint_address(),
         .entrypoint = recomp_entrypoint,
     },

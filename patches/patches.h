@@ -26,8 +26,8 @@
 #define osContStartQuery osContStartQuery_recomp
 #define osContGetQuery osContGetQuery_recomp
 
-#define __sinf __sinf_recomp
-#define __cosf __cosf_recomp
+#define sinf __sinf_recomp
+#define cosf __cosf_recomp
 #define sqrtf sqrtf_recomp
 #define bzero bzero_recomp
 #define gRandFloat sRandFloat
@@ -35,26 +35,12 @@
 #define INVERT_Y_AXIS_COND_RES (recomp_get_invert_y_axis_mode() == 1 ? 1 : -1)
 
 #include "PR/ultratypes.h"
-#include "PR/gbi.h"
-#include "gfx.h"
-#include "sf64thread.h"
-#include "sf64object.h"
-#include "context.h"
-#include "functions.h"
 #include "rt64_extended_gbi.h"
-#include "graphics.h"
-#include "PR/abi.h"
-#include "audioseq_cmd.h"
-#include "macros.h"
-#include "variables.h"
-#include "debug.h"
-#include "sfx.h"
-#include "sf64event.h"
-#include "sf64_tagging.h"
-#include "assets.h"
-#include "bgm.h"
-#include "input.h"
-#include "functions.h"
+#include "ultra64.h"
+
+extern OSMesgQueue gSIMessageQ;
+extern s8 gCurrControllerNum;
+extern OSPfs gPFS[];
 
 typedef struct ArwingInfoRecomp {
     u8 rightWingState;

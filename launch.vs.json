@@ -5,8 +5,8 @@
     {
       "type": "default",
       "project": "CMakeLists.txt",
-      "projectTarget": "Starfox64Recompiled.exe",
-      "name": "Starfox64Recompiled.exe",
+      "projectTarget": "Quest64Recompiled.exe",
+      "name": "Quest64Recompiled.exe",
       "currentDir": "${workspaceRoot}"
     }
   ]

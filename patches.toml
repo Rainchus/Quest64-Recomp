@@ -10,8 +10,8 @@ single_file_output = true
 use_absolute_symbols = true
 
 # Point the recompiler at the symbol files so that it can resolve relocations during recompilation.
-func_reference_syms_file = "Starfox64RecompSyms/sf64.us.rev1.syms.toml"
-data_reference_syms_files = [ "Starfox64RecompSyms/sf64.us.rev1.datasyms.toml" ]
+func_reference_syms_file = "Quest64Syms/dump.toml"
+data_reference_syms_files = [ "Quest64Syms/data_dump.toml" ]
 # data_reference_syms_files = [ "Starfox64RecompSyms/sf64.us.rev1.datasyms.toml", "Starfox64RecompSyms/sf64.us.rev1.datasyms_static.toml" ]
 
 # Tell the recompiler to write the output binary. Doing this instead of using objcopy allows the recompiler to patch MIPS32 relocs.
@@ -23,4 +23,5 @@ unpaired_lo16_warnings = false
 # Allow exporting functions and events for mods to use. 
 allow_exports = true
 
+# Enable strict patch mode, validates that patched symbols exist and that non-patch functions aren't symbols.
 strict_patch_mode = true

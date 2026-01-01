@@ -9,7 +9,7 @@
 *.map
 
 # Output C files
-RecompiledFuncs/
+
 RecompiledPatches/
 
 # Linux build output

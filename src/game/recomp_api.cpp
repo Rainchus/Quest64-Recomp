@@ -202,3 +202,16 @@ extern "C" void recomp_set_right_analog_suppressed(uint8_t* rdram, recomp_contex
 
     recomp::set_right_analog_suppressed(suppressed);
 }
+
+extern "C" void rmonPrintf_recomp(uint8_t* rdram, recomp_context* ctx) {
+
+}
+
+extern "C" void bzero_recomp(uint8_t* rdram, recomp_context* ctx) {
+    char* ptr = _arg<0, char*>(rdram, ctx);
+    u32 size = _arg<1, u32>(rdram, ctx);
+
+    for (int i = 0; i < size; i++) {
+        ptr[i] = 0;
+    }
+}
