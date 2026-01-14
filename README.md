@@ -1,7 +1,7 @@
 # Quest64: Recompiled
 Quest64: Recompiled is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Quest64 into a native port with many new features and enhancements. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
 
-### [Check out the latest release here](https://github.com/Rainchus/ChameleonTwist1-JP-Recomp/releases).
+### [Check out the latest release here](https://github.com/Rainchus/Quest64-Recomp/).
 
 ### **This repository and its releases do not contain game assets. The original game is required to build or run this project.**
 
@@ -109,7 +109,7 @@ Building is not required to play this project, as prebuilt binaries (which do no
 * [FreeType](https://freetype.org/) for font rendering, used by RmlUi  
 * [moodycamel::ConcurrentQueue](https://github.com/cameron314/concurrentqueue) for semaphores and fast, lock-free MPMC queues
 * [Gamepad Motion Helpers](https://github.com/JibbSmart/GamepadMotionHelpers) for sensor fusion and calibration algorithms to implement gyro aiming
-* [Quest64 Decompilation](https://github.com/chameleonTwistRet/chameleonTwistv1.0-JP) for headers and some function definitions, used for making patches or some enhancements
+* [Quest64 Decompilation](https://github.com/Mallos31/Quest) for headers and some function definitions, used for making patches or some enhancements
 * [Ares emulator](https://github.com/ares-emulator/ares) for RSP vector instruction reference implementations, used in RSP recompilation
 
 Special thanks to [thecozies](https://github.com/thecozies) for designing and helping implement the launcher and config menus!
