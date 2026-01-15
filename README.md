@@ -1,15 +1,7 @@
-# Starfox 64: Recompiled
-[Starfox 64: Recompiled](https://github.com/sonicdcer/Starfox64Recomp) is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Starfox 64 into a native port with many new features, enhancements, and extensive mod support. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
+# Quest 64: Recompiled
+[Quest 64: Recompiled](https://github.com/Rainchus/Quest64-Recomp) is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Quest 64 into a native port with many new features, enhancements, and extensive mod support. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
 
-[Starfox 64: Recompiled](https://github.com/sonicdcer/Starfox64Recomp) was developed alongside [Starship](https://github.com/HarbourMasters/Starship) with both ports intended to coexist and evolve independently using different technologies. As such, they are considered sibling projects.
-
-For a more detailed history, be sure to check out [fox_lore.md](DOCS/fox_lore.md)
-
-### [Check out the latest release here](https://github.com/sonicdcer/Starfox64Recomp/releases/latest).
-
-Join the [N64: Recompiled Community Discord](https://discord.gg/AWZThJ4dPf) to discuss this and other N64: Recompiled projects!
-
-[![Discord Invitation](https://discordapp.com/api/guilds/1374083583739826328/widget.png?style=banner2 'N64 Recomp')](https://discord.gg/AWZThJ4dPf)
+### [Check out the latest release here](https://github.com/Rainchus/Quest64-Recomp/releases/latest).
 
 ### **This repository and its releases do not contain game assets. The original game is required to build or run this project.**
 
@@ -66,7 +58,7 @@ Any aspect ratio is supported, with most effects modded to work correctly in wid
 #### Mod Support
 Install community made mods and texture packs! Mods can change any part of the game, including adding completely new features and content. You can install mods by simply dragging the mod files onto the game window before starting the game or by clicking the **Install Mods** button in the mod menu. Mods can be toggled in the mod menu, and some mods can be configured there as well.
 
-If you're interested in making mods for this project, check out [the mod template](https://github.com/sonicdcer/SF64RecompModTemplate) and [the modding documentation](https://hackmd.io/fMDiGEJ9TBSjomuZZOgzNg). If you're interested in making texture packs, check out [the RT64 documentation](https://github.com/rt64/rt64/blob/main/TEXTURE-PACKS.md).
+If you're interested in making texture packs, check out [the RT64 documentation](https://github.com/rt64/rt64/blob/main/TEXTURE-PACKS.md).
 
 #### Additional Control Options
 Customize your experience by setting your stick deadzone to your liking, as well as adjusting the Y axis inversion for aiming.
@@ -92,15 +84,15 @@ A Linux binary as well as a Flatpak is available for playing on most up-to-date 
 Static recompilation is the process of automatically translating an application from one platform to another. For more details, check out the full description of how this project's recompilation works here: [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp).
 
 #### How is this related to the decompilation project?
-Unlike N64 ports in the past, this project is not based on the source code provided by a decompilation of the game. This is because static recompilation bypasses the need for decompiled source code when making a port, allowing ports to be made **without source code**. However, the reverse engineering work done by the decompilation team was invaluable for providing some of the enhancements featured in this project. For this reason, the project uses headers and some functions from the [Decompilation Project](https://github.com/sonicdcer/sf64) in order to make modifications to the game. Many thanks to the [decompilation team](https://github.com/sonicdcer/sf64/graphs/contributors) for all of the hard work they've done.
+Unlike N64 ports in the past, this project is not based on the source code provided by a decompilation of the game. This is because static recompilation bypasses the need for decompiled source code when making a port, allowing ports to be made **without source code**. However, the reverse engineering work done by the decompilation team was invaluable for providing some of the enhancements featured in this project. For this reason, the project uses headers and some functions from the [Decompilation Project](https://github.com/Rainchus/Quest64-Decomp) in order to make modifications to the game. Many thanks to the decompilation team for all of the hard work they've done.
 
 #### Where is the savefile stored?
-- Windows: `%LOCALAPPDATA%\Starfox64Recompiled\saves`
-- Linux: `~/.config/StarfoxRecompiled/saves`
-- macOS: `~/Library/Application Support/StarfoxRecompiled/saves`
+- Windows: `%LOCALAPPDATA%\Quest64Recompiled\saves`
+- Linux: `~/.config/Quest64Recompiled/saves`
+- macOS: `~/Library/Application Support/Quest64Recompiled/saves`
 
 #### How do I choose a different ROM?
-**You don't.** This project is **only** a port of Starfox 64, and it will only accept one specific ROM: the US version 1.1 (Rev A) of the N64 release of Starfox 64. ROMs in formats other than .z64 will be automatically converted, as long as it is the correct ROM. **It is not an emulator and it cannot run any arbitrary ROM.** 
+**You don't.** This project is **only** a port of Quest 64, and it will only accept one specific ROM: the US version of the N64 release of Quest 64. ROMs in formats other than .z64 will be automatically converted, as long as it is the correct ROM. **It is not an emulator and it cannot run any arbitrary ROM.** 
 
 Instead, you can change the game by installing mods. See the [mod support](#mod-support) section for details.
 
@@ -111,7 +103,7 @@ Yes, if you place a file named `portable.txt` in the same folder as the executab
 * Overlays such as MSI Afterburner and other software such as Wallpaper Engine can cause performance issues with this project that prevent the game from rendering correctly. Disabling such software is recommended.
 
 ## Building
-Building is not required to play this project, as prebuilt binaries (which do not contain game assets) can be found in the [Releases](https://github.com/sonicdcer/Starfox64Recomp/releases/latest) section. Instructions on how to build this project can be found in the [BUILDING.md](BUILDING.md) file.
+Building is not required to play this project, as prebuilt binaries (which do not contain game assets) can be found in the [Releases](https://github.com/Rainchus/Quest64-Recomp/releases/latest) section. Instructions on how to build this project can be found in the [BUILDING.md](BUILDING.md) file.
 
 ## Libraries Used and Projects Referenced
 * [RT64](https://github.com/rt64/rt64) for the project's rendering engine
@@ -120,7 +112,7 @@ Building is not required to play this project, as prebuilt binaries (which do no
 * [FreeType](https://freetype.org/) for font rendering, used by RmlUi  
 * [moodycamel::ConcurrentQueue](https://github.com/cameron314/concurrentqueue) for semaphores and fast, lock-free MPMC queues
 * [Gamepad Motion Helpers](https://github.com/JibbSmart/GamepadMotionHelpers) for sensor fusion and calibration algorithms to implement gyro aiming
-* [Starfox 64 Decompilation](https://github.com/sonicdcer/sf64) for headers and some function definitions, used for making patches or some enhancements
+* [Quest 64 Decompilation](https://github.com/Rainchus/Quest64-Decomp) for headers and some function definitions, used for making patches or some enhancements
 * [Ares emulator](https://github.com/ares-emulator/ares) for RSP vector instruction reference implementations, used in RSP recompilation
 
 # Special Thanks:
@@ -128,11 +120,3 @@ Building is not required to play this project, as prebuilt binaries (which do no
 * [ZeldaRET](https://github.com/zeldaret) : for teaching me the fundamental knowledge of N64 decompilation.
 * [Decompals](https://github.com/decompals) : for helping in the initial disassembly and decompilation of the game.
 * [Wiseguy](https://github.com/Mr-Wiseguy) and [DarioSamo](https://github.com/DarioSamo): for creating [N64Recomp](https://github.com/N64Recomp) and [RT64](https://github.com/rt64/rt64), assisting with fantastic technical support along the way.
-
-* [inspectredc](https://github.com/inspectredc) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64).
-* [jnmartin84](https://github.com/jnmartin84) : for contributing with a UV texture scrolling implementation.
-* [Lywx](https://github.com/KiritoDv) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64) and creating [Torch](https://github.com/HarbourMasters/Torch) asset extraction system.
-* [petrie911](https://github.com/petrie911) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64) as a lead.
-* [Ryan-Myers](https://github.com/Ryan-Myers) : for contributing to the [SF64 decompilation project](https://github.com/sonicdcer/sf64).
-* [Thar0](https://github.com/Thar0) : for contributing with an improved Starfield that can be interpolated to any framerate.
-* [TheBoy181](https://github.com/TheBoy181) : for contributing to this project with various widescreen enhancements such as level floors, an extended Starfield among other things.
