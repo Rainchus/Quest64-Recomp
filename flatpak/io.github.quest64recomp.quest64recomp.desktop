@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Quest 64: Recompiled
+Exec=/app/bin/Quest64Recompiled
+Type=Application
+Icon=io.github.quest64recomp.quest64recomp
+Categories=Game;
+Comment=Static recompilation of Quest 64 for PC.
+MimeType=x-scheme-handler/quest64recomp

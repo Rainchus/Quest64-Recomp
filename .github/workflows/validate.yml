@@ -61,7 +61,7 @@ jobs:
           token: ${{ secrets.SF64_RECOMP }}
           path: sf64-secret
       - name: Prepare Build
-        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
+        run: cp -r sf64-secret/quest64.us.z64 ./
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -86,35 +86,35 @@ jobs:
           ./N64Recomp us.rev1.toml
           ./RSPRecomp aspMain.us.rev1.toml
 
-      - name: Build Starfox64Recomp
+      - name: Build Quest64Recomp
         run: |-
           # enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_C_COMPILER=clang-15 -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build
-          cmake --build cmake-build --config ${{ matrix.type }} --target Starfox64Recompiled -j $(nproc)
+          cmake --build cmake-build --config ${{ matrix.type }} --target Quest64Recompiled -j $(nproc)
       - name: Prepare Archive
         run: |
-          mv cmake-build/Starfox64Recompiled Starfox64Recompiled
+          mv cmake-build/Quest64Recompiled Quest64Recompiled
           rm -rf assets/scss
-          tar -czf Starfox64Recompiled.tar.gz Starfox64Recompiled assets/ recompcontrollerdb.txt
-      - name: Archive Starfox64Recomp
+          tar -czf Quest64Recompiled.tar.gz Quest64Recompiled assets/ recompcontrollerdb.txt
+      - name: Archive Quest64Recomp
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-${{ runner.os }}-X64-${{ matrix.type }}
-          path: Starfox64Recompiled.tar.gz
+          name: Quest64Recompiled-${{ runner.os }}-X64-${{ matrix.type }}
+          path: Quest64Recompiled.tar.gz
       - name: Build AppImage
         run: |-
           ./.github/linux/appimage.sh 
-      - name: Starfox64Recomp AppImage
+      - name: Quest64Recomp AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-AppImage-X64-${{ matrix.type }}
-          path: Starfox64Recompiled-*.AppImage
+          name: Quest64Recompiled-AppImage-X64-${{ matrix.type }}
+          path: Quest64Recompiled-*.AppImage
   build-linux-flatpak:
     runs-on: ubuntu-latest
     env:
-      FLATPAK_ID: io.github.starfox64recomp.starfox64recomp
+      FLATPAK_ID: io.github.quest64recomp.quest64recomp
       FREEDESKTOP_VERSION: 23.08
       LLVM_VERSION: 18
     strategy:
@@ -144,7 +144,7 @@ jobs:
           token: ${{ secrets.SF64_RECOMP }}
           path: sf64-secret
       - name: Prepare Build
-        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
+        run: cp -r sf64-secret/quest64.us.z64 ./
 
       - name: Prepare Flatpak
         run: |
@@ -152,7 +152,7 @@ jobs:
           flatpak --user install -y flathub org.freedesktop.Sdk//${{ env.FREEDESKTOP_VERSION }}
           flatpak --user install -y flathub org.freedesktop.Sdk.Extension.llvm${{ env.LLVM_VERSION }}//${{ env.FREEDESKTOP_VERSION }}
 
-      - name: Build Starfox64Recomp
+      - name: Build Quest64Recomp
         run: |-
           export CCACHE_DIR=/tmp/ccache
           git config --global protocol.file.allow always
@@ -163,7 +163,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-Flatpak-X64-${{ matrix.type }}
+          name: Quest64Recompiled-Flatpak-X64-${{ matrix.type }}
           path: ./${{ env.FLATPAK_ID }}.flatpak
   build-linux-arm64:
     runs-on: ubuntu-22.04-arm
@@ -209,7 +209,7 @@ jobs:
           token: ${{ secrets.SF64_RECOMP }}
           path: sf64-secret
       - name: Prepare Build
-        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
+        run: cp -r sf64-secret/quest64.us.z64 ./
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -234,31 +234,31 @@ jobs:
           ./N64Recomp us.rev1.toml
           ./RSPRecomp aspMain.us.rev1.toml
 
-      - name: Build Starfox64Recomp
+      - name: Build Quest64Recomp
         run: |-
           # enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
 
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_C_COMPILER=clang-15 -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build
-          cmake --build cmake-build --config ${{ matrix.type }} --target Starfox64Recompiled -j $(nproc)
+          cmake --build cmake-build --config ${{ matrix.type }} --target Quest64Recompiled -j $(nproc)
       - name: Prepare Archive
         run: |
-          mv cmake-build/Starfox64Recompiled Starfox64Recompiled
+          mv cmake-build/Quest64Recompiled Quest64Recompiled
           rm -rf assets/scss
-          tar -czf Starfox64Recompiled.tar.gz Starfox64Recompiled assets/ recompcontrollerdb.txt
-      - name: Archive Starfox64Recomp
+          tar -czf Quest64Recompiled.tar.gz Quest64Recompiled assets/ recompcontrollerdb.txt
+      - name: Archive Quest64Recomp
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-${{ runner.os }}-ARM64-${{ matrix.type }}
-          path: Starfox64Recompiled.tar.gz
+          name: Quest64Recompiled-${{ runner.os }}-ARM64-${{ matrix.type }}
+          path: Quest64Recompiled.tar.gz
       - name: Build AppImage
         run: |-
           ./.github/linux/appimage.sh
-      - name: Starfox64Recomp AppImage
+      - name: Quest64Recomp AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-AppImage-ARM64-${{ matrix.type }}
-          path: Starfox64Recompiled-*.AppImage
+          name: Quest64Recompiled-AppImage-ARM64-${{ matrix.type }}
+          path: Quest64Recompiled-*.AppImage
   build-windows:
     runs-on: windows-latest
     strategy:
@@ -295,7 +295,7 @@ jobs:
           token: ${{ secrets.SF64_RECOMP }}
           path: sf64-secret
       - name: Prepare Build
-        run: copy .\sf64-secret\starfox64.us.rev1.uncompressed.z64 .\
+        run: copy .\sf64-secret\quest64.us.z64 .\
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -319,7 +319,7 @@ jobs:
         run: |
           ./N64Recomp.exe us.rev1.toml
           ./RSPRecomp.exe aspMain.us.rev1.toml
-      - name: Build Starfox64Recomp
+      - name: Build Quest64Recomp
         run: |-
           # enable ccache
           set $env:PATH="$env:USERPROFILE/.cargo/bin;$env:PATH"
@@ -329,23 +329,23 @@ jobs:
           $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -ne 'C:\Program Files\LLVM\bin' }) -join ';'
 
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_MAKE_PROGRAM=ninja -DPATCHES_C_COMPILER="..\portable-llvm\LLVM-19.1.3-Windows-X64\bin\clang" -DPATCHES_LD="..\portable-llvm\LLVM-19.1.3-Windows-X64\bin\ld.lld" -G Ninja -S . -B cmake-build -DCMAKE_CXX_FLAGS="-Xclang -fexceptions -Xclang -fcxx-exceptions"
-          cmake --build cmake-build --config ${{ matrix.type }} --target Starfox64Recompiled -j $cpuCores
+          cmake --build cmake-build --config ${{ matrix.type }} --target Quest64Recompiled -j $cpuCores
         env:
           SDL2_VERSION: ${{ inputs.SDL2_VERSION }}
       - name: Prepare Archive
         run: |
-          Move-Item -Path "cmake-build/Starfox64Recompiled.exe" -Destination "Starfox64Recompiled.exe"
+          Move-Item -Path "cmake-build/Quest64Recompiled.exe" -Destination "Quest64Recompiled.exe"
           Move-Item -Path "cmake-build/dxcompiler.dll" -Destination "dxcompiler.dll"
           Move-Item -Path "cmake-build/dxil.dll" -Destination "dxil.dll"
           Move-Item -Path "cmake-build/SDL2.dll" -Destination "SDL2.dll"
-          Move-Item -Path "cmake-build/Starfox64Recompiled.pdb" -Destination "Starfox64Recompiled.pdb"
+          Move-Item -Path "cmake-build/Quest64Recompiled.pdb" -Destination "Quest64Recompiled.pdb"
           Remove-Item -Path "assets/scss" -Recurse -Force
-      - name: Archive Starfox64Recomp
+      - name: Archive Quest64Recomp
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-${{ runner.os }}-${{ matrix.type }}
+          name: Quest64Recompiled-${{ runner.os }}-${{ matrix.type }}
           path: |
-            Starfox64Recompiled.exe
+            Quest64Recompiled.exe
             dxcompiler.dll
             dxil.dll
             SDL2.dll
@@ -354,9 +354,9 @@ jobs:
       - name: Archive Debug Files
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-PDB-${{ matrix.type }}
+          name: Quest64Recompiled-PDB-${{ matrix.type }}
           path: |
-            Starfox64Recompiled.pdb
+            Quest64Recompiled.pdb
   build-macos:
     runs-on: macos-14
     strategy:
@@ -390,7 +390,7 @@ jobs:
           token: ${{ secrets.SF64_RECOMP }}
           path: sf64-secret
       - name: Prepare Build
-        run: cp -r sf64-secret/starfox64.us.rev1.uncompressed.z64 ./
+        run: cp -r sf64-secret/quest64.us.z64 ./
 
       - name: Build N64Recomp & RSPRecomp
         run: |
@@ -414,7 +414,7 @@ jobs:
         run: |
           ./N64Recomp us.rev1.toml
           ./RSPRecomp aspMain.us.rev1.toml
-      - name: Build Starfox64Recomp
+      - name: Build Quest64Recomp
         run: |-
           # enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
@@ -422,13 +422,13 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build \
           -DPATCHES_LD=/opt/local/bin/ld.lld-mp-18 -DCMAKE_AR=/opt/local/bin/llvm-ar-mp-18 -DPATCHES_C_COMPILER=/opt/local/bin/clang-mp-18 \
           -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
-          cmake --build cmake-build --config ${{ matrix.type }} --target Starfox64Recompiled -j $(sysctl -n hw.ncpu)
+          cmake --build cmake-build --config ${{ matrix.type }} --target Quest64Recompiled -j $(sysctl -n hw.ncpu)
       - name: Prepare Archive
         run: |
-          mv cmake-build/Starfox64Recompiled.app Starfox64Recompiled.app
-          zip -r -y Starfox64Recompiled.zip Starfox64Recompiled.app
-      - name: Archive Starfox64Recomp
+          mv cmake-build/Quest64Recompiled.app Quest64Recompiled.app
+          zip -r -y Quest64Recompiled.zip Quest64Recompiled.app
+      - name: Archive Quest64Recomp
         uses: actions/upload-artifact@v4
         with:
-          name: Starfox64Recompiled-${{ runner.os }}-${{ matrix.type }}
-          path: Starfox64Recompiled.zip
+          name: Quest64Recompiled-${{ runner.os }}-${{ matrix.type }}
+          path: Quest64Recompiled.zip

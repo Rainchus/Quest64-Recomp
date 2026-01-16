@@ -38,7 +38,7 @@ If you have issues with crashes on startup, make sure your graphics drivers are 
 ## Features
 
 #### Plug and Play
-Simply provide your copy of the 1.1 (Rev A) North American version of the game in the main menu and start playing! This project will automatically load assets from the provided copy, so there is no need to go through a separate extraction step or build the game yourself. Other versions of the game may be supported in the future.
+Simply provide your copy of the 1.0 North American version of the game in the main menu and start playing! This project will automatically load assets from the provided copy, so there is no need to go through a separate extraction step or build the game yourself. Other versions of the game may be supported in the future.
 
 #### Fully Intact N64 Effects
 A lot of care was put into RT64 to make sure all graphical effects were rendered exactly as they did originally on the N64. No workarounds or "hacks" were made to replicate these effects, with the only modifications to them being made for enhancement purposes such as widescreen support.

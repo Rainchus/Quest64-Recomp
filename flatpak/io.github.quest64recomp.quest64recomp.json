@@ -1,5 +1,5 @@
 {
-  "id": "io.github.starfox64recomp.starfox64recomp",
+  "id": "io.github.quest64recomp.quest64recomp",
   "runtime": "org.freedesktop.Platform",
   "runtime-version": "23.08",
   "sdk": "org.freedesktop.Sdk",
@@ -17,7 +17,7 @@
   ],
   "modules": [
     {
-      "name": "Starfox64Recompiled",
+      "name": "Quest64Recompiled",
       "buildsystem": "simple",
       "build-commands": [
         "cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S lib/N64Recomp -B lib/N64Recomp/cmake-build",
@@ -28,15 +28,15 @@
         "./N64Recomp us.rev1.toml",
         "./RSPRecomp aspMain.us.rev1.toml",
         "cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=ninja -DPATCHES_C_COMPILER=clang -DPATCHES_LD=ld.lld -DRECOMP_FLATPAK=ON -G Ninja -S . -B cmake-build",
-        "cmake --build cmake-build --config Release --target Starfox64Recompiled --parallel",
+        "cmake --build cmake-build --config Release --target Quest64Recompiled --parallel",
         "rm -rf assets/scss",
         "mkdir -p /app/bin",
-        "cp cmake-build/Starfox64Recompiled /app/bin/Starfox64Recompiled",
+        "cp cmake-build/Quest64Recompiled /app/bin/Quest64Recompiled",
         "cp recompcontrollerdb.txt /app/bin/recompcontrollerdb.txt",
         "cp -R assets /app/bin/assets",
         "install -Dm644 icons/512.png /app/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png",
-        "install -Dm644 flatpak/io.github.starfox64recomp.starfox64recomp.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml",
-        "install -Dm644 flatpak/io.github.starfox64recomp.starfox64recomp.desktop /app/share/applications/${FLATPAK_ID}.desktop"
+        "install -Dm644 flatpak/io.github.quest64recomp.quest64recomp.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml",
+        "install -Dm644 flatpak/io.github.quest64recomp.quest64recomp.desktop /app/share/applications/${FLATPAK_ID}.desktop"
       ],
       "sources": [
         {
