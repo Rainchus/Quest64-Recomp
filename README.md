@@ -24,6 +24,7 @@
 * [Libraries Used and Projects Referenced](#libraries-used-and-projects-referenced)
 
 ## System Requirements
+Currently, only a **Windows** exe is provided but other operating systems will be supported soon.<br/>
 A GPU supporting Direct3D 12.0 (Shader Model 6), Vulkan 1.2, or Metal Argument Buffers Tier 2 support is required to run this project. The oldest GPUs that should be supported for each vendor are:
 * GeForce GT 630
 * Radeon HD 7750 (the one from 2012, not to be confused with the RX 7000 series) and newer
