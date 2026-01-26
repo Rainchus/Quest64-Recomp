@@ -13,12 +13,13 @@
 [submodule "lib/sse2neon"]
 	path = lib/sse2neon
 	url = https://github.com/DLTcollab/sse2neon.git
-[submodule "lib/N64ModernRuntime"]
-	path = lib/N64ModernRuntime
-	url = https://github.com/sonicdcer/N64ModernRuntime
 [submodule "lib/rt64"]
 	path = lib/rt64
 	url = https://github.com/rt64/rt64
 [submodule "Quest64Syms"]
 	path = Quest64Syms
 	url = https://github.com/Rainchus/Quest64Syms
+[submodule "lib/N64ModernRuntime"]
+	path = lib/N64ModernRuntime
+	url = https://github.com/gcsmith/N64ModernRuntime
+	branch = controller_pak
