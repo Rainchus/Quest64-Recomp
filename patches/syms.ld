@@ -72,3 +72,4 @@ osPfsReadWriteFile_recomp = 0x8F0000F0;
 osPfsInitPak_recomp = 0x8F0000F4;
 osPfsFileState_recomp = 0x8F0000F8;
 osPfsFreeBlocks_recomp = 0x8F0000FC;
+osVirtualToPhysical_recomp = 0x8F000100;

@@ -172,25 +172,6 @@ typedef struct Unk6 {
     f32 unk_20;
 } Unk6; //sizeof 0x24                                       /* size = 0x20 */
 
-typedef struct Unk8 {
-    /* 0x00 */ char unk_00[6];
-    /* 0x06 */ u16 unk_06;
-    /* 0x08 */ char unk_08[12];
-    /* 0x14 */ s8 unk_14;                            /* inferred */
-    /* 0x15 */ s8 unk_15;
-    /* 0x16 */ u8 unk_16;                            /* inferred */
-    /* 0x17 */ char unk_17[1];
-    /* 0x18 */ s32* unk_18;
-    /* 0x1C */ u16 unk_1C;
-    /* 0x1E */ char unk_1E[2];
-} Unk8; //sizeof 0x20
-
-typedef struct Unk9 {
-    s16 unk_00;
-    char unk_02[6];
-    s32* unk_08;
-} Unk9;
-
 typedef struct Vec3f {
     f32 x;
     f32 y;
@@ -203,7 +184,7 @@ extern s32 D_8008C5E0;
 extern f32 D_8008C5E8[4][4];
 extern Gfx* gMasterGfxPos;
 extern Mtx D_2000000[];
-void func_80022B40(void* arg0, f32* arg1, s32 arg2);   /* extern */
+void func_80022B40(void* arg0, Unk6* arg1, s32 arg2); /* extern */
 void func_8002371C(f32 (*)[4], f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
 void func_80023DF4(f32 (*)[4], f32 arg1, f32 arg2, f32 arg3);
 extern s32 D_8007B2F8;
@@ -215,11 +196,18 @@ void func_80023E80(f32 (*)[4], f32 (*)[4], f32 (*)[4]);                      /* 
 
 //void func_8001DC78(MtxF*, Vec3f, s32, s32, s32, s32, void*, void*, s32);
 
-typedef struct Unk12 {
-    /* 0x00 */ char pad0[0x14];
-    /* 0x14 */ s8 unk14;        /* inferred */
-    /* 0x15 */ char pad15[0xB]; /* maybe part of unk14[0xC]? */
-} Unk12;                         /* size = 0x20 */
+typedef struct Unk8 {
+    /* 0x00 */ char unk_00[6];
+    /* 0x06 */ u16 unk_06;
+    /* 0x08 */ char unk_08[12];
+    /* 0x14 */ s8 unk_14; /* inferred */
+    /* 0x15 */ s8 unk_15;
+    /* 0x16 */ u8 unk_16; /* inferred */
+    /* 0x17 */ char unk_17[1];
+    /* 0x18 */ s32* unk_18;
+    /* 0x1C */ u16 unk_1C;
+    /* 0x1E */ char unk_1E[2];
+} Unk8; // sizeof 0x20
 
 typedef struct Unk3 {
     /* 0x00 */ f32 x;
@@ -236,14 +224,16 @@ typedef struct Unk3 {
     /* 0x58 */ char pad58[0x14]; /* maybe part of unk56[0xB]? */
 } Unk3;                          /* size = 0x6C */
 
+//same as Unk9
 typedef struct Unk4 {
     /* 0x00 */ s16 unk_00;
-    /* 0x02 */ char pad1[2];    /* maybe part of unk_00[4]? */
-    /* 0x04 */ Unk12* unk4;      /* inferred */
-    /* 0x08 */ char pad8[0x59]; /* maybe part of unk4[0x17]? */
-} Unk4;                         /* size = 0x61 */
+    /* 0x02 */ char pad1[2];
+    /* 0x04 */ Unk8* unk4;
+    /* 0x08 */ s32* unk_08;
+    /* 0x0C */ char pad8[0x55];
+} Unk4; /* size = 0x61 */
 
-void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk9* arg8, Unk8* arg9,
+void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk4* arg8, Unk8* arg9,
                    Mtx* arg10);
 void func_80023360(f32[4][4], f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7);
 extern s32 D_8008C5E0;
@@ -251,7 +241,7 @@ extern s32 D_8008C5E0;
 //main draw skeleton function
 RECOMP_PATCH void func_8001DB38(s32 arg0, Unk3* arg1, Unk4* arg2, Mtx* arg3) {
     u16 temp_s5;
-    Unk12* temp_s4;
+    Unk8* temp_s4;
     u16 temp_s6;
     char pad[4];
     f32 sp78[4][4];
@@ -259,7 +249,7 @@ RECOMP_PATCH void func_8001DB38(s32 arg0, Unk3* arg1, Unk4* arg2, Mtx* arg3) {
     s32 i;
 
     D_8008C5E0 = 0;
-    func_80023360(&sp78, arg1->unkC, arg1->unk10, arg1->unk14, arg1->unk24, arg1->x, arg1->y, arg1->z);
+    func_80023360(sp78, arg1->unkC, arg1->unk10, arg1->unk14, arg1->unk24, arg1->x, arg1->y, arg1->z);
 
     sp6C.x = arg1->unk24;
     sp6C.y = arg1->unk24;
@@ -269,7 +259,7 @@ RECOMP_PATCH void func_8001DB38(s32 arg0, Unk3* arg1, Unk4* arg2, Mtx* arg3) {
     temp_s6 = arg1->unk56;
 
     for (i = 0; i < arg2->unk_00; i++) {
-        if (temp_s4[i].unk14 == 0) {
+        if (temp_s4[i].unk_14 == 0) {
             // this functon is recursive, draws all limbs of skeleton?
             func_8001DC78(sp78, sp6C, arg0, i, temp_s5, temp_s6, arg2, temp_s4, arg3);
         }
@@ -277,7 +267,7 @@ RECOMP_PATCH void func_8001DB38(s32 arg0, Unk3* arg1, Unk4* arg2, Mtx* arg3) {
 }
 
 //recursively draws skeleton limb by limb based on animation frame timer
-RECOMP_PATCH void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk9* arg8,
+RECOMP_PATCH void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk4* arg8,
                                 Unk8* arg9, Mtx* arg10) {
     s32* temp_a1;
     s32* temp_a2_2;
@@ -327,8 +317,6 @@ RECOMP_PATCH void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, 
         D_8008C5B0[D_8008C5E0++].z = spA0[3][2];
     }
 
-    if (temp_a1) {}
-
     temp_a2_2 = temp_s2->unk_18;
     temp_a1 = arg8->unk_08;
     if (temp_a2_2 == 0) {
@@ -354,6 +342,7 @@ struct Struct_800011DC_arg0_sub {
     /* 0x8148 */ Gfx unk_8148[1];
     /* 0x8150 */ char unk_8150[0xD14C - 0x8150];
     /* 0xD14C */ u16* unk_D14C;
+    char nothing[0x2000];
 };
 
 struct Struct_800011DC_arg0 {
@@ -364,12 +353,185 @@ struct Struct_800011DC_arg0 {
     /* 0x0058 */ struct Struct_800011DC_arg0_sub unk_58;
 };
 
-void* testing(struct Struct_800011DC_arg0* arg0) {
-    //recomp_printf("arg0->unk_58.unk_8148 is: %08X\n", arg0->unk_58.unk_8148);
-    gMasterGfxPos = &arg0->unk_58.unk_8148[0];
+// Gfx macroTest[] = {
+//     gsSPSegment(0x00, 0x00000000),
+// };
+
+// void* testing(struct Struct_800011DC_arg0* arg0) {
+//     //recomp_printf("arg0->unk_58.unk_8148 is: %08X\n", arg0->unk_58.unk_8148);
+//     s32 sizeofGfxMacro = sizeof(macroTest);
+//     recomp_printf("sizeofGfxMacro: %d\n", sizeofGfxMacro);
+//     recomp_printf("instruction 0: %llX\n", macroTest[0]);
+
+//     gMasterGfxPos = &arg0->unk_58.unk_8148[0];
+//     gEXEnable(gMasterGfxPos++); // @recomp
+//     gEXSetRefreshRate(gMasterGfxPos++, 60 / 2);
+//     // recomp_printf("arg0 is: %08X\n", arg0);
+
+//     return arg0;
+// }
+
+extern s32 D_8004C210;
+extern s8 D_8006AC60;
+extern s32 D_8007B300;
+extern s32 D_8007B304;
+extern u32 D_8007B308;
+extern s32 D_8007B340;
+extern s32 D_8007B34C;
+extern void* D_8007B350;
+extern s32 D_8007BC08;
+extern u16 D_80084F12;
+
+extern u8 DepthBuffer[];
+void func_80012BE0(Mtx* arg0);
+void func_80018638(Mtx* arg0);
+void func_8001B19C(Mtx* arg0);
+void func_8001E25C(Mtx* arg0);
+void func_80021524(void);
+void func_800228F8(Mtx* arg0);
+void func_80026A7C(Mtx* arg0);
+void func_8002B510(s32 arg0);
+void func_8002EAA0(void);
+void func_80003870(Mtx* arg0);
+void func_80007F18(Mtx* arg0);
+void func_80008CF4(Mtx* arg0);
+void func_8000B618(Mtx* arg0);
+void func_8000C4C4(Mtx* arg0);
+void func_8000CE8C(Mtx* arg0);
+void func_8000D9BC(Mtx* arg0);
+void func_80010B58(void);
+void func_800111F8(s32 arg0);
+void func_800118D4(Mtx*); // has a different struct in a matched function. I'm scared...
+void func_80011D28(Mtx* arg0);
+void func_8001249C(void);
+s32 func_8010004C_DA693C_ovl_title(void);
+s32 func_8010009C_DC16BC_ovl_intro(void);
+s32 func_8010008C_E278CC_ovl_ending(void);
+
+extern u8 D_1000010[];
+extern s32 gGameState;
+extern u16 gGameMode;
+extern s32 gNextMap;
+extern s32 gNextSubmap;
+extern u16 D_8007B2E8;
+extern u8 D_8007B344;
+
+RECOMP_PATCH void func_800011DC(struct Struct_800011DC_arg0* arg0) {
+    struct Struct_800011DC_arg0_sub* sub = &arg0->unk_58;
+    s32 temp_t8;
+    s32 one = 1;
+
+    gMasterGfxPos = arg0->unk_58.unk_8148;
+
     gEXEnable(gMasterGfxPos++); // @recomp
     gEXSetRefreshRate(gMasterGfxPos++, 60 / 2);
-    // recomp_printf("arg0 is: %08X\n", arg0);
 
-    return arg0;
+    gSPSegment(gMasterGfxPos++, 0x00, 0x00000000);
+    gSPSegment(gMasterGfxPos++, 0x01, osVirtualToPhysical(D_8007B350));
+    gSPSegment(gMasterGfxPos++, 0x02, osVirtualToPhysical(&arg0->unk_58));
+    gSPDisplayList(gMasterGfxPos++, D_1000010);
+    gDPSetDepthImage(gMasterGfxPos++, osVirtualToPhysical(DepthBuffer));
+    gDPPipeSync(gMasterGfxPos++);
+    gDPSetCycleType(gMasterGfxPos++, G_CYC_FILL);
+    gDPSetColorImage(gMasterGfxPos++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, osVirtualToPhysical(DepthBuffer));
+    gDPSetFillColor(gMasterGfxPos++, 0xFFFCFFFC);
+    gDPFillRectangle(gMasterGfxPos++, 8, 8, 311, 231);
+    gDPPipeSync(gMasterGfxPos++);
+    gDPSetColorImage(gMasterGfxPos++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, osVirtualToPhysical(arg0->unk_58.unk_D14C));
+
+    if (gGameMode == 1) {
+        gDPSetFillColor(gMasterGfxPos++, (GPACK_RGBA5551(D_8007B300, D_8007B304, D_8007B308, 1) << 16) |
+                                             (GPACK_RGBA5551(D_8007B300, D_8007B304, D_8007B308, 1)));
+        gDPFillRectangle(gMasterGfxPos++, 8, 8, 311, 231);
+    } else {
+        gDPSetFillColor(gMasterGfxPos++, (GPACK_RGBA5551(0, 0, 0, 1) << 16) | (GPACK_RGBA5551(0, 0, 0, 1)));
+        gDPFillRectangle(gMasterGfxPos++, 8, 8, 311, 231);
+    }
+    gDPPipeSync(gMasterGfxPos++);
+    gDPSetCycleType(gMasterGfxPos++, G_CYC_2CYCLE);
+
+    if (gGameMode == 1) {
+        func_80012BE0(sub->unk_58);
+        func_80010B58();
+        if (D_80084F12 & 4) {
+            func_800111F8(D_8007B340);
+            func_8000D9BC(sub->unk_58);
+        }
+        func_800111F8(D_8007B340);
+        func_8000C4C4(sub->unk_58);
+        func_80003870(sub->unk_58);
+        func_80007F18(sub->unk_58);
+        func_80011D28(sub->unk_58);
+        func_8000CE8C(sub->unk_58);
+        func_80008CF4(sub->unk_58);
+        func_8000B618(sub->unk_58);
+        func_8001249C();
+        func_800111F8(D_8007BC08);
+        func_800118D4(sub->unk_58);
+        func_8001B19C(sub->unk_58);
+        func_80018638(sub->unk_58);
+        func_800228F8(sub->unk_58);
+        if (gGameState & 2) {
+            func_8002EAA0();
+        } else if (!(gGameState & 0x4000) && ((u16) D_8007B2E8 != 4)) {
+            func_8001E25C(sub->unk_58);
+        }
+        if (gGameState & 1) {
+            func_80021524();
+        }
+    } else if (gGameMode == 2) {
+        func_80026A7C(sub->unk_58);
+    } else if (gGameMode == 3) {
+        switch (func_8010004C_DA693C_ovl_title()) {
+            case 0:
+                switch (D_8007B344 & 0xF0) {
+                    case 0x10:
+                        gGameMode = 1;
+                        break;
+                    case 0x20:
+                        func_8002B510(0);
+                        break;
+                    case 0x30:
+                        func_8002B510(8);
+                        break;
+                    default:
+                        gGameMode = 1;
+                        break;
+                }
+                break;
+            case 1:
+                gGameMode = 4;
+                break;
+        }
+    } else if (gGameMode == 4) {
+        switch (func_8010009C_DC16BC_ovl_intro()) {
+            case 0:
+                D_8006AC60 = 0;
+                gGameMode = 3;
+                break;
+            case 1:
+                D_8006AC60 = one;
+                gGameMode = 3;
+                break;
+            default:
+                D_8006AC60 = 0;
+                // break; // no break here!
+        }
+    } else if (gGameMode == 5) {
+        if (func_8010008C_E278CC_ovl_ending() == 0) {
+            gGameMode = 3;
+        }
+    }
+    gDPFullSync(gMasterGfxPos++);
+    gSPEndDisplayList(gMasterGfxPos++);
+    osWritebackDCache(D_2000000, 0xD0F0);
+
+    temp_t8 = (u32) gMasterGfxPos - (u32) arg0->unk_58.unk_8148;
+    if (D_8007B34C < temp_t8) {
+        D_8007B34C = temp_t8;
+    }
+    D_8004C210 = temp_t8;
+
+    arg0->unk_40 = sub->unk_8148;
+    arg0->unk_44 = ((u32) gMasterGfxPos - (u32) sub->unk_8148) * sizeof(Gfx);
 }

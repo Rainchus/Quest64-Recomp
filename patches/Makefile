@@ -3,8 +3,8 @@ TARGET = patches.elf
 CC      ?= clang
 LD      ?= ld.lld
 
-CFLAGS   := -target mips -mips2 -mabi=32 -O2 -G0 -mno-abicalls -mno-odd-spreg -mno-check-zero-division \
-			-fomit-frame-pointer -ffast-math -fno-unsafe-math-optimizations -fno-builtin-memset \
+CFLAGS   := -target mips -mips2 -mabi=32 -O0 -G0 -mno-abicalls -mno-odd-spreg -mno-check-zero-division \
+			-fomit-frame-pointer -ffast-math -fno-unsafe-math-optimizations -fno-builtin-memset -DF3DEX_GBI \
 			-Wall -Wextra -Wno-incompatible-library-redeclaration -Wno-unused-parameter -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-but-set-variable -Wno-missing-braces -Wno-unsupported-floating-point-opt -Wno-switch
 CPPFLAGS := -nostdinc -DF3DEX_GBI -D_LANGUAGE_C -DMIPS -I dummy_headers -I ../lib/sf64decomp/include -I ../lib/sf64decomp/include/libultra -I ../lib/sf64decomp/src -I ../lib/rt64/include
 LDFLAGS  := -nostdlib -T patches.ld -T syms.ld -Map patches.map --unresolved-symbols=ignore-all --emit-relocs

@@ -25,6 +25,7 @@
 #define osContGetReadData osContGetReadData_recomp
 #define osContStartQuery osContStartQuery_recomp
 #define osContGetQuery osContGetQuery_recomp
+#define osVirtualToPhysical osVirtualToPhysical_recomp
 
 #define sinf __sinf_recomp
 #define cosf __cosf_recomp
