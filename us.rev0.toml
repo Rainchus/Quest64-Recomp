@@ -31,3 +31,25 @@ before_vram = 0x80024690
 func = "dma_write"
 text = "load_overlays(ctx->r4, ctx->r5, ctx->r6);"
 before_vram = 0x80024260
+
+[[patches.hook]]
+func = "func_800011DC"
+text = """
+//MEM_W(0X1C, ctx->r29) = ctx->r31;
+//ctx->r16 = 0 | ctx->r4; //store a0 to s0 for later
+MEM_W(0X1C, ctx->r29) = ctx->r31;
+testing(rdram, ctx);
+ctx->r4 = 0 | ctx->r2; //put a0 back
+//ctx->r4 = 0 | ctx->r16; //put a0 back
+"""
+before_vram = 0x800011E4
+
+
+
+[[patches.hook]]
+func = "func_8001D640"
+text = """
+MEM_B(0XE, ctx->r20) = ctx->r4; //store enemy type into free byte
+MEM_B(0XF, ctx->r20) = ctx->r17; //store enemy index into free byte
+"""
+before_vram = 0x8001D7A8

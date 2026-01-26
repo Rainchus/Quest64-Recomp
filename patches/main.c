@@ -1,5 +1,11 @@
 #include "patches.h"
 
+#define BRIAN_LIMB_TAG(limb_index) \
+    (0x42524941 | ((limb_index) << 8)) // 'BRIA' + limb index
+
+#define MODEL_TAG(model_id, instance) \
+    ((model_id) | ((instance) << 16))
+    
 int dummy = 1;
 int dummyBSS;
 
@@ -145,7 +151,7 @@ s32 func_80031C0C(u8* str0, u8* str1, s32 size);
 
 void func_8001E138(f32 (*)[4], void*);                 /* extern */
 void func_80023C1C(f32 (*)[4], f32, f32, f32, f32, f32, f32, f32, f32, f32); /* extern */
-void func_80023E80(MtxF*, f32 (*)[4], f32 (*)[4]);     /* extern */
+void func_80023E80(f32 (*)[4], f32 (*)[4], f32 (*)[4]);                      /* extern */
 
 typedef struct Unk5 {
     char unk_00[0x0C];
@@ -194,34 +200,30 @@ typedef struct Vec3f {
 extern Unk5 D_80086DC0;
 extern Vec3f D_8008C5B0[];
 extern s32 D_8008C5E0;
-extern MtxF D_8008C5E8;
+extern f32 D_8008C5E8[4][4];
 extern Gfx* gMasterGfxPos;
 extern Mtx D_2000000[];
 void func_80022B40(void* arg0, f32* arg1, s32 arg2);   /* extern */
-void func_8002371C(MtxF* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
-void func_80023DF4(MtxF* arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8002371C(f32 (*)[4], f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
+void func_80023DF4(f32 (*)[4], f32 arg1, f32 arg2, f32 arg3);
 extern s32 D_8007B2F8;
+
+
+                                      /* extern */
+void func_80023C1C(f32 (*)[4], f32, f32, f32, f32, f32, f32, f32, f32, f32); /* extern */
+void func_80023E80(f32 (*)[4], f32 (*)[4], f32 (*)[4]);                      /* extern */
+
 //void func_8001DC78(MtxF*, Vec3f, s32, s32, s32, s32, void*, void*, s32);
-RECOMP_PATCH void func_8001DC78(MtxF* arg0, Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk9* arg8, Unk8* arg9, Mtx* arg10) {
-    Gfx* temp_v0;
-    Gfx* temp_v0_3;
-    Gfx* temp_v0_4;
+
+RECOMP_PATCH void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk9* arg8,
+                                Unk8* arg9, Mtx* arg10) {
     s32* temp_a1;
     s32* temp_a2_2;
-    Vec3f spD0;
-    s32 var_a2;
-    s32 var_s1;
-    s8 temp_s1;
     s32 temp_a2;
-    u32* temp_a2_3;
     Unk8* temp_s2;
-    Vec3f* temp_v0_2;
-    Unk8* var_s0;
-    MtxF spA0;
+    f32 spA0[4][4];
     Unk6 sp7C;
-    s32 temp;
     s32 i;
-    
 
     temp_s2 = arg9 + arg5;
     temp_a2 = temp_s2->unk_06;
@@ -239,323 +241,156 @@ RECOMP_PATCH void func_8001DC78(MtxF* arg0, Vec3f arg1, s32 arg4, s32 arg5, s32 
             sp7C.unk_04 = 0;
         }
     }
-    func_80023C1C(&spA0, sp7C.unk_00, sp7C.unk_04, sp7C.unk_08, sp7C.unk_10, sp7C.unk_0C, sp7C.unk_14, sp7C.unk_18, sp7C.unk_1C, sp7C.unk_20);
-    func_8001E138(&spA0, temp_s2);
+    func_80023C1C(spA0, sp7C.unk_00, sp7C.unk_04, sp7C.unk_08, sp7C.unk_10, sp7C.unk_0C, sp7C.unk_14, sp7C.unk_18,
+                  sp7C.unk_1C, sp7C.unk_20);
+    func_8001E138(spA0, temp_s2);
     arg1.x *= sp7C.unk_18;
     arg1.y *= sp7C.unk_1C;
     arg1.z *= sp7C.unk_20;
     if (temp_s2->unk_16 & 1) {
-        func_80023E80(arg0, &spA0, &spA0);
-        func_8002371C(&D_8008C5E8, spD0.x, spD0.y, spD0.z, D_80086DC0.unk_0C, D_80086DC0.unk_10, D_80086DC0.unk_14);
-        func_80023DF4(&D_8008C5E8, arg1.x, arg1.y, arg1.z);
-        guMtxF2L(&D_8008C5E8, arg10 + 3 + D_8007B2F8);
+        func_80023E80(arg0, spA0, spA0);
+        func_8002371C(D_8008C5E8, spA0[3][0], spA0[3][1], spA0[3][2], D_80086DC0.unk_0C, D_80086DC0.unk_10,
+                      D_80086DC0.unk_14);
+        func_80023DF4(D_8008C5E8, arg1.x, arg1.y, arg1.z);
+        guMtxF2L(D_8008C5E8, arg10 + 3 + D_8007B2F8);
     } else {
-        func_80023E80(arg0, &spA0, &spA0);
-        guMtxF2L(&spA0, arg10 + 3 + D_8007B2F8);
+        func_80023E80(arg0, spA0, spA0);
+        guMtxF2L(spA0, arg10 + 3 + D_8007B2F8);
     }
-    gSPMatrix(gMasterGfxPos++, D_2000000 + 3 + D_8007B2F8, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    D_8007B2F8++;
-    var_s0 = arg9;
-    if (temp_s2->unk_16 & 2) {\
-        D_8008C5B0[D_8008C5E0].x = spD0.x;
-        D_8008C5B0[D_8008C5E0].y = spD0.y;
-        D_8008C5B0[D_8008C5E0].z = spD0.z;
-        D_8008C5E0++;
+    gSPMatrix(gMasterGfxPos++, D_2000000 + 3 + D_8007B2F8++, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+    if (temp_s2->unk_16 & 2) {
+        D_8008C5B0[D_8008C5E0].x = spA0[3][0];
+        D_8008C5B0[D_8008C5E0].y = spA0[3][1];
+        D_8008C5B0[D_8008C5E0++].z = spA0[3][2];
     }
+
+    if (temp_a1) {}
+
     temp_a2_2 = temp_s2->unk_18;
     temp_a1 = arg8->unk_08;
     if (temp_a2_2 == 0) {
         i = temp_s2->unk_15;
         if (i != -1) {
-            temp_a2_3 = temp_a1 + i;
-            if (*temp_a2_3 != 0) {
-                gSPDisplayList(gMasterGfxPos++, *temp_a2_3);
+            if (temp_a1[i] != 0) {
+                gSPDisplayList(gMasterGfxPos++, temp_a1[i]);
             }
         }
     } else {
         gSPDisplayList(gMasterGfxPos++, temp_a1[temp_a2_2[arg7 % temp_s2->unk_1C]]);
     }
-    for (i = 0; i < arg8->unk_00; i++, var_s0++) {
-        temp = arg5 + 1;
-        if (temp == var_s0->unk_14) {
-            func_8001DC78((MtxF* ) &spA0, arg1, arg4, i, arg6, arg7, arg8, arg9, arg10);
-        }        
+    for (i = 0; i < arg8->unk_00; i++) {
+        if ((arg5 + 1) == arg9[i].unk_14) {
+            func_8001DC78(spA0, arg1, arg4, i, arg6, arg7, arg8, arg9, arg10);
+        }
     }
 }
 
-// RECOMP_PATCH s32 func_800319E0(s32 pfsIndex, s32 file_no, s32 offset, s32 nbytes, u8* data_buffer) {
-//     recomp_printf("func_800319E0 called");
-// 	return osPfsReadWriteFile_recomp(&gPFS[pfsIndex], file_no, PFS_READ, offset, nbytes, data_buffer);
-// }
-
-
-// RECOMP_PATCH void func_8002DD18(void) {
-//     Unk* temp_v0;
-//     s32 var_a1;
-//     s32 var_fp;
-//     s32 i;
-
-//     recomp_printf("func_8002DD18 called");
-
-//     var_fp = 0;
-    
-//     //17 not 16?
-//     for (i = 0; i < 16; i++) { //patch to 16
-//         D_8008FD30[i].unk_00 = -1;
-//         D_8008FD30[i].unk_01 = -1;
-//     }
-
-//     var_a1 = 0;
-//     for (i = 0; i < 16; i++) {
-//         if ((D_80092A38[gCurrControllerNum].unk_02[i] != 0x7F) && (D_80092A38[gCurrControllerNum].unk_02[i] >= 0)) {
-//             temp_v0 = &D_8008FD30[var_a1];
-//             temp_v0->unk_00 = i;
-//             temp_v0->unk_01 = D_80092A38[gCurrControllerNum].unk_02[i];
-//             var_a1 += 1;
-//         }        
-//     }
-    
-//     if (D_8008FD0C & 4) {
-//         if ((D_80092A38[gCurrControllerNum].unk_13 >= 2) && !(D_80092A38[gCurrControllerNum].unk_00 & 0x2000)) {
-//             D_8008FD30[var_a1].unk_00 = -2;
-//         }
-//     }
-//     D_8008FD2A = 0;
-
-//     for (i = 0; i < 16; i++) {
-//         //if slot index is greater than or equal to 0
-//         if (D_8008FD30[i].unk_00 >= 0) {
-//             var_a1 = func_800319E0(gCurrControllerNum, D_8008FD30[i].unk_00, 0, 0x80, &D_80090460);
-//             volatile u32* src = (u32*)&D_80090460;
-//             volatile u32* dst = (u32*)&D_8008FD58[i];
-//             s32 j;
-
-//             for (j = 0; j < sizeof(SaveData) / 4; j++) {
-//                 dst[j] = src[j];
-//             }
-//             if (var_a1 != 0) {
-//                 D_8008FD24 = var_fp;
-//                 var_fp = -func_80031BB0(var_fp);
-//                 if (var_fp == 1) {
-//                     D_8008FD22 = 8;
-//                     D_8008FD29 = 0xA;
-//                 } else {
-//                     D_8008FD22 = 0x11;
-//                     D_8008FD29 = 0xA;
-//                 }
-                
-//                 D_8008FD20 &= ~7;
-//                 D_8008FD20 |= 5;
-//             }
-//         }   
-//     }
-// }
-
-// RECOMP_PATCH void func_8002B8C4(void) {
-//     s32 sp1C;
-//     s32 sp18;
-//     s32 temp_v0;
-//     s32 var_a0_2;
-
-//     recomp_printf("func_8002B8C4 called\n");
-
-//     sp1C = D_8008FD0C & 0xC;
-//     if (D_8008FD20 & 0x1000) {
-//         temp_v0 = osPfsInitPak_recomp(&gSIMessageQ, &gPFS[gCurrControllerNum], gCurrControllerNum);
-//         if (temp_v0 == 2) {
-//             temp_v0 = 0;
-//         } else if (temp_v0 == 0xA) {
-//             if (osMotorInit(&gSIMessageQ, &gPFS[gCurrControllerNum], gCurrControllerNum) == 0) {
-//                 temp_v0 = 1;
-//             } else {
-//                 temp_v0 = 0xA;
-//             }
-//         }
-//         sp18 = temp_v0;
-//         D_8008FD20 &= ~0x1000;
-//     }
-//     var_a0_2 = sp18;
-//     if (var_a0_2 == 0) {
-//         var_a0_2 = func_80031574(gCurrControllerNum);
-//     }
-//     if (var_a0_2 != 0) {
-//         D_8008FD24 = var_a0_2;
-//         if (-func_80031BB0(var_a0_2) == 1) {
-//             if (sp1C == 4) {
-//                 D_8008FD22 = 0xD;
-//                 D_8008FD29 = 0xA;
-//             } else {
-//                 D_8008FD22 = 8;
-//                 D_8008FD29 = 0xA;
-//             }
-//         } else {
-//             D_8008FD22 = 0x11;
-//             D_8008FD29 = 0xA;
-//         }
-        
-//         D_8008FD20 &= ~7;
-//         D_8008FD20 |= 5;
-//         return;
-//     }
-//     recomp_printf("sp1C is %d\n", sp1C);
-//     recomp_printf("D_8008FD2C is %d\n", D_8008FD2C);
-//     recomp_printf("D_80092A38[gCurrControllerNum].unk_00 is %08X\n", D_80092A38[gCurrControllerNum].unk_00);
-//     //D_80092A38[gCurrControllerNum].unk_00 |= 0x4001; //hack, set these bits
-//     if (sp1C == 4) {
-//         if (D_80092A38[gCurrControllerNum].unk_13 < 2) {
-//             if (D_80092A38[gCurrControllerNum].unk_00 & 0x4000) {
-//                 D_8008FD22 = 0x15;
-//             } else {
-//                 D_8008FD22 = 0x14;
-//             }
-//             D_8008FD29 = 0xA;
-//             D_8008FD20 &= ~7;
-//             D_8008FD20 |= 5;
-//             return;
-//         }
-//         if (D_80092A38[gCurrControllerNum].unk_00 & 0x2000) {
-//             if (D_80092A38[gCurrControllerNum].unk_00 & 0x4000) {
-//                 D_8008FD22 = 0x15;
-//                 D_8008FD2A = 0;
-//                 D_8008FD20 &= ~0x20;
-//             } else {
-//                 D_8008FD22 = 0x14;
-//             }
-//             D_8008FD29 = 0xA;
-//             D_8008FD20 &= ~7;
-//             D_8008FD20 |= 5;
-//             return;
-//         }
-//     } else if ((D_8008FD2C != 0) && ((D_80092A38[gCurrControllerNum].unk_13 < 2) || (D_80092A38[gCurrControllerNum].unk_00 & 0x2000)) ) {
-//         D_8008FD22 = 0x18;
-//         D_8008FD29 = 0xA;
-//         func_8002DD18();
-//         D_8008FD20 &= ~7;
-//         D_8008FD20 |= 5;
-//         D_8008FD2A = 0;
-//         D_8008FD20 &= ~0x20;
-//         return;
-//     } else if (!(D_80092A38[gCurrControllerNum].unk_00 & 0x4000)) {
-//         if (sp1C == 0) {
-//             D_8008FD22 = 9;
-//             D_8008FD29 = 0xA;
-//         } else {
-//             D_8008FD22 = 0xA;
-//             D_8008FD29 = 0xA;
-//         }
-//         D_8008FD20 &= ~7;
-//         D_8008FD20 |= 5;
-//         return;
-//     }
-//     func_8002DD18();
-//     D_8008FD20 &= ~7;
-//     D_8008FD20 = D_8008FD20;
-//     D_8008FD2A = 0;
-//     D_8008FD20 &= ~0x20;
-// }
-
-RECOMP_PATCH s32 func_80031574(s32 arg0) {
-    s32 i;
-    char pad[0x10];
-    s32 var_s4;
-    s32 var_s5;
-    s32 var_s6;
-    s32 temp;
-    OSPfsState sp4C;
- 
-    
-    var_s4 = 0;
-    var_s6 = 0;
-    D_80092A38[arg0].unk_13 = 0xFF;
-    D_80092A38[arg0].unk_00 = 0;
-
-    for (i = 0; i < 16; i++) {
-        D_80092A38[arg0].unk_02[i] = -1;
-    }
-
-    var_s5 = osPfsInitPak_recomp(&gSIMessageQ, &gPFS[arg0], arg0);
-    if (var_s5 != 0) {
-        if (var_s5 == 0xA) {
-            var_s5 = (osMotorInit(&gSIMessageQ, &gPFS[arg0], arg0) == 0) ? 1 : 10;
-        }
-        return var_s5;
-    }
-    for (i = 0; i < 16; i++) {
-        var_s5 = osPfsFileState_recomp(&gPFS[arg0], i, &sp4C);
-        if (var_s5 == 0) {
-            recomp_printf("game_code is: %08X\n", sp4C.game_code);
-            recomp_printf("company_code is: %08X\n", sp4C.company_code);
-
-            //2A2E1E2C 2D161400 00000000 00000000
-            recomp_printf("game_name is: %08X\n", sp4C.game_name[0]);
-            recomp_printf("game_name is: %08X\n", sp4C.game_name[4]);
-            recomp_printf("game_name is: %08X\n", sp4C.game_name[8]);
-            recomp_printf("game_name is: %08X\n", sp4C.game_name[12]);
-
-            if ((sp4C.game_code == 0x4E455445) && (sp4C.company_code == 0x3738)) {
-                if (1) { //TODO: this fixes a bug in recomp with sp4C.game_name being wrong, so let's just not check it
-                // if (func_80031C0C(D_8005FB40, sp4C.game_name, 0x10) == 0) {
-                    D_80092A38[arg0].unk_02[i] = sp4C.ext_name[0];
-                    D_80092A38[arg0].unk_00 |= 0x4000;
-                    var_s4 += 1;
-                    var_s6 += 1;
-                } else {
-                    D_80092A38[arg0].unk_02[i] = 0x7F;
-                    var_s6 += 1;
-                }
-            } else {
-                D_80092A38[arg0].unk_02[i] = 0x7F;
-                var_s6 += 1;
-            }
-            continue;
-        }
-        
-        if (var_s5 == 5) {
-            D_80092A38[arg0].unk_02[i] = -1;
-            var_s5 = 0;
-        } else {
-            break;
-        }
-    }
-    
-    if (var_s5 == 0) {
-        D_80092A38[arg0].unk_00 &= ~0x0F;
-        D_80092A38[arg0].unk_00 |= var_s4;
-        if (var_s4 >= 0x10) {
-            D_80092A38[arg0].unk_00 |= 0x2000;
-        }
-        if (var_s6 >= 0x10) {
-            D_80092A38[arg0].unk_00 |= 0x2000;
-        }
-        osPfsFreeBlocks_recomp(&gPFS[arg0], &i);
-        D_80092A38[arg0].unk_13 = i / 256;
-        if ((i / 256) < 2) {
-            D_80092A38[arg0].unk_00 |= 0x2000;
-        }
-    }        
-    
-    return var_s5;
-}
-
-/*initializes devices such as the rumble pak and the controller pak and returns an error ID if there is one.*/
-//RECOMP_PATCH s32 initPFSPaks(s32 arg0, s32 arg1) {
-//    s32 con_error;
-//    u32 cont;
+//RECOMP_PATCH s32 func_80031574(s32 arg0) {
+//    s32 i;
+//    char pad[0x10];
+//    s32 var_s4;
+//    s32 var_s5;
+//    s32 var_s6;
+//    s32 temp;
+//    OSPfsState sp4C;
+// 
+//    
+//    var_s4 = 0;
+//    var_s6 = 0;
+//    D_80092A38[arg0].unk_13 = 0xFF;
+//    D_80092A38[arg0].unk_00 = 0;
 //
-//    cont = gCurrControllerNum;
-//
-//    if (arg1 == 0xA) {
-//        if (osMotorInit(&gSIMessageQ, &gPFS[cont], cont) != 0) {
-//            con_error = osPfsInitPak_recomp(&gSIMessageQ, &gPFS[cont], cont);
-//            if ((con_error != PFS_ERR_DEVICE) && (con_error != PFS_ERR_NOPACK) && (con_error != PFS_ERR_NEW_PACK)) {
-//                //con_error = __osGetID(&gPFS[cont]);
-//            }
-//        } else {
-//            con_error = 4;
-//        }
-//    } else {
-//        con_error = osPfsInitPak_recomp(&gSIMessageQ, &gPFS[cont], cont);
+//    for (i = 0; i < 16; i++) {
+//        D_80092A38[arg0].unk_02[i] = -1;
 //    }
 //
-//    return con_error;
+//    var_s5 = osPfsInitPak_recomp(&gSIMessageQ, &gPFS[arg0], arg0);
+//    if (var_s5 != 0) {
+//        if (var_s5 == 0xA) {
+//            var_s5 = (osMotorInit(&gSIMessageQ, &gPFS[arg0], arg0) == 0) ? 1 : 10;
+//        }
+//        return var_s5;
+//    }
+//    for (i = 0; i < 16; i++) {
+//        var_s5 = osPfsFileState_recomp(&gPFS[arg0], i, &sp4C);
+//        if (var_s5 == 0) {
+//            recomp_printf("game_code is: %08X\n", sp4C.game_code);
+//            recomp_printf("company_code is: %08X\n", sp4C.company_code);
+//
+//            //2A2E1E2C 2D161400 00000000 00000000
+//            recomp_printf("game_name is: %08X\n", sp4C.game_name[0]);
+//            recomp_printf("game_name is: %08X\n", sp4C.game_name[4]);
+//            recomp_printf("game_name is: %08X\n", sp4C.game_name[8]);
+//            recomp_printf("game_name is: %08X\n", sp4C.game_name[12]);
+//
+//            if ((sp4C.game_code == 0x4E455445) && (sp4C.company_code == 0x3738)) {
+//                if (1) { //TODO: this fixes a bug in recomp with sp4C.game_name being wrong, so let's just not check it
+//                // if (func_80031C0C(D_8005FB40, sp4C.game_name, 0x10) == 0) {
+//                    D_80092A38[arg0].unk_02[i] = sp4C.ext_name[0];
+//                    D_80092A38[arg0].unk_00 |= 0x4000;
+//                    var_s4 += 1;
+//                    var_s6 += 1;
+//                } else {
+//                    D_80092A38[arg0].unk_02[i] = 0x7F;
+//                    var_s6 += 1;
+//                }
+//            } else {
+//                D_80092A38[arg0].unk_02[i] = 0x7F;
+//                var_s6 += 1;
+//            }
+//            continue;
+//        }
+//        
+//        if (var_s5 == 5) {
+//            D_80092A38[arg0].unk_02[i] = -1;
+//            var_s5 = 0;
+//        } else {
+//            break;
+//        }
+//    }
+//    
+//    if (var_s5 == 0) {
+//        D_80092A38[arg0].unk_00 &= ~0x0F;
+//        D_80092A38[arg0].unk_00 |= var_s4;
+//        if (var_s4 >= 0x10) {
+//            D_80092A38[arg0].unk_00 |= 0x2000;
+//        }
+//        if (var_s6 >= 0x10) {
+//            D_80092A38[arg0].unk_00 |= 0x2000;
+//        }
+//        osPfsFreeBlocks_recomp(&gPFS[arg0], &i);
+//        D_80092A38[arg0].unk_13 = i / 256;
+//        if ((i / 256) < 2) {
+//            D_80092A38[arg0].unk_00 |= 0x2000;
+//        }
+//    }        
+//    
+//    return var_s5;
 //}
+
+struct Struct_800011DC_arg0_sub {
+    /* 0x0058 */ Mtx unk_58[1];
+    /* 0x0098 */ char unk_98[0x8148 - 0x98];
+    /* 0x8148 */ Gfx unk_8148[1];
+    /* 0x8150 */ char unk_8150[0xD14C - 0x8150];
+    /* 0xD14C */ u16* unk_D14C;
+};
+
+struct Struct_800011DC_arg0 {
+    /* 0x0000 */ char unk_00[0x40];
+    /* 0x0040 */ Gfx* unk_40;
+    /* 0x0044 */ s32 unk_44;
+    /* 0x0048 */ char unk_48[0x10];
+    /* 0x0058 */ struct Struct_800011DC_arg0_sub unk_58;
+};
+
+void* testing(struct Struct_800011DC_arg0* arg0) {
+    //recomp_printf("arg0->unk_58.unk_8148 is: %08X\n", arg0->unk_58.unk_8148);
+    gMasterGfxPos = &arg0->unk_58.unk_8148[0];
+    gEXEnable(gMasterGfxPos++); // @recomp
+    gEXSetRefreshRate(gMasterGfxPos++, 60 / 2);
+    // recomp_printf("arg0 is: %08X\n", arg0);
+
+    return arg0;
+}

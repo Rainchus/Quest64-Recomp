@@ -4,7 +4,7 @@
 #include "zelda_render.h"
 #include "zelda_support.h"
 #include "ultramodern/config.hpp"
-#include "librecomp/files.hpp"
+#include "ultramodern/files.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -208,7 +208,7 @@ bool read_json_with_backups(const std::filesystem::path& path, nlohmann::json& j
     }
 
     // Try reading and parsing the backup file.
-    if (read_json(recomp::open_input_backup_file(path), json_out)) {
+    if (read_json(ultramodern::open_input_backup_file(path), json_out)) {
         return true;
     }
 
@@ -218,14 +218,14 @@ bool read_json_with_backups(const std::filesystem::path& path, nlohmann::json& j
 
 bool save_json_with_backups(const std::filesystem::path& path, const nlohmann::json& json_data) {
     {
-        std::ofstream output_file = recomp::open_output_file_with_backup(path);
+        std::ofstream output_file = ultramodern::open_output_file_with_backup(path);
         if (!output_file.good()) {
             return false;
         }
 
         output_file << std::setw(4) << json_data;
     }
-    return recomp::finalize_output_file_with_backup(path);
+    return ultramodern::finalize_output_file_with_backup(path);
 }
 
 bool save_general_config(const std::filesystem::path& path) {
