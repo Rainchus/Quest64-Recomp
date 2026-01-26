@@ -35,12 +35,12 @@ typedef struct Unk {
 #define INVENTORY_SIZE 151
 #define UNK_SIZE_2 1
 
-typedef struct Unk4 {
+typedef struct Unk14 {
     u8 unk_00[UNK_SIZE_0];
     u8 unk_20[UNK_SIZE_1];
     u8 unk_30[INVENTORY_SIZE];
     u8 unk_C7[UNK_SIZE_2];
-} Unk4; //sizeof 0xC8
+} Unk14; //sizeof 0xC8
 
 typedef struct PlayerMainStats {
   /*0x00*/ u16 unk0;
@@ -90,14 +90,14 @@ typedef struct SaveData {
   /* 0x60 */ s8 unk_63;
 } SaveData;
 
-typedef struct Unk3 {
+typedef struct Unk13 {
   /* 0x00 */ s16 unk_00;
   /* 0x02 */ s8 unk_02[0x10];
   /* 0x12 */ char unk_12[1];
   /* 0x13 */ u8 unk_13;
-} Unk3;
+} Unk13;
 
-extern Unk3 D_80092A38[4];
+extern Unk13 D_80092A38[4];
 extern s32 D_80084EFC;
 extern s32 D_80084F00;
 extern s32 D_80084F04;
@@ -105,8 +105,8 @@ extern s32 D_80084F08;
 extern s32 D_80084F0C;
 extern s8 D_8005FA00;
 extern s8 D_8005F010;
-extern Unk4 D_80090398;
-extern Unk4 D_800904E0;
+extern Unk14 D_80090398;
+extern Unk14 D_800904E0;
 extern u8 D_800869D8[UNK_SIZE_0];
 extern u8 D_80086AE8[UNK_SIZE_1];
 extern u8 D_8007D19C[UNK_SIZE_2];
@@ -215,6 +215,68 @@ void func_80023E80(f32 (*)[4], f32 (*)[4], f32 (*)[4]);                      /* 
 
 //void func_8001DC78(MtxF*, Vec3f, s32, s32, s32, s32, void*, void*, s32);
 
+typedef struct Unk12 {
+    /* 0x00 */ char pad0[0x14];
+    /* 0x14 */ s8 unk14;        /* inferred */
+    /* 0x15 */ char pad15[0xB]; /* maybe part of unk14[0xC]? */
+} Unk12;                         /* size = 0x20 */
+
+typedef struct Unk3 {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+    /* 0x08 */ f32 z;
+    /* 0x0C */ f32 unkC;         /* inferred */
+    /* 0x10 */ f32 unk10;        /* inferred */
+    /* 0x14 */ f32 unk14;        /* inferred */
+    /* 0x18 */ char pad18[0xC];  /* maybe part of unk14[4]? */
+    /* 0x24 */ f32 unk24;        /* inferred */
+    /* 0x28 */ char pad28[0x2C]; /* maybe part of unk24[0xC]? */
+    /* 0x54 */ u16 unk54;        /* inferred */
+    /* 0x56 */ u16 unk56;        /* inferred */
+    /* 0x58 */ char pad58[0x14]; /* maybe part of unk56[0xB]? */
+} Unk3;                          /* size = 0x6C */
+
+typedef struct Unk4 {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ char pad1[2];    /* maybe part of unk_00[4]? */
+    /* 0x04 */ Unk12* unk4;      /* inferred */
+    /* 0x08 */ char pad8[0x59]; /* maybe part of unk4[0x17]? */
+} Unk4;                         /* size = 0x61 */
+
+void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk9* arg8, Unk8* arg9,
+                   Mtx* arg10);
+void func_80023360(f32[4][4], f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7);
+extern s32 D_8008C5E0;
+
+//main draw skeleton function
+RECOMP_PATCH void func_8001DB38(s32 arg0, Unk3* arg1, Unk4* arg2, Mtx* arg3) {
+    u16 temp_s5;
+    Unk12* temp_s4;
+    u16 temp_s6;
+    char pad[4];
+    f32 sp78[4][4];
+    Vec3f sp6C;
+    s32 i;
+
+    D_8008C5E0 = 0;
+    func_80023360(&sp78, arg1->unkC, arg1->unk10, arg1->unk14, arg1->unk24, arg1->x, arg1->y, arg1->z);
+
+    sp6C.x = arg1->unk24;
+    sp6C.y = arg1->unk24;
+    sp6C.z = arg1->unk24;
+    temp_s4 = arg2->unk4;
+    temp_s5 = arg1->unk54;
+    temp_s6 = arg1->unk56;
+
+    for (i = 0; i < arg2->unk_00; i++) {
+        if (temp_s4[i].unk14 == 0) {
+            // this functon is recursive, draws all limbs of skeleton?
+            func_8001DC78(sp78, sp6C, arg0, i, temp_s5, temp_s6, arg2, temp_s4, arg3);
+        }
+    }
+}
+
+//recursively draws skeleton limb by limb based on animation frame timer
 RECOMP_PATCH void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, s32 arg6, s32 arg7, Unk9* arg8,
                                 Unk8* arg9, Mtx* arg10) {
     s32* temp_a1;
@@ -285,89 +347,6 @@ RECOMP_PATCH void func_8001DC78(f32 arg0[4][4], Vec3f arg1, s32 arg4, s32 arg5, 
         }
     }
 }
-
-//RECOMP_PATCH s32 func_80031574(s32 arg0) {
-//    s32 i;
-//    char pad[0x10];
-//    s32 var_s4;
-//    s32 var_s5;
-//    s32 var_s6;
-//    s32 temp;
-//    OSPfsState sp4C;
-// 
-//    
-//    var_s4 = 0;
-//    var_s6 = 0;
-//    D_80092A38[arg0].unk_13 = 0xFF;
-//    D_80092A38[arg0].unk_00 = 0;
-//
-//    for (i = 0; i < 16; i++) {
-//        D_80092A38[arg0].unk_02[i] = -1;
-//    }
-//
-//    var_s5 = osPfsInitPak_recomp(&gSIMessageQ, &gPFS[arg0], arg0);
-//    if (var_s5 != 0) {
-//        if (var_s5 == 0xA) {
-//            var_s5 = (osMotorInit(&gSIMessageQ, &gPFS[arg0], arg0) == 0) ? 1 : 10;
-//        }
-//        return var_s5;
-//    }
-//    for (i = 0; i < 16; i++) {
-//        var_s5 = osPfsFileState_recomp(&gPFS[arg0], i, &sp4C);
-//        if (var_s5 == 0) {
-//            recomp_printf("game_code is: %08X\n", sp4C.game_code);
-//            recomp_printf("company_code is: %08X\n", sp4C.company_code);
-//
-//            //2A2E1E2C 2D161400 00000000 00000000
-//            recomp_printf("game_name is: %08X\n", sp4C.game_name[0]);
-//            recomp_printf("game_name is: %08X\n", sp4C.game_name[4]);
-//            recomp_printf("game_name is: %08X\n", sp4C.game_name[8]);
-//            recomp_printf("game_name is: %08X\n", sp4C.game_name[12]);
-//
-//            if ((sp4C.game_code == 0x4E455445) && (sp4C.company_code == 0x3738)) {
-//                if (1) { //TODO: this fixes a bug in recomp with sp4C.game_name being wrong, so let's just not check it
-//                // if (func_80031C0C(D_8005FB40, sp4C.game_name, 0x10) == 0) {
-//                    D_80092A38[arg0].unk_02[i] = sp4C.ext_name[0];
-//                    D_80092A38[arg0].unk_00 |= 0x4000;
-//                    var_s4 += 1;
-//                    var_s6 += 1;
-//                } else {
-//                    D_80092A38[arg0].unk_02[i] = 0x7F;
-//                    var_s6 += 1;
-//                }
-//            } else {
-//                D_80092A38[arg0].unk_02[i] = 0x7F;
-//                var_s6 += 1;
-//            }
-//            continue;
-//        }
-//        
-//        if (var_s5 == 5) {
-//            D_80092A38[arg0].unk_02[i] = -1;
-//            var_s5 = 0;
-//        } else {
-//            break;
-//        }
-//    }
-//    
-//    if (var_s5 == 0) {
-//        D_80092A38[arg0].unk_00 &= ~0x0F;
-//        D_80092A38[arg0].unk_00 |= var_s4;
-//        if (var_s4 >= 0x10) {
-//            D_80092A38[arg0].unk_00 |= 0x2000;
-//        }
-//        if (var_s6 >= 0x10) {
-//            D_80092A38[arg0].unk_00 |= 0x2000;
-//        }
-//        osPfsFreeBlocks_recomp(&gPFS[arg0], &i);
-//        D_80092A38[arg0].unk_13 = i / 256;
-//        if ((i / 256) < 2) {
-//            D_80092A38[arg0].unk_00 |= 0x2000;
-//        }
-//    }        
-//    
-//    return var_s5;
-//}
 
 struct Struct_800011DC_arg0_sub {
     /* 0x0058 */ Mtx unk_58[1];
