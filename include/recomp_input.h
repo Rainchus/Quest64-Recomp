@@ -18,19 +18,19 @@ namespace recomp {
     // First parameter is the enum name, second parameter is the bit field for the input (or 0 if there is no associated one), third is the readable name.
     // TODO refactor this to allow projects to rename these, or get rid of the readable name and leave that up to individual projects to map.
     #define DEFINE_N64_BUTTON_INPUTS() \
-        DEFINE_INPUT(A, 0x8000, "Laser") \
-        DEFINE_INPUT(B, 0x4000, "Smart Bomb") \
-        DEFINE_INPUT(Z, 0x2000, "Tilt Left") \
-        DEFINE_INPUT(R, 0x0010, "Tilt Right") \
+        DEFINE_INPUT(A, 0x8000, "Interact/Cast") \
+        DEFINE_INPUT(B, 0x4000, "Cancel/Camera Lock") \
+        DEFINE_INPUT(Z, 0x2000, "Camera Zoom") \
+        DEFINE_INPUT(R, 0x0010, "Inventory") \
         DEFINE_INPUT(START, 0x1000, "Pause") \
-        DEFINE_INPUT(C_UP, 0x0008, "Camera") \
-        DEFINE_INPUT(C_LEFT, 0x0002, "Turbo") \
-        DEFINE_INPUT(C_DOWN, 0x0004, "Brake") \
-        DEFINE_INPUT(C_RIGHT, 0x0001, "ROB Message") \
-        DEFINE_INPUT(DPAD_UP, 0x0800, "Menu Up") \
-        DEFINE_INPUT(DPAD_RIGHT, 0x0100, "Menu Right") \
-        DEFINE_INPUT(DPAD_DOWN, 0x0400, "Menu Down") \
-        DEFINE_INPUT(DPAD_LEFT, 0x0200, "Menu Left") \
+        DEFINE_INPUT(C_UP, 0x0008, "Magic: Fire") \
+        DEFINE_INPUT(C_LEFT, 0x0002, "Magic: Earth") \
+        DEFINE_INPUT(C_DOWN, 0x0004, "Magic: Water") \
+        DEFINE_INPUT(C_RIGHT, 0x0001, "Magic: Wind") \
+        DEFINE_INPUT(DPAD_UP, 0x0800, "N/A") \
+        DEFINE_INPUT(DPAD_RIGHT, 0x0100, "N/A") \
+        DEFINE_INPUT(DPAD_DOWN, 0x0400, "N/A") \
+        DEFINE_INPUT(DPAD_LEFT, 0x0200, "N/A") \
         DEFINE_INPUT(L, 0x0020, "L (debug)")
 
     #define DEFINE_N64_AXIS_INPUTS() \
