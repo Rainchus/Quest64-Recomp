@@ -143,9 +143,9 @@ s32 func_8003195C(s8, u8);
 void func_8002DF6C(void);
 s32 func_80031C0C(u8* str0, u8* str1, s32 size);
 
-void func_8001E138(f32 (*)[4], void*);                 /* extern */
-void func_80023C1C(f32 (*)[4], f32, f32, f32, f32, f32, f32, f32, f32, f32); /* extern */
-void func_80023E80(MtxF*, f32 (*)[4], f32 (*)[4]);     /* extern */
+void func_8001E138(MtxF*, void*);                      /* extern */
+void func_80023C1C(MtxF*, f32, f32, f32, f32, f32, f32, f32, f32, f32); /* extern */
+void func_80023E80(MtxF*, MtxF*, MtxF*);               /* extern */
 
 typedef struct Unk5 {
     char unk_00[0x0C];
@@ -197,7 +197,7 @@ extern s32 D_8008C5E0;
 extern MtxF D_8008C5E8;
 extern Gfx* gMasterGfxPos;
 extern Mtx D_2000000[];
-void func_80022B40(void* arg0, f32* arg1, s32 arg2);   /* extern */
+void func_80022B40(void* arg0, Unk6* arg1, s32 arg2);  /* extern */
 void func_8002371C(MtxF* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
 void func_80023DF4(MtxF* arg0, f32 arg1, f32 arg2, f32 arg3);
 extern s32 D_8007B2F8;
@@ -248,10 +248,10 @@ RECOMP_PATCH void func_8001DC78(MtxF* arg0, Vec3f arg1, s32 arg4, s32 arg5, s32 
         func_80023E80(arg0, &spA0, &spA0);
         func_8002371C(&D_8008C5E8, spD0.x, spD0.y, spD0.z, D_80086DC0.unk_0C, D_80086DC0.unk_10, D_80086DC0.unk_14);
         func_80023DF4(&D_8008C5E8, arg1.x, arg1.y, arg1.z);
-        guMtxF2L(&D_8008C5E8, arg10 + 3 + D_8007B2F8);
+        guMtxF2L(D_8008C5E8.mf, arg10 + 3 + D_8007B2F8);
     } else {
         func_80023E80(arg0, &spA0, &spA0);
-        guMtxF2L(&spA0, arg10 + 3 + D_8007B2F8);
+        guMtxF2L(spA0.mf, arg10 + 3 + D_8007B2F8);
     }
     gSPMatrix(gMasterGfxPos++, D_2000000 + 3 + D_8007B2F8, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     D_8007B2F8++;

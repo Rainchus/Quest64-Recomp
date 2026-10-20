@@ -1,66 +1,67 @@
 # Building Guide
 
-This guide will help you build the project on your local machine. The process will require you to provide a decompressed ROM of the 1.1 US version of the game.
+This guide will help you build the project on your local machine. You will need your own copy of the **1.0 North American (USA)** version of Quest 64 in `.z64` format. No other version will work.
 
-These steps cover: decompressing the ROM, running the recompiler and finally building the project.
+These steps cover: cloning the repository, installing the tools, running the recompiler and finally building the project.
 
 ## 1. Clone the Quest64Recomp Repository
 This project makes use of submodules so you will need to clone the repository with the `--recurse-submodules` flag.
 
 ```bash
-git clone --recurse-submodules
+git clone --recurse-submodules https://github.com/Rainchus/Quest64-Recomp.git
 # if you forgot to clone with --recurse-submodules
 # cd /path/to/cloned/repo && git submodule update --init --recursive
 ```
 
+Then copy your ROM into the repository root and name it `quest64.us.z64`.
+
 ## 2. Install Dependencies
 
+### Windows
+Install the following:
+
+- [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) with these options selected:
+  - Desktop development with C++
+  - C++ Clang Compiler for Windows
+  - C++ CMake tools for Windows
+- [LLVM](https://github.com/llvm/llvm-project/releases), for its `ld.lld` linker: `winget install LLVM.LLVM`
+- [MSYS2](https://www.msys2.org/), for a clang that can compile MIPS code: `winget install MSYS2.MSYS2`, then in an MSYS2 shell run `pacman -S mingw-w64-clang-x86_64-clang`
+- `make`: `winget install ezwinports.make`
+
+> [!NOTE]
+> The patches in `patches/` are compiled for the N64's MIPS CPU. The official Windows builds of LLVM (the installer, the release archive, and the copy bundled with Visual Studio) are built without the MIPS target, which is why MSYS2's clang is needed. The official `ld.lld` is still used for linking, because MSYS2's `ld.lld` defaults to Windows-style linking.
+
 ### Linux
-For Linux the instructions for Ubuntu are provided, but you can find the equivalent packages for your preferred distro.
+For Linux the instructions for Ubuntu are provided, but you can find the equivalent packages for your preferred distro. The Linux build has not been tested since the Windows build fixes.
 
 ```bash
 # For Ubuntu, simply run:
-sudo apt-get install cmake ninja libsdl2-dev libgtk-3-dev lld llvm clang-15
+sudo apt-get install cmake ninja-build libsdl2-dev libgtk-3-dev lld llvm clang
 ```
+
+## 3. Build
 
 ### Windows
-You will need to install [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/).
-In the setup process you'll need to select the following options and tools for installation:
-- Desktop development with C++
-- C++ Clang Compiler for Windows
-- C++ CMake tools for Windows
+From the repository root, run:
 
-The other tool necessary will be `make` which can be installe via [Chocolatey](https://chocolatey.org/):
 ```bash
-choco install make
+build-windows.bat Release
 ```
 
-## 3. Generating the C code
+The script builds the recompiler tools, recompiles the ROM into C code, and builds the game. Steps that are already done are skipped, so running it again only rebuilds what changed. If a tool is missing, the script says which one and how to install it.
 
-Now that you have the required files, you must build [N64Recomp](https://github.com/Mr-Wiseguy/N64Recomp) and run it to generate the C code to be compiled. The building instructions can be found [here](https://github.com/Mr-Wiseguy/N64Recomp?tab=readme-ov-file#building). That will build the executables: `N64Recomp` and `RSPRecomp` which you should copy to the root of the Quest64Recomp repository.
+The result is `build-Release\Quest64Recompiled.exe`. Use `Debug` instead of `Release` for a debug build.
 
-After that, go back to the repository root, and run the following commands:
+### Linux (manual steps)
+Build [N64Recomp](https://github.com/N64Recomp/N64Recomp) from `lib/N64ModernRuntime/N64Recomp` (the version this project's runtime expects), copy `N64Recomp` and `RSPRecomp` to the repository root, then run:
+
 ```bash
 ./N64Recomp us.rev0.toml
 ./RSPRecomp aspMain.toml
+cmake -S . -B build-cmake -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build-cmake --target Quest64Recompiled -j$(nproc)
 ```
 
-## 4. Building the Project
+## 4. Run
 
-Finally, you can build the project! :rocket:
-
-On Windows, you can open the repository folder with Visual Studio, and you'll be able to `[build / run / debug]` the project from there.
-
-If you prefer the command line or you're on a Unix platform you can build the project using CMake:
-
-```bash
-cmake -S . -B build-cmake -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -G Ninja -DCMAKE_BUILD_TYPE=Release # or Debug if you want to debug
-cmake --build build-cmake --target Quest64Recompiled -j$(nproc) --config Release # or Debug
-```
-
-## 5. Success
-
-Voilà! You should now have a `Quest64Recompiled` executable in the build directory! If you used Visual Studio this will be `out/build/x64-[Configuration]` and if you used the provided CMake commands then this will be `build-cmake`. You will need to run the executable out of the root folder of this project or copy the assets folder to the build folder to run it.
-
-> [!IMPORTANT]  
-> In the game itself, you should be using a standard ROM, not the decompressed one.
+Run the executable with the repository root as the working directory, or copy the `assets` folder next to the executable. When the game asks for a ROM, select your USA 1.0 Quest 64 ROM.
