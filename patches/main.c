@@ -208,7 +208,6 @@ RECOMP_PATCH void func_8001DC78(MtxF* arg0, Vec3f arg1, s32 arg4, s32 arg5, s32 
     Gfx* temp_v0_4;
     s32* temp_a1;
     s32* temp_a2_2;
-    Vec3f spD0;
     s32 var_a2;
     s32 var_s1;
     s8 temp_s1;
@@ -244,9 +243,11 @@ RECOMP_PATCH void func_8001DC78(MtxF* arg0, Vec3f arg1, s32 arg4, s32 arg5, s32 
     arg1.x *= sp7C.unk_18;
     arg1.y *= sp7C.unk_1C;
     arg1.z *= sp7C.unk_20;
+    // The position used below is the translation row of the combined matrix (sp+0xD0 in the original,
+    // which is inside spA0), not a separate variable.
     if (temp_s2->unk_16 & 1) {
         func_80023E80(arg0, &spA0, &spA0);
-        func_8002371C(&D_8008C5E8, spD0.x, spD0.y, spD0.z, D_80086DC0.unk_0C, D_80086DC0.unk_10, D_80086DC0.unk_14);
+        func_8002371C(&D_8008C5E8, spA0.mf[3][0], spA0.mf[3][1], spA0.mf[3][2], D_80086DC0.unk_0C, D_80086DC0.unk_10, D_80086DC0.unk_14);
         func_80023DF4(&D_8008C5E8, arg1.x, arg1.y, arg1.z);
         guMtxF2L(&D_8008C5E8, arg10 + 3 + D_8007B2F8);
     } else {
@@ -257,9 +258,9 @@ RECOMP_PATCH void func_8001DC78(MtxF* arg0, Vec3f arg1, s32 arg4, s32 arg5, s32 
     D_8007B2F8++;
     var_s0 = arg9;
     if (temp_s2->unk_16 & 2) {\
-        D_8008C5B0[D_8008C5E0].x = spD0.x;
-        D_8008C5B0[D_8008C5E0].y = spD0.y;
-        D_8008C5B0[D_8008C5E0].z = spD0.z;
+        D_8008C5B0[D_8008C5E0].x = spA0.mf[3][0];
+        D_8008C5B0[D_8008C5E0].y = spA0.mf[3][1];
+        D_8008C5B0[D_8008C5E0].z = spA0.mf[3][2];
         D_8008C5E0++;
     }
     temp_a2_2 = temp_s2->unk_18;
